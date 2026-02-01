@@ -29,4 +29,13 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         // Settings/Users
         Route::get('/users', [App\Http\Controllers\Master\WarehouseController::class, 'index'])->name('users.index'); // Placeholder
     });
+
+    // Procurement Routes
+    Route::prefix('procurement')->name('procurement.')->group(function () {
+        Route::get('/prices', [App\Http\Controllers\Procurement\PurchaseController::class, 'prices'])->name('prices.index');
+        Route::get('/requests', [App\Http\Controllers\Procurement\PurchaseController::class, 'requests'])->name('requests.index');
+        Route::get('/approvals', [App\Http\Controllers\Procurement\PurchaseController::class, 'approvals'])->name('approvals.index');
+        Route::get('/orders', [App\Http\Controllers\Procurement\PurchaseController::class, 'orders'])->name('orders.index');
+        Route::get('/orders/{id}/print', [App\Http\Controllers\Procurement\PurchaseController::class, 'print'])->name('orders.print');
+    });
 });

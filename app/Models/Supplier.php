@@ -48,6 +48,16 @@ class Supplier extends Model
         return $this->belongsTo(User::class, 'updated_by');
     }
 
+    public function prices()
+    {
+        return $this->hasMany(ItemPrice::class);
+    }
+
+    public function purchaseOrders()
+    {
+        return $this->hasMany(PurchaseOrder::class);
+    }
+
     // Scopes
     public function scopeActive($query)
     {

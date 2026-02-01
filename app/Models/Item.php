@@ -59,6 +59,21 @@ class Item extends Model
         return $this->hasMany(ItemConversion::class);
     }
 
+    public function prices()
+    {
+        return $this->hasMany(ItemPrice::class);
+    }
+
+    public function purchaseRequestDetails()
+    {
+        return $this->hasMany(PurchaseRequestDetail::class);
+    }
+
+    public function purchaseOrderDetails()
+    {
+        return $this->hasMany(PurchaseOrderDetail::class);
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');

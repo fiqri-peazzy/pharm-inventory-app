@@ -63,6 +63,31 @@ class MenuHelper
                 ]
             ],
             [
+                'title' => 'PENGADAAN',
+                'items' => [
+                    [
+                        'name' => 'E-Catalog Harga',
+                        'path' => '/procurement/prices',
+                        'icon' => 'tag',
+                    ],
+                    [
+                        'name' => 'Permintaan (PR)',
+                        'path' => '/procurement/requests',
+                        'icon' => 'file-text',
+                    ],
+                    [
+                        'name' => 'Approval Direktur',
+                        'path' => '/procurement/approvals',
+                        'icon' => 'check-square',
+                    ],
+                    [
+                        'name' => 'Pesanan (PO)',
+                        'path' => '/procurement/orders',
+                        'icon' => 'shopping-cart',
+                    ],
+                ]
+            ],
+            [
                 'title' => 'SISTEM',
                 'items' => [
                     [
@@ -92,6 +117,14 @@ class MenuHelper
             'settings' => '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.28033 1.46967C8.57322 1.76256 8.57322 2.23744 8.28033 2.53033L7.81066 3H12.1893L11.7197 2.53033C11.4268 2.23744 11.4268 1.76256 11.7197 1.46967C12.0126 1.17678 12.4874 1.17678 12.7803 1.46967L14.7803 3.46967C15.0732 3.76256 15.0732 4.23744 14.7803 4.53033L12.7803 6.53033C12.4874 6.82322 12.0126 6.82322 11.7197 6.53033C11.4268 6.23744 11.4268 5.76256 11.7197 5.46967L12.1893 5H7.81066L8.28033 5.46967C8.57322 5.76256 8.57322 6.23744 8.28033 6.53033C7.98744 6.82322 7.51256 6.82322 7.21967 6.53033L5.21967 4.53033C4.92678 4.23744 4.92678 3.76256 5.21967 3.46967L7.21967 1.46967C7.51256 1.17678 7.98744 1.17678 8.28033 1.46967ZM3 9.25C3 8.83579 3.33579 8.5 3.75 8.5H16.25C16.6642 8.5 17 8.83579 17 9.25V16.25C17 16.6642 16.6642 17 16.25 17H3.75C3.33579 17 3 16.6642 3 16.25V9.25ZM4.5 10V15.5H15.5V10H4.5Z" fill="currentColor"/></svg>',
             
             'activity' => '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 10H5.83333L7.91667 5L12.0833 15L14.1667 10H17.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+            
+            'tag' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>',
+            
+            'file-text' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>',
+            
+            'check-square' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>',
+            
+            'shopping-cart' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>',
         ];
 
         return $icons[$iconName] ?? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" fill="currentColor"/></svg>';
