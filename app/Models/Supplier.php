@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Warehouse extends Model
+class Supplier extends Model
 {
     use HasFactory, SoftDeletes;
 
@@ -14,11 +14,17 @@ class Warehouse extends Model
         'code',
         'name',
         'type',
-        'is_main',
-        'is_active',
-        'pic_name',
-        'pic_phone',
         'address',
+        'phone',
+        'email',
+        'contact_person',
+        'npwp',
+        'tax_status',
+        'payment_term',
+        'bank_name',
+        'bank_account_number',
+        'bank_account_name',
+        'is_active',
         'created_by',
         'updated_by',
     ];
@@ -26,17 +32,12 @@ class Warehouse extends Model
     protected function casts(): array
     {
         return [
-            'is_main' => 'boolean',
             'is_active' => 'boolean',
+            'payment_term' => 'integer',
         ];
     }
 
     // Relations
-    public function users()
-    {
-        return $this->hasMany(User::class, 'warehouse_id');
-    }
-
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -53,27 +54,30 @@ class Warehouse extends Model
         return $query->where('is_active', true);
     }
 
-    public function scopeMain($query)
-    {
-        return $query->where('is_main', true);
-    }
-
     public function scopeByType($query, $type)
     {
         return $query->where('type', $type);
+    }
+
+    public function scopePkp($query)
+    {
+        return $query->where('tax_status', 'pkp');
     }
 
     // Helpers
     public function getTypeNameAttribute(): string
     {
         return match($this->type) {
-            'gudang_utama' => 'Gudang Utama',
-            'depo_farmasi' => 'Depo Farmasi',
-            'depo_ok' => 'Depo OK',
-            'depo_igd' => 'Depo IGD',
-            'depo_ranap' => 'Depo Rawat Inap',
-            'depo_rajal' => 'Depo Rawat Jalan',
+            'pbf' => 'PBF (Pedagang Besar Farmasi)',
+            'distributor' => 'Distributor',
+            'manufaktur' => 'Manufaktur',
+            'toko' => 'Toko',
             default => $this->type,
         };
+    }
+
+    public function isPkp(): bool
+    {
+        return $this->tax_status === 'pkp';
     }
 }

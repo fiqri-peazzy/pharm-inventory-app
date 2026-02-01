@@ -13,7 +13,7 @@ class WarehouseSeeder extends Seeder
             [
                 'code' => 'GD-UTAMA',
                 'name' => 'Gudang Farmasi Utama',
-                'type' => 'Gudang Utama',
+                'type' => 'gudang_utama',
                 'is_main' => true,
                 'is_active' => true,
                 'pic_name' => 'Kepala Gudang Farmasi',
@@ -23,7 +23,7 @@ class WarehouseSeeder extends Seeder
             [
                 'code' => 'APT-IGD',
                 'name' => 'Apotek IGD',
-                'type' => 'Depo Farmasi',
+                'type' => 'depo_igd',
                 'is_main' => false,
                 'is_active' => true,
                 'pic_name' => 'Apoteker IGD',
@@ -33,7 +33,7 @@ class WarehouseSeeder extends Seeder
             [
                 'code' => 'APT-RANAP',
                 'name' => 'Apotek Rawat Inap',
-                'type' => 'Depo Farmasi',
+                'type' => 'depo_ranap',
                 'is_main' => false,
                 'is_active' => true,
                 'pic_name' => 'Apoteker Rawat Inap',
@@ -43,7 +43,7 @@ class WarehouseSeeder extends Seeder
             [
                 'code' => 'APT-RAJAL',
                 'name' => 'Apotek Rawat Jalan',
-                'type' => 'Depo Farmasi',
+                'type' => 'depo_rajal',
                 'is_main' => false,
                 'is_active' => true,
                 'pic_name' => 'Apoteker Rawat Jalan',
