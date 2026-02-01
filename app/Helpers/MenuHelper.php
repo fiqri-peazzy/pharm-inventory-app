@@ -35,7 +35,7 @@ class MenuHelper
                             [
                                 'name' => 'Item (Obat & BMHP)',
                                 'path' => '/master/items',
-                            ],
+                            ], 
                             [
                                 'name' => 'Supplier',
                                 'path' => '/master/suppliers',

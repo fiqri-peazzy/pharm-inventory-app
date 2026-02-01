@@ -91,6 +91,12 @@
         })();
     </script>
     
+    @livewireStyles
+    <style>
+        .swal2-container {
+            z-index: 999999 !important;
+        }
+    </style>
 </head>
 
 <body
@@ -134,5 +140,51 @@
 </body>
 
 @stack('scripts')
+    @livewireScripts
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('livewire:init', () => {
+            // Toast Notification Listener
+            Livewire.on('notify', (data) => {
+                const event = Array.isArray(data) ? data[0] : data;
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
 
+                Toast.fire({
+                    icon: event.type || 'success',
+                    title: event.message
+                });
+            });
+
+            // Confirmation Listener
+            Livewire.on('confirm-delete', (data) => {
+                const event = Array.isArray(data) ? data[0] : data;
+                Swal.fire({
+                    title: 'Hapus Data?',
+                    text: event.message || "Anda akan menghapus data ini secara permanen!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6e7881',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Livewire.dispatch(event.action, { id: event.id });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
 </html>

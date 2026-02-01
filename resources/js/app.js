@@ -10,12 +10,8 @@ import { Calendar } from '@fullcalendar/core';
 
 
 
-window.Alpine = Alpine;
+// Alpine.js is handled by Livewire 3 automatically
 window.ApexCharts = ApexCharts;
-window.flatpickr = flatpickr;
-window.FullCalendar = Calendar;
-
-Alpine.start();
 
 // Initialize components on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
