@@ -44,6 +44,10 @@ class MenuHelper
                                 'name' => 'Gudang/Depo',
                                 'path' => '/master/warehouses',
                             ],
+                            [
+                                'name' => 'Unit Layanan',
+                                'path' => '/master/service-units',
+                            ],
                         ]
                     ],
                     [

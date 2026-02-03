@@ -25,6 +25,7 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/items', [App\Http\Controllers\Master\ItemController::class, 'index'])->name('items.index');
         Route::get('/suppliers', [App\Http\Controllers\Master\SupplierController::class, 'index'])->name('suppliers.index');
         Route::get('/warehouses', [App\Http\Controllers\Master\WarehouseController::class, 'index'])->name('warehouses.index');
+        Route::get('/service-units', [App\Http\Controllers\Master\ServiceUnitController::class, 'index'])->name('service-units.index');
         
         // Settings/Users
         Route::get('/users', [App\Http\Controllers\Master\WarehouseController::class, 'index'])->name('users.index'); // Placeholder
@@ -34,6 +35,8 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
     Route::prefix('procurement')->name('procurement.')->group(function () {
         Route::get('/prices', [App\Http\Controllers\Procurement\PurchaseController::class, 'prices'])->name('prices.index');
         Route::get('/requests', [App\Http\Controllers\Procurement\PurchaseController::class, 'requests'])->name('requests.index');
+        Route::get('/requests/create', [App\Http\Controllers\Procurement\PurchaseController::class, 'createRequest'])->name('requests.create');
+        Route::get('/requests/{id}/edit', [App\Http\Controllers\Procurement\PurchaseController::class, 'editRequest'])->name('requests.edit');
         Route::get('/approvals', [App\Http\Controllers\Procurement\PurchaseController::class, 'approvals'])->name('approvals.index');
         Route::get('/orders', [App\Http\Controllers\Procurement\PurchaseController::class, 'orders'])->name('orders.index');
         Route::get('/orders/{id}/print', [App\Http\Controllers\Procurement\PurchaseController::class, 'print'])->name('orders.print');

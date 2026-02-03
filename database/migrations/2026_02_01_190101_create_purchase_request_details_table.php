@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('purchase_request_id')->constrained()->onDelete('cascade');
             $table->foreignId('item_id')->constrained();
             $table->integer('current_stock')->default(0);
-            $table->decimal('average_usage', 15, 2)->default(0);
+            $table->decimal('average_usage', 10, 2)->default(0);
             $table->integer('requested_qty');
             $table->integer('approved_qty')->nullable();
             $table->text('notes')->nullable();

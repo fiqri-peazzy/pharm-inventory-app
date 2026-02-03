@@ -37,6 +37,11 @@ class Warehouse extends Model
         return $this->hasMany(User::class, 'warehouse_id');
     }
 
+    public function servedUnits()
+    {
+        return $this->hasMany(ServiceUnit::class, 'default_warehouse_id');
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');

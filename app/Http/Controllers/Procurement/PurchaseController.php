@@ -17,6 +17,16 @@ class PurchaseController extends Controller
         return view('pages.procurement.requests');
     }
 
+    public function createRequest()
+    {
+        return view('pages.procurement.requests-create');
+    }
+
+    public function editRequest($id)
+    {
+        return view('pages.procurement.requests-edit', compact('id'));
+    }
+
     public function approvals()
     {
         return view('pages.procurement.approvals');

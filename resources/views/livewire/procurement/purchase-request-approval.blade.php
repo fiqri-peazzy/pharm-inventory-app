@@ -1,0 +1,155 @@
+<div>
+    <div class="mb-6 flex items-center justify-between">
+        <div class="relative w-full md:w-80">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </span>
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="Cari No. PR..." class="w-full rounded-xl border border-gray-100 bg-white py-2.5 pl-11 pr-4 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-gray-900 transition-all shadow-sm">
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg">
+            <div class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+            <span class="text-[10px] font-black uppercase tracking-widest text-indigo-700 dark:text-indigo-400">Menunggu Review: {{ $pendingCount }}</span>
+        </div>
+    </div>
+
+    <div class="overflow-hidden bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-gray-50/50 text-xs uppercase font-black text-gray-500 dark:bg-white/[0.02] border-b border-gray-100 dark:border-gray-800">
+                <tr>
+                    <th class="px-6 py-4">Dokumen</th>
+                    <th class="px-6 py-4">Gudang & Pemohon</th>
+                    <th class="px-6 py-4 text-center">Periode</th>
+                    <th class="px-6 py-4 text-center">Status</th>
+                    <th class="px-6 py-4 text-right">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                @forelse($requests as $request)
+                    <tr class="hover:bg-gray-50/50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $request->request_number }}</span>
+                                <span class="text-[10px] text-gray-500 italic">{{ $request->request_date->format('d M Y') }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold text-gray-700 dark:text-gray-300">{{ $request->warehouse->name }}</span>
+                                <span class="text-[10px] text-gray-400">Oleh: {{ $request->creator->name ?? '-' }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                             <span class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase">
+                                {{ \Carbon\Carbon::create()->month($request->period_month)->translatedFormat('M') }} {{ $request->period_year }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            @php
+                                $statusColors = [
+                                    'submitted' => 'bg-blue-50 text-blue-700 ring-blue-700/10',
+                                    'approved' => 'bg-green-50 text-green-700 ring-green-700/10',
+                                    'rejected' => 'bg-red-50 text-red-700 ring-red-700/10',
+                                ];
+                            @endphp
+                            <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest {{ $statusColors[$request->status] ?? 'bg-gray-50 text-gray-700' }} ring-1 ring-inset">
+                                {{ $request->status }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <button wire:click="selectPr({{ $request->id }})" class="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white hover:bg-gray-800 transition-all dark:bg-brand-500 dark:hover:bg-brand-600 shadow-lg shadow-gray-900/10 min-w-24 justify-center">
+                                Review Details
+                            </button>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="px-6 py-20 text-center opacity-40 italic text-gray-400 text-sm">
+                            Tidak ada pengajuan yang membutuhkan tindakan saat ini.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        {{ $requests->links() }}
+    </div>
+
+    <!-- Approval Modal -->
+    <div x-data="{ open: @entangle('showApprovalModal') }" x-show="open" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         class="fixed inset-0 z-[1001] overflow-y-auto" style="display: none;">
+        <div class="flex min-h-screen items-center justify-center p-4">
+            <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" @click="open = false"></div>
+
+            <div class="relative w-full max-w-4xl rounded-2xl bg-white p-0 shadow-2xl dark:bg-gray-900 border border-white/10 overflow-hidden">
+                @if($selectedPr)
+                    <div class="p-6 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-black uppercase text-gray-900 dark:text-white tracking-tighter">Review Purchase Request</h3>
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{{ $selectedPr->request_number }} • {{ $selectedPr->warehouse->name }}</p>
+                        </div>
+                        <button @click="open = false" class="text-gray-400 hover:text-gray-600"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>
+                    </div>
+
+                    <div class="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="bg-gray-50/50 text-[10px] uppercase font-black text-gray-400 border-b border-gray-100 dark:border-gray-800">
+                                <tr>
+                                    <th class="px-4 py-3">Nama Baranga</th>
+                                    <th class="px-4 py-3 text-center">Stok Riil</th>
+                                    <th class="px-4 py-3 text-center">Rata2 Pakai</th>
+                                    <th class="px-4 py-3 text-center">Qty Minta</th>
+                                    <th class="px-4 py-3">Catatan</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                                @foreach($selectedPr->details as $detail)
+                                    <tr>
+                                        <td class="px-4 py-4">
+                                            <div class="flex flex-col">
+                                                <span class="font-bold text-gray-900 dark:text-white text-xs">{{ $detail->item->name }}</span>
+                                                <span class="text-[10px] font-mono text-gray-400 uppercase">{{ $detail->item->code }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-4 text-center font-mono font-bold text-xs">{{ number_format($detail->current_stock) }}</td>
+                                        <td class="px-4 py-4 text-center font-mono text-xs">{{ number_format($detail->average_usage) }}</td>
+                                        <td class="px-4 py-4 text-center">
+                                            <span class="rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-black text-indigo-700 ring-1 ring-inset ring-indigo-700/10">{{ number_format($detail->requested_qty) }} {{ $detail->item->unit?->name }}</span>
+                                        </td>
+                                        <td class="px-4 py-4 text-[10px] text-gray-500 italic">{{ $detail->notes ?: '-' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+
+                        @if($selectedPr->notes)
+                            <div class="mt-6 p-4 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1 block">Notes dari Pemohon:</label>
+                                <p class="text-xs text-gray-600 dark:text-gray-400">{{ $selectedPr->notes }}</p>
+                            </div>
+                        @endif
+
+                        @if($selectedPr->status === 'submitted')
+                            <div class="mt-8">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-red-500 mb-2 block">Catatan Penolakan (Wajib jika menolak):</label>
+                                <textarea wire:model="rejectionReason" rows="2" placeholder="Tuliskan alasan jika pengajuan ditolak..." class="w-full rounded-xl border border-gray-200 bg-white p-4 text-sm outline-none focus:border-red-500 dark:border-gray-800 dark:bg-gray-800 transition-all"></textarea>
+                                @error('rejectionReason') <span class="text-[10px] text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="p-6 bg-gray-50 dark:bg-white/[0.02] border-t border-gray-100 dark:border-gray-800 flex justify-end gap-3">
+                        @if($selectedPr->status === 'submitted')
+                            <button wire:click="reject" class="px-8 py-3 rounded-xl border border-red-200 bg-white text-xs font-black uppercase tracking-widest text-red-500 hover:bg-red-50 transition-all shadow-sm">Tolak Pengajuan</button>
+                            <button wire:click="approve" class="px-8 py-3 rounded-xl bg-green-600 text-xs font-black uppercase tracking-widest text-white hover:bg-green-700 shadow-lg shadow-green-600/20 transition-all">Setujui & Approve ✓</button>
+                        @endif
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>

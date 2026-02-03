@@ -22,6 +22,8 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             UserSeeder::class,
             MasterDataSeeder::class,
+            ItemPriceSeeder::class,
+            ServiceUnitSeeder::class,
         ]);
     }
 }

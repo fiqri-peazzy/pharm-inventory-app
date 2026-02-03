@@ -20,14 +20,14 @@ return new class extends Migration
             $table->date('po_date');
             $table->date('expected_delivery_date')->nullable();
             $table->integer('payment_term')->default(30);
-            $table->decimal('total_amount', 15, 2)->default(0);
-            $table->decimal('ppn_amount', 15, 2)->default(0);
+            $table->decimal('total_amount', 15, 2);
+            $table->decimal('ppn_amount', 15, 2);
             $table->decimal('discount_amount', 15, 2)->default(0);
-            $table->decimal('grand_total', 15, 2)->default(0);
-            $table->string('status')->default('pending'); // pending, sent, received, cancelled
+            $table->decimal('grand_total', 15, 2);
+            $table->enum('status', ['draft', 'sent', 'partial_received', 'completed', 'cancelled'])->default('draft');
             $table->text('notes')->nullable();
-            $table->foreignId('created_by')->constrained('users');
-            $table->foreignId('approved_by')->nullable()->constrained('users');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('approved_by')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
