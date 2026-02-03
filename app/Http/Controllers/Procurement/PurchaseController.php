@@ -46,7 +46,7 @@ class PurchaseController extends Controller
     {
         return view('pages.procurement.orders-edit', compact('id'));
     }
-
+    // pdf dompdf implementation
     public function print($id)
     {
         $order = PurchaseOrder::with(['supplier', 'warehouse', 'details.item', 'purchaseRequest'])->findOrFail($id);
