@@ -37,9 +37,23 @@ class PurchaseController extends Controller
         return view('pages.procurement.orders');
     }
 
+    public function createOrder()
+    {
+        return view('pages.procurement.orders-create');
+    }
+
+    public function editOrder($id)
+    {
+        return view('pages.procurement.orders-edit', compact('id'));
+    }
+
     public function print($id)
     {
-        $order = PurchaseOrder::with(['supplier', 'warehouse', 'details.item'])->findOrFail($id);
-        return view('pages.procurement.po-print', compact('order'));
+        $order = PurchaseOrder::with(['supplier', 'warehouse', 'details.item', 'purchaseRequest'])->findOrFail($id);
+        
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pages.procurement.po-pdf', compact('order'))
+            ->setPaper('a4', 'portrait');
+            
+        return $pdf->stream('PO-' . str_replace('/', '-', $order->po_number) . '.pdf');
     }
 }

@@ -39,6 +39,8 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/requests/{id}/edit', [App\Http\Controllers\Procurement\PurchaseController::class, 'editRequest'])->name('requests.edit');
         Route::get('/approvals', [App\Http\Controllers\Procurement\PurchaseController::class, 'approvals'])->name('approvals.index');
         Route::get('/orders', [App\Http\Controllers\Procurement\PurchaseController::class, 'orders'])->name('orders.index');
+        Route::get('/orders/create', [App\Http\Controllers\Procurement\PurchaseController::class, 'createOrder'])->name('orders.create');
+        Route::get('/orders/{id}/edit', [App\Http\Controllers\Procurement\PurchaseController::class, 'editOrder'])->name('orders.edit');
         Route::get('/orders/{id}/print', [App\Http\Controllers\Procurement\PurchaseController::class, 'print'])->name('orders.print');
     });
 });

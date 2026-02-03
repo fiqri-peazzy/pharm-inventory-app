@@ -45,8 +45,8 @@ class PurchaseRequestForm extends Component
     public function mount($requestId = null)
     {
         $this->request_date = date('Y-m-d');
-        $this->period_month = date('m');
-        $this->period_year = date('Y');
+        $this->period_month = (int)date('m');
+        $this->period_year = (int)date('Y');
         
         if ($requestId) {
             $this->requestId = $requestId;
@@ -80,9 +80,11 @@ class PurchaseRequestForm extends Component
     {
         $pr = PurchaseRequest::with('details.item')->findOrFail($this->requestId);
         
-        if ($pr->status !== 'draft') {
-            return redirect()->route('procurement.requests.index')->with('error', 'Hanya PR Draft yang dapat diubah.');
+        if (!in_array($pr->status, ['draft', 'rejected'])) {
+            return redirect()->route('procurement.requests.index')->with('error', 'Hanya PR Draft atau Rejected yang dapat diubah.');
         }
+
+        $this->rows = [];
 
         $this->request_number = $pr->request_number;
         $this->warehouse_id = $pr->warehouse_id;

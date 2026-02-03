@@ -15,7 +15,7 @@ class PurchaseRequestIndex extends Component
     public $showDeleteModal = false;
     public $selectedId;
 
-    protected $updatesQueryString = ['search', 'status'];
+    protected $queryString = ['search', 'status'];
 
     public function updatingSearch()
     {
