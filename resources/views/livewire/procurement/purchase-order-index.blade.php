@@ -91,15 +91,18 @@
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeModal"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-            <div class="relative inline-block align-bottom bg-white dark:bg-gray-800 rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-[90%] sm:w-full border border-gray-200 dark:border-gray-700">
+            <div class="relative inline-block align-middle bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full border border-gray-100 dark:border-gray-700">
                 <form wire:submit.prevent="store">
-                    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-gray-900 text-white">
+                    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800">
                         <div>
-                            <h3 class="text-lg font-bold">Form Pembuatan Pesanan (PO)</h3>
-                            <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mt-0.5">Automated Procurement Workflow</p>
+                            <h3 class="text-base font-black text-gray-800 dark:text-white uppercase tracking-tighter">Form Pesanan Barang (PO)</h3>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                <p class="text-[9px] text-gray-400 uppercase tracking-widest font-bold">Standard Procurement Protocol</p>
+                            </div>
                         </div>
-                        <button type="button" wire:click="closeModal" class="text-gray-400 hover:text-white transition-colors">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        <button type="button" wire:click="closeModal" class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-all">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         </button>
                     </div>
 
@@ -142,18 +145,18 @@
                         </div>
 
                         <!-- Date & Terms -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 border-b pb-8 dark:border-gray-700">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                             <div>
-                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Tgl PO</label>
-                                <input type="date" wire:model="po_date" class="w-full text-sm border-gray-200 rounded-lg dark:bg-gray-700">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Tgl Pesanan</label>
+                                <input type="date" wire:model="po_date" class="w-full text-xs border-gray-200 rounded-lg dark:bg-gray-700 focus:ring-indigo-500">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Estimasi Kedatangan</label>
+                                <input type="date" wire:model="expected_delivery_date" class="w-full text-xs border-gray-200 rounded-lg dark:bg-gray-700 focus:ring-indigo-500">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Estimasi Kedatangan</label>
-                                <input type="date" wire:model="expected_delivery_date" class="w-full text-sm border-gray-200 rounded-lg dark:bg-gray-700">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Termin Pembayaran (Hari)</label>
-                                <input type="number" wire:model="payment_term" class="w-full text-sm border-gray-200 rounded-lg dark:bg-gray-700">
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Termin (Hari)</label>
+                                <input type="number" wire:model="payment_term" class="w-full text-xs border-gray-200 rounded-lg dark:bg-gray-700 focus:ring-indigo-500">
                             </div>
                         </div>
 
@@ -166,49 +169,56 @@
 
                             <div class="border rounded-xl shadow-sm overflow-hidden dark:border-gray-700">
                                 <table class="w-full text-[11px] text-left">
-                                    <thead class="bg-gray-50 dark:bg-gray-700/50 text-gray-400 font-bold uppercase tracking-widest border-b dark:border-gray-700">
+                                    <thead class="bg-gray-50/50 dark:bg-gray-700/50 text-gray-400 font-bold uppercase tracking-widest border-b dark:border-gray-700">
                                         <tr>
-                                            <th class="px-3 py-3 w-1/3">Nama Barang</th>
-                                            <th class="px-3 py-3 w-16 text-center">Qty</th>
-                                            <th class="px-3 py-3 w-32 text-right">Harga Satuan</th>
-                                            <th class="px-3 py-3 w-16 text-center">PPN%</th>
-                                            <th class="px-3 py-3 w-32 text-right bg-indigo-50/20">Subtotal</th>
-                                            <th class="px-3 py-3 w-8 text-center"></th>
+                                            <th class="px-3 py-3">Nama Barang / Item Pesanan</th>
+                                            <th class="px-3 py-3 w-20 text-center">Qty</th>
+                                            <th class="px-3 py-3 w-36 text-right">Hrg Satuan</th>
+                                            <th class="px-3 py-3 w-20 text-center">PPN%</th>
+                                            <th class="px-3 py-3 w-40 text-right bg-indigo-50/20">Subtotal</th>
+                                            <th class="px-3 py-3 w-10 text-center"></th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                                         @foreach($items as $index => $item)
-                                            <tr class="group hover:bg-gray-50 transition-colors">
+                                            <tr class="group hover:bg-gray-50/50 transition-colors align-top">
                                                 <td class="px-3 py-3">
-                                                    <div class="flex flex-col gap-1">
-                                                        <select wire:model="items.{{ $index }}.item_id" class="w-full border-gray-200 rounded text-[11px] p-1.5 dark:bg-gray-800 focus:ring-1 focus:ring-indigo-500">
+                                                    <div class="flex flex-col gap-1.5">
+                                                        <select wire:model="items.{{ $index }}.item_id" class="w-full border-gray-200 rounded-lg text-[11px] p-2 dark:bg-gray-800 focus:ring-1 focus:ring-indigo-500 shadow-sm font-medium">
                                                             <option value="">-- Pilih Barang --</option>
                                                             @foreach($available_items as $ai)
-                                                                <option value="{{ $ai->id }}">{{ $ai->name }}</option>
+                                                                <option value="{{ $ai->id }}">{{ $ai->name }} ({{ $ai->code }})</option>
                                                             @endforeach
                                                         </select>
-                                                        <button type="button" wire:click="fetchPrice({{ $index }})" class="text-[9px] text-indigo-500 font-black uppercase tracking-tight hover:underline self-start">✨ Tarik Harga E-Catalog</button>
+                                                        <button type="button" wire:click="fetchPrice({{ $index }})" class="text-[9px] text-indigo-500 font-black uppercase tracking-tight hover:text-indigo-700 self-start bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded border border-indigo-100 dark:border-indigo-800 transition-all">✨ Ambil Harga Kontrak</button>
                                                     </div>
                                                 </td>
                                                 <td class="px-3 py-3">
-                                                    <input type="number" wire:model.live="items.{{ $index }}.qty_ordered" wire:change="calculateTotals" class="w-full border-gray-200 rounded p-1.5 text-center font-bold dark:bg-gray-800 focus:ring-1 focus:ring-indigo-500">
+                                                    <input type="number" wire:model.live="items.{{ $index }}.qty_ordered" wire:change="calculateTotals" class="w-full border-gray-200 rounded-lg p-2 text-center font-black text-indigo-700 dark:text-indigo-400 dark:bg-gray-800 focus:ring-1 focus:ring-indigo-500 shadow-sm">
                                                 </td>
                                                 <td class="px-3 py-3">
                                                     <div class="relative">
-                                                        <span class="absolute left-1.5 top-1.5 text-gray-400">Rp</span>
-                                                        <input type="number" wire:model.live="items.{{ $index }}.purchase_price" wire:change="calculateTotals" class="w-full border-gray-200 rounded p-1.5 text-right font-semibold dark:bg-gray-800 pl-6 focus:ring-1 focus:ring-indigo-500">
+                                                        <span class="absolute left-2.5 top-2.5 text-gray-400 text-[10px]">Rp</span>
+                                                        <input type="number" wire:model.live="items.{{ $index }}.purchase_price" wire:change="calculateTotals" class="w-full border-gray-200 rounded-lg p-2 text-right font-bold dark:bg-gray-800 pl-8 focus:ring-1 focus:ring-indigo-500 shadow-sm">
                                                     </div>
                                                 </td>
-                                                <td class="px-3 py-3 text-center">
-                                                    <input type="number" wire:model.live="items.{{ $index }}.ppn_percentage" wire:change="calculateTotals" class="w-full border-gray-200 rounded p-1.5 text-center dark:bg-gray-800 focus:ring-1 focus:ring-indigo-500">
+                                                <td class="px-3 py-3">
+                                                    <div class="relative">
+                                                        <input type="number" wire:model.live="items.{{ $index }}.ppn_percentage" wire:change="calculateTotals" class="w-full border-gray-200 rounded-lg p-2 text-center text-gray-500 dark:bg-gray-800 focus:ring-1 focus:ring-indigo-500 shadow-sm">
+                                                        <span class="absolute right-2 top-2.5 text-[10px] text-gray-300">%</span>
+                                                    </div>
                                                 </td>
-                                                <td class="px-3 py-3 text-right font-black text-gray-700 bg-indigo-50/5 dark:text-gray-200">
-                                                    <span class="text-[10px] text-gray-400 font-medium mr-1">Rp</span>
-                                                    {{ number_format($item['subtotal'], 0, ',', '.') }}
+                                                <td class="px-3 py-3 text-right vertical-middle bg-indigo-50/5">
+                                                    <div class="flex flex-col items-end">
+                                                        <span class="text-[8px] text-gray-400 font-black uppercase tracking-tighter">Netto</span>
+                                                        <span class="font-black text-gray-800 dark:text-gray-200">
+                                                            {{ number_format($item['subtotal'], 0, ',', '.') }}
+                                                        </span>
+                                                    </div>
                                                 </td>
-                                                <td class="px-3 py-3 text-center">
-                                                    <button type="button" wire:click="removeItem({{ $index }})" class="text-red-300 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100">
-                                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                                <td class="px-3 py-4 text-center">
+                                                    <button type="button" wire:click="removeItem({{ $index }})" class="text-red-300 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100 p-1 hover:bg-red-50 rounded">
+                                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -220,28 +230,37 @@
                     </div>
 
                     <!-- Footer Totals -->
-                    <div class="px-8 py-6 bg-gray-900 text-white rounded-b-xl">
-                        <div class="flex flex-col md:flex-row justify-between gap-8">
+                    <div class="px-8 py-6 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 rounded-b-xl">
+                        <div class="flex flex-col md:flex-row justify-between gap-12">
                             <div class="flex-1 space-y-3">
-                                <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest">Catatan Penutup</label>
-                                <textarea wire:model="notes" rows="3" class="w-full bg-gray-800 border-gray-700 rounded-lg text-sm text-gray-300 focus:ring-indigo-500" placeholder="Instruksi pengiriman, termin khusus, dll..."></textarea>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest">Informasi Tambahan / Syarat Khusus</label>
+                                <textarea wire:model="notes" rows="3" class="w-full bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-600 rounded-xl text-xs text-gray-600 focus:ring-indigo-500 italic" placeholder="Instruksi pengiriman, termin khusus, dll..."></textarea>
                             </div>
-                            <div class="flex-none min-w-[300px] space-y-2">
-                                <div class="flex justify-between text-xs text-gray-400">
-                                    <span>SUBTOTAL ITEM</span>
-                                    <span class="font-mono">Rp {{ number_format($total_amount, 0, ',', '.') }}</span>
-                                </div>
-                                <div class="flex justify-between text-xs text-gray-400 border-b border-gray-800 pb-2">
-                                    <span>TOTAL PPN</span>
-                                    <span class="font-mono">Rp {{ number_format($ppn_amount, 0, ',', '.') }}</span>
-                                </div>
-                                <div class="flex justify-between items-center pt-2">
-                                    <span class="text-xs font-black text-indigo-400 uppercase">GRAND TOTAL</span>
-                                    <span class="text-2xl font-black font-mono text-white">Rp {{ number_format($grand_total, 0, ',', '.') }}</span>
+                            <div class="flex-none min-w-[320px] space-y-4 pt-2">
+                                <div class="space-y-2.5">
+                                    <div class="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                                        <span>Subtotal Netto</span>
+                                        <span class="font-mono text-gray-600 bg-gray-50 px-2 py-0.5 rounded">Rp {{ number_format($total_amount, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                                        <span>Akumulasi PPN</span>
+                                        <span class="font-mono text-gray-600 bg-gray-50 px-2 py-0.5 rounded">Rp {{ number_format($ppn_amount, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="pt-3 mt-3 border-t-2 border-dashed border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                                        <span class="text-xs font-black text-indigo-600 uppercase tracking-widest">Grand Total</span>
+                                        <div class="text-right">
+                                            <span class="block text-[8px] font-black text-indigo-400 uppercase leading-none mb-1">Total Pembayaran</span>
+                                            <span class="text-2xl font-black font-mono text-gray-900 dark:text-white leading-none">Rp {{ number_format($grand_total, 0, ',', '.') }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="pt-6 flex gap-3">
-                                    <button type="button" wire:click="closeModal" class="flex-1 px-4 py-2 text-[10px] font-black text-gray-400 border border-gray-700 rounded-lg hover:bg-gray-800 transition-all uppercase tracking-widest shadow-sm">Batal</button>
-                                    <button type="submit" class="flex-1 px-4 py-2 text-[10px] font-black text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-all uppercase tracking-widest shadow-xl shadow-indigo-500/20 active:scale-95">Finalisasi & Kirim PO</button>
+                                    <button type="button" wire:click="closeModal" class="flex-1 px-4 py-2.5 text-[10px] font-black text-gray-400 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all uppercase tracking-widest group">
+                                        <span class="group-hover:text-gray-600">Batal</span>
+                                    </button>
+                                    <button type="submit" class="flex-[2] px-6 py-2.5 text-[10px] font-black text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-all uppercase tracking-widest shadow-xl shadow-indigo-500/20 active:scale-95">
+                                        Finalisasi & Kirim PO
+                                    </button>
                                 </div>
                             </div>
                         </div>
