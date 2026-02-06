@@ -17,6 +17,7 @@ class PurchaseRequestForm extends Component
     // Header fields
     public $request_number;
     public $warehouse_id;
+    public $supplier_id;
     public $request_date;
     public $period_month;
     public $period_year;
@@ -34,6 +35,7 @@ class PurchaseRequestForm extends Component
     {
         return [
             'warehouse_id' => 'required',
+            'supplier_id' => 'nullable|exists:suppliers,id',
             'request_date' => 'required|date',
             'period_month' => 'required|numeric|min:1|max:12',
             'period_year' => 'required|numeric',
@@ -88,6 +90,7 @@ class PurchaseRequestForm extends Component
 
         $this->request_number = $pr->request_number;
         $this->warehouse_id = $pr->warehouse_id;
+        $this->supplier_id = $pr->supplier_id;
         $this->request_date = $pr->request_date->format('Y-m-d');
         $this->period_month = $pr->period_month;
         $this->period_year = $pr->period_year;
@@ -166,6 +169,7 @@ class PurchaseRequestForm extends Component
                 $data = [
                     'request_number' => $this->request_number,
                     'warehouse_id' => $this->warehouse_id,
+                    'supplier_id' => $this->supplier_id ?: null,
                     'request_date' => $this->request_date,
                     'period_month' => (int)$this->period_month,
                     'period_year' => (int)$this->period_year,
@@ -226,7 +230,8 @@ class PurchaseRequestForm extends Component
     public function render()
     {
         return view('livewire.procurement.purchase-request-form', [
-            'warehouses' => Warehouse::all()
+            'warehouses' => Warehouse::all(),
+            'suppliers' => \App\Models\Supplier::orderBy('name')->get()
         ]);
     }
 }

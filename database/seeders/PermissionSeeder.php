@@ -18,7 +18,7 @@ class PermissionSeeder extends Seeder
             'master-warehouses' => ['view', 'create', 'update', 'delete'],
             'master-users' => ['view', 'create', 'update', 'delete'],
             'purchase-requests' => ['view', 'create', 'update', 'delete', 'approve'],
-            'purchase-orders' => ['view', 'create', 'update', 'delete', 'approve'],
+            'purchase-orders' => ['view', 'create', 'update', 'delete', 'approve', 'direktur-approve'],
             'receivings' => ['view', 'create', 'update', 'delete', 'approve'],
             'stocks' => ['view', 'adjust'],
             'distributions' => ['view', 'create', 'update', 'delete', 'approve'],
@@ -140,6 +140,14 @@ class PermissionSeeder extends Seeder
             'reports-stock.view', 'reports-stock.export',
             'reports-accounting.view', 'reports-accounting.export',
             'reports-transparency.view', 'reports-transparency.export',
+        ]);
+
+        // Direktur
+        $direktur = Role::findByName('direktur');
+        $direktur->givePermissionTo([
+            'dashboard.view',
+            'purchase-orders.view', 'purchase-orders.direktur-approve',
+            'reports-stock.view', 'reports-accounting.view',
         ]);
     }
 }

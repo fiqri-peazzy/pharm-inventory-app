@@ -16,4 +16,21 @@ class InventoryController extends Controller
     {
         return view('pages.inventory.stock-report');
     }
+
+    public function disposals()
+    {
+        return view('pages.inventory.disposals.index');
+    }
+
+    public function createDisposal()
+    {
+        return view('pages.inventory.disposals.form');
+    }
+
+    public function editDisposal($id)
+    {
+        return view('pages.inventory.disposals.form', [
+            'disposalId' => $id
+        ]);
+    }
 }

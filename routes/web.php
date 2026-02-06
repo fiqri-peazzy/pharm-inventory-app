@@ -52,5 +52,8 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
     // Inventory Routes
     Route::prefix('inventory')->name('inventory.')->group(function () {
         Route::get('/dashboard', [App\Http\Controllers\Inventory\InventoryController::class, 'dashboard'])->name('dashboard');
+        Route::get('/disposals', [App\Http\Controllers\Inventory\InventoryController::class, 'disposals'])->name('disposals.index');
+        Route::get('/disposals/create', [App\Http\Controllers\Inventory\InventoryController::class, 'createDisposal'])->name('disposals.create');
+        Route::get('/disposals/{id}/edit', [App\Http\Controllers\Inventory\InventoryController::class, 'editDisposal'])->name('disposals.edit');
     });
 });

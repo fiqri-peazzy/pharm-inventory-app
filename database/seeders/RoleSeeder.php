@@ -45,6 +45,11 @@ class RoleSeeder extends Seeder
                 'guard_name' => 'web',
                 'description' => 'Bupati - Transparansi Pemerintah'
             ],
+            [
+                'name' => 'direktur',
+                'guard_name' => 'web',
+                'description' => 'Direktur Rumah Sakit'
+            ],
         ];
 
         foreach ($roles as $role) {

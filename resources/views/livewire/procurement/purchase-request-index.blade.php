@@ -40,6 +40,9 @@
             <thead
                 class="bg-gray-50/50 text-xs uppercase font-black text-gray-500 dark:bg-white/[0.02] dark:text-gray-400 border-b border-gray-100 dark:border-gray-800">
                 <tr>
+                    <th class="px-6 py-4 w-10">
+                        <input type="checkbox" wire:model.live="selectAll" class="rounded border-gray-300 text-brand-500 focus:ring-brand-500">
+                    </th>
                     <th class="px-6 py-4">Informasi PR</th>
                     <th class="px-6 py-4">Gudang</th>
                     <th class="px-6 py-4 text-center">Periode</th>
@@ -50,6 +53,11 @@
             <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                 @forelse ($requests as $request)
                     <tr class="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-colors group">
+                        <td class="px-6 py-4">
+                            @if($request->status === 'approved')
+                                <input type="checkbox" wire:model.live="selectedPRs" value="{{ $request->id }}" class="rounded border-gray-300 text-brand-500 focus:ring-brand-500">
+                            @endif
+                        </td>
                         <td class="px-6 py-4">
                             <div class="flex flex-col">
                                 <span
@@ -119,6 +127,22 @@
                                                 stroke-linejoin="round" />
                                         </svg>
                                     </button>
+                                    </button>
+                                @endif
+
+                                @if (auth()->user()->hasPermissionTo('purchase-requests.approve') && $request->status === 'submitted')
+                                    <button
+                                        wire:click="approve({{ $request->id }})"
+                                        class="p-2 text-green-400 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all"
+                                        title="Approve PR">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </button>
+                                    <button
+                                        wire:click="$dispatch('confirm-reject', { id: {{ $request->id }}, action: 'reject-pr' })"
+                                        class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                                        title="Reject PR">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                    </button>
                                 @endif
                             </div>
                         </td>
@@ -141,6 +165,31 @@
         </table>
     </div>
 
+    @if(!empty($selectedPRs))
+        <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+            <div class="bg-gray-900 border border-white/10 rounded-2xl p-4 shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-4 duration-300">
+                <div class="flex items-center gap-3 pr-6 border-r border-white/10">
+                    <div class="w-10 h-10 bg-brand-500 rounded-xl flex items-center justify-center text-white font-black">
+                        {{ count($selectedPRs) }}
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">Terpilih</p>
+                        <p class="text-xs font-bold text-white">Purchase Request</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <button wire:click="combineSelected" class="px-6 py-2.5 bg-brand-500 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/20">
+                        Gabung ke PO 🔗
+                    </button>
+                    <button wire:click="$set('selectedPRs', [])" class="px-4 py-2.5 bg-white/5 text-gray-400 hover:text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all">
+                        Batal
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="mt-6">
         {{ $requests->links() }}
     </div>
@@ -161,6 +210,33 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         @this.delete(data.id);
+                    }
+                });
+            }
+        });
+
+        window.addEventListener('confirm-reject', event => {
+            const data = Array.isArray(event.detail) ? event.detail[0] : event.detail;
+            if (data.action === 'reject-pr') {
+                Swal.fire({
+                    title: 'Tolak PR?',
+                    text: 'Masukkan alasan penolakan:',
+                    input: 'textarea',
+                    inputPlaceholder: 'Alasan penolakan...',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Ya, Tolak!',
+                    cancelButtonText: 'Batal',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'Alasan penolakan wajib diisi!'
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        @this.reject(data.id, result.value);
                     }
                 });
             }

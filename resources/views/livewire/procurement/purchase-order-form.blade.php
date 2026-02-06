@@ -80,9 +80,9 @@
                     <span wire:loading.remove wire:target="save('draft')">Simpan Draft</span>
                     <span wire:loading wire:target="save('draft')">Memproses...</span>
                 </button>
-                <button wire:click="save('sent')" wire:loading.attr="disabled" class="w-full rounded-xl bg-brand-500 py-4 text-xs font-black uppercase tracking-widest text-white hover:bg-brand-600 shadow-lg shadow-brand-500/20">
-                    <span wire:loading.remove wire:target="save('sent')">Finalisasi & Kirim PO 🚀</span>
-                    <span wire:loading wire:target="save('sent')">Mengirim...</span>
+                <button wire:click="save('submitted')" wire:loading.attr="disabled" class="w-full rounded-xl bg-brand-500 py-4 text-xs font-black uppercase tracking-widest text-white hover:bg-brand-600 shadow-lg shadow-brand-500/20">
+                    <span wire:loading.remove wire:target="save('submitted')">Submit Pesanan 🛡️</span>
+                    <span wire:loading wire:target="save('submitted')">Mengirim...</span>
                 </button>
             </div>
             <a href="{{ route('procurement.orders.index') }}" class="block text-center text-xs font-bold text-gray-400 uppercase tracking-tighter hover:text-gray-600 transition-colors">Batal</a>

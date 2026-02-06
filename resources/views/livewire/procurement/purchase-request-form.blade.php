@@ -22,6 +22,18 @@
                         @error('warehouse_id') <span class="text-[10px] text-red-500 mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
+                    <div>
+                        <label class="mb-1.5 block text-[10px] font-black tracking-widest uppercase text-gray-500">Pemasok / Supplier (Opsional)</label>
+                        <select wire:model="supplier_id" class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 outline-none dark:border-gray-800 dark:bg-gray-900">
+                            <option value="">-- Tanpa Supplier --</option>
+                            @foreach($suppliers as $supplier)
+                                <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                            @endforeach
+                        </select>
+                        <p class="text-[9px] text-gray-400 mt-1 italic leading-tight">* Memilih supplier sekarang memudahkan penggabungan PR jadi 1 PO nanti.</p>
+                        @error('supplier_id') <span class="text-[10px] text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="mb-1.5 block text-[10px] font-black tracking-widest uppercase text-gray-500">Bulan Periode</label>

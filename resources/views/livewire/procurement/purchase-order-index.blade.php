@@ -11,6 +11,9 @@
             <select wire:model.live="status" class="rounded-xl border border-gray-100 bg-white py-2.5 px-4 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-gray-900 shadow-sm">
                 <option value="">Semua Status</option>
                 <option value="draft">Draft</option>
+                <option value="submitted">Submitted 📝</option>
+                <option value="pending_director">Pending Direktur 🏛️</option>
+                <option value="approved">Approved ✓</option>
                 <option value="sent">Sent 🚀</option>
                 <option value="partial_received">Partial Received</option>
                 <option value="completed">Completed ✓</option>
@@ -61,6 +64,9 @@
                             @php
                                 $statusColors = [
                                     'draft' => 'bg-gray-100 text-gray-700 ring-gray-600/10',
+                                    'submitted' => 'bg-amber-100 text-amber-700 ring-amber-600/10',
+                                    'pending_director' => 'bg-purple-100 text-purple-700 ring-purple-600/10',
+                                    'approved' => 'bg-emerald-100 text-emerald-700 ring-emerald-600/10',
                                     'sent' => 'bg-blue-100 text-blue-700 ring-blue-600/10',
                                     'partial_received' => 'bg-orange-100 text-orange-700 ring-orange-600/10',
                                     'completed' => 'bg-green-100 text-green-700 ring-green-600/10',
@@ -85,6 +91,22 @@
                                 @if(!in_array($order->status, ['completed', 'cancelled']))
                                     <button wire:click="cancelOrder({{ $order->id }})" class="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                    </button>
+                                @endif
+
+                                {{-- Approval Buttons --}}
+                                @if (auth()->user()->hasPermissionTo('purchase-orders.approve') && $order->status === 'submitted')
+                                    <button wire:click="approve({{ $order->id }})" class="p-2 text-green-400 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all" title="Approve PO">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    </button>
+                                    <button wire:click="$dispatch('confirm-reject-po', { id: {{ $order->id }} })" class="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all" title="Reject PO">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                    </button>
+                                @endif
+
+                                @if (auth()->user()->hasPermissionTo('purchase-orders.direktur-approve') && $order->status === 'pending_director')
+                                    <button wire:click="approve({{ $order->id }})" class="p-2 text-purple-400 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all" title="Direktur Approve">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
                                     </button>
                                 @endif
                             </div>

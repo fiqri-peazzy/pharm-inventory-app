@@ -13,6 +13,7 @@ class PurchaseRequest extends Model
     protected $fillable = [
         'request_number',
         'warehouse_id',
+        'supplier_id',
         'request_date',
         'period_month',
         'period_year',
@@ -38,6 +39,11 @@ class PurchaseRequest extends Model
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class);
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     public function details()

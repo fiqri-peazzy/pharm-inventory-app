@@ -60,4 +60,61 @@ class PurchaseOrderIndex extends Component
         $po->update(['status' => 'cancelled']);
         $this->dispatch('notify', ['type' => 'info', 'message' => 'Purchase Order telah dibatalkan.']);
     }
+
+    public function approve($id)
+    {
+        $po = PurchaseOrder::findOrFail($id);
+        $user = auth()->user();
+
+        // 1. Logic for Kepala Farmasi
+        if ($po->status === 'submitted' && $user->hasPermissionTo('purchase-orders.approve')) {
+            if ($po->grand_total > 10000000) {
+                $po->update([
+                    'status' => 'pending_director',
+                    'approved_by' => $user->id,
+                    'approved_at' => now(),
+                ]);
+                $this->dispatch('notify', ['type' => 'info', 'message' => 'PO > 10Jt. Menunggu persetujuan Direktur.']);
+            } else {
+                $po->update([
+                    'status' => 'approved',
+                    'approved_by' => $user->id,
+                    'approved_at' => now(),
+                ]);
+                $this->dispatch('notify', ['type' => 'success', 'message' => 'Purchase Order telah disetujui.']);
+            }
+            return;
+        }
+
+        // 2. Logic for Direktur
+        if ($po->status === 'pending_director' && $user->hasPermissionTo('purchase-orders.direktur-approve')) {
+            $po->update([
+                'status' => 'approved',
+                // Maybe maintain logs for multiple approvals if needed, 
+                // but for now we just update status
+            ]);
+            $this->dispatch('notify', ['type' => 'success', 'message' => 'Purchase Order telah disetujui oleh Direktur.']);
+            return;
+        }
+
+        $this->dispatch('notify', ['type' => 'error', 'message' => 'Anda tidak memiliki otoritas atau status PO tidak sesuai.']);
+    }
+
+    public function reject($id, $reason)
+    {
+        $po = PurchaseOrder::findOrFail($id);
+        $user = auth()->user();
+
+        if (!$user->hasPermissionTo('purchase-orders.approve') && !$user->hasPermissionTo('purchase-orders.direktur-approve')) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Otoritas ditolak.']);
+            return;
+        }
+
+        $po->update([
+            'status' => 'rejected',
+            'notes' => ($po->notes ? $po->notes . ' | ' : '') . "Ditolak: " . $reason
+        ]);
+
+        $this->dispatch('notify', ['type' => 'warning', 'message' => 'Purchase Order telah ditolak.']);
+    }
 }

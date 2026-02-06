@@ -26,6 +26,7 @@ class PurchaseOrderForm extends Component
     public $expected_delivery_date;
     public $payment_term = 30; // Default 30 days
     public $notes;
+    public $from_prs = []; // Multi-PR source
     
     // Totals
     public $total_amount = 0;
@@ -74,7 +75,45 @@ class PurchaseOrderForm extends Component
             $this->generatePoNumber();
             $mainWh = Warehouse::where('is_main', true)->first();
             if ($mainWh) $this->warehouse_id = $mainWh->id;
+
+            // Handle Multi-PR consolidation
+            if (request()->has('from_prs')) {
+                $prIds = explode(',', request('from_prs'));
+                $this->from_prs = $prIds;
+                $this->loadFromMultiplePRs($prIds);
+            }
         }
+    }
+
+    public function loadFromMultiplePRs($prIds)
+    {
+        $prs = PurchaseRequest::with('details.item')->whereIn('id', $prIds)->get();
+        if ($prs->isEmpty()) return;
+
+        // Set Supplier & Warehouse from first PR
+        $this->supplier_id = $prs->first()->supplier_id;
+        $this->warehouse_id = $prs->first()->warehouse_id;
+
+        $aggregatedItems = []; // item_id => [qty, item_object]
+
+        foreach ($prs as $pr) {
+            foreach ($pr->details as $detail) {
+                if (!isset($aggregatedItems[$detail->item_id])) {
+                    $aggregatedItems[$detail->item_id] = [
+                        'qty' => 0,
+                        'item' => $detail->item
+                    ];
+                }
+                $aggregatedItems[$detail->item_id]['qty'] += ($detail->approved_qty ?? $detail->requested_qty);
+            }
+        }
+
+        $this->rows = [];
+        foreach ($aggregatedItems as $itemId => $data) {
+            $this->addItem($itemId, $data['qty']);
+        }
+        
+        $this->notes = "Gabungan dari PR: " . $prs->pluck('request_number')->implode(', ');
     }
 
     public function generatePoNumber()
@@ -266,8 +305,8 @@ class PurchaseOrderForm extends Component
                     'expected_delivery_date' => $this->expected_delivery_date,
                     'payment_term' => $this->payment_term,
                     'total_amount' => $this->total_amount,
-                    'ppn_amount' => $this->total_ppn,
-                    'discount_amount' => $this->total_discount,
+                    'total_ppn' => $this->total_ppn,
+                    'total_discount' => $this->total_discount,
                     'grand_total' => $this->grand_total,
                     'notes' => $this->notes,
                     'status' => $status,
@@ -298,6 +337,10 @@ class PurchaseOrderForm extends Component
 
                 if ($this->purchase_request_id) {
                     PurchaseRequest::find($this->purchase_request_id)->update(['status' => 'closed']);
+                }
+
+                if (!empty($this->from_prs)) {
+                    PurchaseRequest::whereIn('id', $this->from_prs)->update(['status' => 'closed']);
                 }
             });
 
