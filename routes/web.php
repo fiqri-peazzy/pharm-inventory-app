@@ -42,5 +42,15 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/orders/create', [App\Http\Controllers\Procurement\PurchaseController::class, 'createOrder'])->name('orders.create');
         Route::get('/orders/{id}/edit', [App\Http\Controllers\Procurement\PurchaseController::class, 'editOrder'])->name('orders.edit');
         Route::get('/orders/{id}/print', [App\Http\Controllers\Procurement\PurchaseController::class, 'print'])->name('orders.print');
+
+        // Receivings
+        Route::get('/receivings', [App\Http\Controllers\Procurement\ReceivingController::class, 'index'])->name('receivings.index');
+        Route::get('/receivings/create', [App\Http\Controllers\Procurement\ReceivingController::class, 'create'])->name('receivings.create');
+        Route::get('/receivings/{id}/edit', [App\Http\Controllers\Procurement\ReceivingController::class, 'edit'])->name('receivings.edit');
+    });
+
+    // Inventory Routes
+    Route::prefix('inventory')->name('inventory.')->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\Inventory\InventoryController::class, 'dashboard'])->name('dashboard');
     });
 });

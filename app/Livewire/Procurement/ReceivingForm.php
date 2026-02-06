@@ -1,0 +1,361 @@
+<?php
+
+namespace App\Livewire\Procurement;
+
+use App\Models\Item;
+use App\Models\ItemBatch;
+use App\Models\PurchaseOrder;
+use App\Models\Receiving;
+use App\Models\ReceivingDetail;
+use App\Models\StockCard;
+use App\Models\Supplier;
+use App\Models\Warehouse;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Livewire\Component;
+
+class ReceivingForm extends Component
+{
+    public $receivingId;
+    public $receiving_number;
+    public $purchase_order_id;
+    public $supplier_id;
+    public $warehouse_id;
+    public $receiving_date;
+    public $invoice_number;
+    public $invoice_date;
+    public $notes;
+    public $status = 'draft';
+
+    // Totals
+    public $total_amount = 0;
+    public $ppn_amount = 0;
+    public $grand_total = 0;
+
+    public $rows = [];
+    public $itemSearch = '';
+    public $searchResults = [];
+
+    protected $rules = [
+        'receiving_date' => 'required|date',
+        'supplier_id' => 'required|exists:suppliers,id',
+        'warehouse_id' => 'required|exists:warehouses,id',
+        'invoice_number' => 'required|string',
+        'invoice_date' => 'required|date',
+        'rows.*.item_id' => 'required|exists:items,id',
+        'rows.*.qty_received' => 'required|numeric|min:1',
+        'rows.*.batch_number' => 'required|string',
+        'rows.*.expired_date' => 'required|date|after:today',
+        'rows.*.purchase_price' => 'required|numeric|min:0',
+    ];
+
+    public function mount($receivingId = null)
+    {
+        $this->receiving_date = date('Y-m-d');
+        $this->invoice_date = date('Y-m-d');
+
+        if ($receivingId) {
+            $this->loadReceiving($receivingId);
+        } else {
+            $this->generateReceivingNumber();
+            $this->addRow();
+        }
+    }
+
+    public function generateReceivingNumber()
+    {
+        $prefix = 'RCV/' . date('Y/m');
+        $last = Receiving::where('receiving_number', 'like', $prefix . '%')
+            ->latest()
+            ->first();
+
+        if ($last) {
+            $lastNumber = intval(substr($last->receiving_number, -4));
+            $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        } else {
+            $newNumber = '0001';
+        }
+
+        $this->receiving_number = $prefix . '/' . $newNumber;
+    }
+
+    public function loadReceiving($id)
+    {
+        $rcv = Receiving::with('details.item')->findOrFail($id);
+        $this->receivingId = $rcv->id;
+        $this->receiving_number = $rcv->receiving_number;
+        $this->purchase_order_id = $rcv->purchase_order_id;
+        $this->supplier_id = $rcv->supplier_id;
+        $this->warehouse_id = $rcv->warehouse_id;
+        $this->receiving_date = $rcv->receiving_date->format('Y-m-d');
+        $this->invoice_number = $rcv->invoice_number;
+        $this->invoice_date = $rcv->invoice_date->format('Y-m-d');
+        $this->notes = $rcv->notes;
+        $this->status = $rcv->status;
+
+        $this->rows = [];
+        foreach ($rcv->details as $detail) {
+            $this->rows[] = [
+                'id' => $detail->id,
+                'item_id' => $detail->item_id,
+                'item_name' => $detail->item->name,
+                'item_code' => $detail->item->code,
+                'qty_ordered' => 0, // Will be updated if PO selected
+                'qty_received' => $detail->qty_received,
+                'batch_number' => $detail->batch_number,
+                'expired_date' => $detail->expired_date->format('Y-m-d'),
+                'purchase_price' => (float)$detail->purchase_price,
+                'ppn_percentage' => (float)$detail->ppn_percentage,
+                'ppn_amount' => (float)$detail->ppn_amount,
+                'subtotal' => (float)$detail->subtotal,
+            ];
+        }
+        $this->calculateTotals();
+    }
+
+    public function updatedPurchaseOrderId($value)
+    {
+        if ($value) {
+            $po = PurchaseOrder::with('details.item')->find($value);
+            if ($po) {
+                $this->supplier_id = $po->supplier_id;
+                $this->warehouse_id = $po->warehouse_id;
+                $this->rows = [];
+                foreach ($po->details as $detail) {
+                    $this->rows[] = [
+                        'item_id' => $detail->item_id,
+                        'item_name' => $detail->item->name,
+                        'item_code' => $detail->item->code,
+                        'qty_ordered' => $detail->qty_ordered - ($detail->qty_received ?? 0),
+                        'qty_received' => $detail->qty_ordered - ($detail->qty_received ?? 0),
+                        'batch_number' => '',
+                        'expired_date' => '',
+                        'purchase_price' => (float)$detail->purchase_price,
+                        'ppn_percentage' => (float)$detail->ppn_percentage,
+                        'ppn_amount' => 0,
+                        'subtotal' => 0,
+                    ];
+                }
+                $this->calculateTotals();
+            }
+        }
+    }
+
+    public function addRow()
+    {
+        $this->rows[] = [
+            'item_id' => '',
+            'item_name' => '',
+            'item_code' => '',
+            'qty_ordered' => 0,
+            'qty_received' => 1,
+            'batch_number' => '',
+            'expired_date' => '',
+            'purchase_price' => 0,
+            'ppn_percentage' => 11,
+            'ppn_amount' => 0,
+            'subtotal' => 0,
+        ];
+    }
+
+    public function removeRow($index)
+    {
+        unset($this->rows[$index]);
+        $this->rows = array_values($this->rows);
+        $this->calculateTotals();
+    }
+
+    public function calculateTotals()
+    {
+        $this->total_amount = 0;
+        $this->ppn_amount = 0;
+
+        foreach ($this->rows as $index => $row) {
+            $sub = floatval($row['qty_received']) * floatval($row['purchase_price']);
+            $ppn = $sub * (floatval($row['ppn_percentage'] ?? 0) / 100);
+            
+            $this->rows[$index]['ppn_amount'] = $ppn;
+            $this->rows[$index]['subtotal'] = $sub + $ppn;
+
+            $this->total_amount += $sub;
+            $this->ppn_amount += $ppn;
+        }
+
+        $this->grand_total = $this->total_amount + $this->ppn_amount;
+    }
+
+    public function updatedRows()
+    {
+        $this->calculateTotals();
+    }
+
+    public function save($status = 'draft')
+    {
+        $this->validate();
+
+        if ($this->grand_total <= 0) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Total penerimaan tidak boleh nol.']);
+            return;
+        }
+
+        try {
+            DB::transaction(function () use ($status) {
+                $rcv = Receiving::updateOrCreate(
+                    ['id' => $this->receivingId],
+                    [
+                        'receiving_number' => $this->receiving_number,
+                        'purchase_order_id' => $this->purchase_order_id ?: null,
+                        'supplier_id' => $this->supplier_id,
+                        'warehouse_id' => $this->warehouse_id,
+                        'receiving_date' => $this->receiving_date,
+                        'invoice_number' => $this->invoice_number,
+                        'invoice_date' => $this->invoice_date,
+                        'total_amount' => $this->total_amount,
+                        'ppn_amount' => $this->ppn_amount,
+                        'grand_total' => $this->grand_total,
+                        'notes' => $this->notes,
+                        'status' => ($status === 'posted') ? 'posted' : 'draft',
+                        'created_by' => auth()->id(),
+                    ]
+                );
+
+                $rcv->details()->delete();
+                foreach ($this->rows as $row) {
+                    $rcv->details()->create($row);
+                }
+
+                if ($status === 'posted') {
+                    $this->processPosting($rcv);
+                }
+            });
+
+            $msg = $status === 'posted' ? 'Penerimaan berhasil diposting dan stok telah diupdate.' : 'Draft penerimaan berhasil disimpan.';
+            session()->flash('success', $msg);
+            return redirect()->route('procurement.receivings.index');
+
+        } catch (\Exception $e) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        }
+    }
+
+    protected function processPosting($rcv)
+    {
+        foreach ($rcv->details as $detail) {
+            // 1. Update/Create Batch
+            $batch = ItemBatch::create([
+                'item_id' => $detail->item_id,
+                'warehouse_id' => $rcv->warehouse_id,
+                'batch_number' => $detail->batch_number,
+                'expired_date' => $detail->expired_date,
+                'initial_qty' => $detail->qty_received,
+                'current_qty' => $detail->qty_received,
+                'purchase_price' => $detail->purchase_price,
+                'is_active' => true,
+            ]);
+
+            // 2. Create Stock Card
+            StockCard::create([
+                'item_id' => $detail->item_id,
+                'warehouse_id' => $rcv->warehouse_id,
+                'item_batch_id' => $batch->id,
+                'transaction_date' => $rcv->receiving_date,
+                'reference_type' => 'receiving',
+                'reference_id' => $rcv->id,
+                'qty_in' => $detail->qty_received,
+                'qty_out' => 0,
+                'last_stock' => $this->calculateLastStock($detail->item_id, $rcv->warehouse_id) + $detail->qty_received,
+                'notes' => 'Penerimaan No: ' . $rcv->receiving_number,
+            ]);
+
+            // 3. Update PO Detail if applicable
+            if ($rcv->purchase_order_id) {
+                $poDetail = \App\Models\PurchaseOrderDetail::where('purchase_order_id', $rcv->purchase_order_id)
+                    ->where('item_id', $detail->item_id)
+                    ->first();
+                if ($poDetail) {
+                    $poDetail->increment('qty_received', $detail->qty_received);
+                }
+            }
+        }
+
+        // 4. Update PO Status if applicable
+        if ($rcv->purchase_order_id) {
+            $po = PurchaseOrder::with('details')->find($rcv->purchase_order_id);
+            $fullyReceived = true;
+            foreach ($po->details as $d) {
+                if ($d->qty_received < $d->qty_ordered) {
+                    $fullyReceived = false;
+                    break;
+                }
+            }
+            $po->update(['status' => $fullyReceived ? 'completed' : 'partial_received']);
+        }
+    }
+
+    protected function calculateLastStock($itemId, $warehouseId)
+    {
+        return ItemBatch::where('item_id', $itemId)
+            ->where('warehouse_id', $warehouseId)
+            ->where('is_active', true)
+            ->sum('current_qty');
+    }
+
+    public function updatedItemSearch($value)
+    {
+        if (strlen($value) < 2) {
+            $this->searchResults = [];
+            return;
+        }
+
+        $this->searchResults = Item::where('name', 'like', '%' . $value . '%')
+            ->orWhere('code', 'like', '%' . $value . '%')
+            ->limit(5)
+            ->get();
+    }
+
+    public function selectItem($itemId)
+    {
+        $item = Item::find($itemId);
+        if ($item) {
+            // Add to a new row or empty row
+            $added = false;
+            foreach ($this->rows as $index => $row) {
+                if (empty($row['item_id'])) {
+                    $this->rows[$index]['item_id'] = $item->id;
+                    $this->rows[$index]['item_name'] = $item->name;
+                    $this->rows[$index]['item_code'] = $item->code;
+                    $added = true;
+                    break;
+                }
+            }
+
+            if (!$added) {
+                $this->rows[] = [
+                    'item_id' => $item->id,
+                    'item_name' => $item->name,
+                    'item_code' => $item->code,
+                    'qty_ordered' => 0,
+                    'qty_received' => 1,
+                    'batch_number' => '',
+                    'expired_date' => '',
+                    'purchase_price' => 0,
+                    'ppn_percentage' => 11,
+                    'ppn_amount' => 0,
+                    'subtotal' => 0,
+                ];
+            }
+        }
+        $this->itemSearch = '';
+        $this->searchResults = [];
+        $this->calculateTotals();
+    }
+
+    public function render()
+    {
+        return view('livewire.procurement.receiving-form', [
+            'suppliers' => Supplier::orderBy('name')->get(),
+            'warehouses' => Warehouse::orderBy('name')->get(),
+            'purchaseOrders' => PurchaseOrder::whereIn('status', ['sent', 'partial_received'])->latest()->get(),
+        ]);
+    }
+}

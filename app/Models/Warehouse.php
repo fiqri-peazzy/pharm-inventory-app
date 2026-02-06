@@ -52,6 +52,11 @@ class Warehouse extends Model
         return $this->belongsTo(User::class, 'updated_by');
     }
 
+    public function batches()
+    {
+        return $this->hasMany(ItemBatch::class);
+    }
+
     // Scopes
     public function scopeActive($query)
     {

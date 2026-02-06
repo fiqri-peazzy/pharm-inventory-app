@@ -74,6 +74,16 @@ class Item extends Model
         return $this->hasMany(PurchaseOrderDetail::class);
     }
 
+    public function batches()
+    {
+        return $this->hasMany(ItemBatch::class);
+    }
+
+    public function stockCards()
+    {
+        return $this->hasMany(StockCard::class);
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
