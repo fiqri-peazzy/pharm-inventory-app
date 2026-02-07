@@ -6,6 +6,7 @@ use App\Models\ServiceUnit;
 use App\Models\Warehouse;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 class ServiceUnitIndex extends Component
 {
@@ -84,8 +85,8 @@ class ServiceUnitIndex extends Component
             'building' => $this->building,
             'floor' => $this->floor,
             'is_active' => $this->is_active,
-            'created_by' => $this->selected_id ? null : auth()->id(),
-            'updated_by' => auth()->id(),
+            'created_by' => $this->selected_id ? null : Auth::id(),
+            'updated_by' => Auth::id(),
         ]);
 
         $this->dispatch('notify', [
@@ -114,7 +115,12 @@ class ServiceUnitIndex extends Component
 
     public function delete($id)
     {
-        ServiceUnit::find($id)->delete();
-        $this->dispatch('notify', ['type' => 'success', 'message' => 'Unit Layanan berhasil dihapus']);
+        $unit = ServiceUnit::find($id);
+        if ($unit) {
+            $unit->delete();
+            $this->dispatch('notify', ['type' => 'success', 'message' => 'Unit Layanan berhasil dihapus']);
+        } else {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Unit Layanan tidak ditemukan']);
+        }
     }
 }

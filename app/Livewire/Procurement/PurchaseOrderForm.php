@@ -27,7 +27,7 @@ class PurchaseOrderForm extends Component
     public $payment_term = 30; // Default 30 days
     public $notes;
     public $from_prs = []; // Multi-PR source
-    
+
     // Totals
     public $total_amount = 0;
     public $total_discount = 0;
@@ -36,10 +36,10 @@ class PurchaseOrderForm extends Component
 
     // Items table
     public $rows = []; // {item_id, item_name, item_code, qty_ordered, purchase_price, discount_percentage, discount_amount, ppn_percentage, ppn_amount, subtotal, notes}
-    
+
     // List for selection
     public $approvedPRs = [];
-    
+
     // UI states
     public $showItemModal = false;
     public $itemSearch = '';
@@ -66,7 +66,7 @@ class PurchaseOrderForm extends Component
         $this->po_date = date('Y-m-d');
         $this->expected_delivery_date = date('Y-m-d', strtotime('+7 days'));
         $this->approvedPRs = PurchaseRequest::where('status', 'approved')->get();
-        
+
         if ($orderId) {
             $this->orderId = $orderId;
             $this->isEdit = true;
@@ -112,7 +112,7 @@ class PurchaseOrderForm extends Component
         foreach ($aggregatedItems as $itemId => $data) {
             $this->addItem($itemId, $data['qty']);
         }
-        
+
         $this->notes = "Gabungan dari PR: " . $prs->pluck('request_number')->implode(', ');
     }
 
@@ -120,13 +120,13 @@ class PurchaseOrderForm extends Component
     {
         $date = date('Y/m');
         $lastPo = PurchaseOrder::where('po_number', 'like', "PO/$date/%")->latest()->first();
-        
+
         $number = 1;
         if ($lastPo) {
             $lastNum = explode('/', $lastPo->po_number);
             $number = (int)end($lastNum) + 1;
         }
-        
+
         $this->po_number = "PO/$date/" . str_pad($number, 4, '0', STR_PAD_LEFT);
     }
 
@@ -157,7 +157,7 @@ class PurchaseOrderForm extends Component
     public function loadOrder()
     {
         $order = PurchaseOrder::with('details.item')->findOrFail($this->orderId);
-        
+
         if (!in_array($order->status, ['draft', 'sent'])) {
             return redirect()->route('procurement.orders.index')->with('error', 'Hanya PO Draft atau Sent yang dapat diubah.');
         }
@@ -211,11 +211,11 @@ class PurchaseOrderForm extends Component
             if ($row['item_id'] == $itemId) return;
         }
 
-        $item = Item::with(['prices' => function($q) {
+        $item = Item::with(['prices' => function ($q) {
             if ($this->supplier_id) $q->where('supplier_id', $this->supplier_id);
             $q->latest('effective_date');
         }])->findOrFail($itemId);
-        
+
         $price = $item->prices->first()->price ?? 0;
 
         $this->rows[] = [
@@ -305,7 +305,8 @@ class PurchaseOrderForm extends Component
                     'expected_delivery_date' => $this->expected_delivery_date,
                     'payment_term' => $this->payment_term,
                     'total_amount' => $this->total_amount,
-                    'total_ppn' => $this->total_ppn,
+                    // 'total_ppn' => $this->total_ppn,
+                    'ppn_amount' => $this->total_ppn,
                     'total_discount' => $this->total_discount,
                     'grand_total' => $this->grand_total,
                     'notes' => $this->notes,
@@ -346,15 +347,14 @@ class PurchaseOrderForm extends Component
 
             session()->flash('notify', ['type' => 'success', 'message' => 'Purchase Order berhasil disimpan.']);
             return redirect()->route('procurement.orders.index');
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             $errorDetails = [];
             foreach ($e->validator->errors()->toArray() as $field => $messages) {
                 $errorDetails[] = $field . ': ' . $messages[0];
             }
-            
+
             $this->dispatch('notify', [
-                'type' => 'error', 
+                'type' => 'error',
                 'message' => 'Validasi gagal: ' . implode(' | ', $errorDetails)
             ]);
             throw $e;
