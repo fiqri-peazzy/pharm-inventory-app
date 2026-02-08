@@ -167,6 +167,17 @@
                                         </svg>
                                     </button>
                                 @endif
+
+                                @if ($order->status === 'approved')
+                                    <button wire:click="markAsSent({{ $order->id }})"
+                                        class="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                        title="Kirim ke Supplier">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2.5">
+                                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+                                        </svg>
+                                    </button>
+                                @endif
                             </div>
                         </td>
                     </tr>

@@ -47,13 +47,21 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/receivings', [App\Http\Controllers\Procurement\ReceivingController::class, 'index'])->name('receivings.index');
         Route::get('/receivings/create', [App\Http\Controllers\Procurement\ReceivingController::class, 'create'])->name('receivings.create');
         Route::get('/receivings/{id}/edit', [App\Http\Controllers\Procurement\ReceivingController::class, 'edit'])->name('receivings.edit');
+        Route::get('/receivings/{id}/print', [\App\Http\Controllers\Procurement\ReceivingPrintController::class, 'print'])->name('receivings.print');
     });
 
     // Inventory Routes
     Route::prefix('inventory')->name('inventory.')->group(function () {
-        Route::get('/dashboard', [App\Http\Controllers\Inventory\InventoryController::class, 'dashboard'])->name('dashboard');
+        Route::get('/dashboard/{warehouse?}', [App\Http\Controllers\Inventory\InventoryController::class, 'dashboard'])->name('dashboard');
+        Route::get('/thresholds', [App\Http\Controllers\Inventory\InventoryController::class, 'thresholds'])->name('thresholds');
         Route::get('/disposals', [App\Http\Controllers\Inventory\InventoryController::class, 'disposals'])->name('disposals.index');
         Route::get('/disposals/create', [App\Http\Controllers\Inventory\InventoryController::class, 'createDisposal'])->name('disposals.create');
         Route::get('/disposals/{id}/edit', [App\Http\Controllers\Inventory\InventoryController::class, 'editDisposal'])->name('disposals.edit');
+
+        // Distributions
+        Route::get('/distributions', [App\Http\Controllers\Inventory\InventoryController::class, 'distributions'])->name('distributions.index');
+        Route::get('/distributions/request', [App\Http\Controllers\Inventory\InventoryController::class, 'createDistributionRequest'])->name('distributions.request');
+        Route::get('/distributions/{id}/process', [App\Http\Controllers\Inventory\InventoryController::class, 'processDistribution'])->name('distributions.process');
+        Route::get('/distributions/{id}/receive', [App\Http\Controllers\Inventory\InventoryController::class, 'receiveDistribution'])->name('distributions.receive');
     });
 });

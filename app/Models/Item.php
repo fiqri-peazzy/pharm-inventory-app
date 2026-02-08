@@ -19,8 +19,6 @@ class Item extends Model
         'item_category_id',
         'manufacturer',
         'item_unit_id',
-        'min_stock',
-        'max_stock',
         'is_prescription',
         'is_consignment',
         'is_active',
@@ -38,8 +36,6 @@ class Item extends Model
             'is_prescription' => 'boolean',
             'is_consignment' => 'boolean',
             'is_active' => 'boolean',
-            'min_stock' => 'integer',
-            'max_stock' => 'integer',
         ];
     }
 
@@ -47,6 +43,11 @@ class Item extends Model
     public function category()
     {
         return $this->belongsTo(ItemCategory::class, 'item_category_id');
+    }
+
+    public function warehouseSettings()
+    {
+        return $this->hasMany(ItemWarehouseSetting::class);
     }
 
     public function unit()

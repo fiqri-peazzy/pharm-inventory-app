@@ -104,32 +104,14 @@ class AuthController extends Controller
 
     private function redirectPath(User $user): string
     {
-        if ($user->hasRole('bupati')) {
-            return '/reports/transparency';
+        // High-level access -> Global Inventory Dashboard
+        if ($user->hasAnyRole(['super-admin', 'kepala-farmasi', 'direktur', 'bupati'])) {
+            return route('inventory.dashboard');
         }
 
-        if ($user->hasRole('super-admin')) {
-            return '/dashboard';
-        }
-
-        if ($user->hasRole('kepala-farmasi')) {
-            return '/dashboard/farmasi';
-        }
-
-        if ($user->hasRole('apoteker')) {
-            return '/prescriptions';
-        }
-
-        if ($user->hasRole('petugas-gudang')) {
-            return '/receivings';
-        }
-
-        if ($user->hasRole('keuangan-blud')) {
-            return '/reports/accounting';
-        }
-
-        if ($user->hasRole('auditor')) {
-            return '/reports/audit';
+        // Warehouse specific access -> Warehouse Dashboard
+        if ($user->warehouse_id) {
+            return route('inventory.dashboard', ['warehouse' => $user->warehouse_id]);
         }
 
         return '/dashboard';

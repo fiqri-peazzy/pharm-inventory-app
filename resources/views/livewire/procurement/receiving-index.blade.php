@@ -12,6 +12,7 @@
             <select wire:model.live="status" class="px-3 py-2 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
                 <option value="">Semua Status</option>
                 <option value="draft">Draft</option>
+                <option value="submitted">Submitted (Perlu Approve)</option>
                 <option value="posted">Posted (Selesai)</option>
             </select>
         </div>
@@ -59,27 +60,47 @@
                             {{ $item->warehouse->name }}
                         </td>
                         <td class="px-6 py-4">
-                            <span class="text-sm font-black text-gray-900">Rp{{ number_format($item->grand_total) }}</span>
+                            <span class="text-sm font-black text-gray-900 block">Rp{{ number_format($item->grand_total) }}</span>
+                            @if($item->invoice_file)
+                                <a href="{{ asset('storage/' . $item->invoice_file) }}" target="_blank" class="text-[9px] text-brand-600 font-bold hover:underline flex items-center gap-1 mt-1 uppercase">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                                    Cek Faktur
+                                </a>
+                            @endif
                         </td>
                         <td class="px-6 py-4">
                             @if($item->status === 'posted')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-green-50 text-green-700 border border-green-100">
                                     <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Posted
                                 </span>
+                            @elseif($item->status === 'approved')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-100 italic">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Submitted
+                                </span>
                             @else
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-100">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></span> Draft
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Draft
                                 </span>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex justify-end gap-2">
+                                @if($item->status === 'submitted')
+                                    <button wire:click="post({{ $item->id }})" wire:confirm="Apakah Anda yakin ingin melakukan posting stok untuk penerimaan ini? Tindakan ini tidak dapat dibatalkan." class="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all" title="Posting ke Stok">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                    </button>
+                                @endif
                                 @if($item->status === 'draft')
-                                    <a href="{{ route('procurement.receivings.edit', $item->id) }}" class="p-2 text-gray-400 hover:text-brand-500 hover:bg-brand-50 rounded-xl transition-all">
+                                    <a href="{{ route('procurement.receivings.edit', $item->id) }}" class="p-2 text-gray-400 hover:text-brand-500 hover:bg-brand-50 rounded-xl transition-all" title="Edit Draft">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                     </a>
                                 @endif
-                                <button class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all">
+                                @if($item->status === 'posted')
+                                    <a href="{{ route('procurement.receivings.print', $item->id) }}" target="_blank" class="p-2 text-gray-400 hover:text-brand-500 hover:bg-brand-50 rounded-xl transition-all" title="Cetak Berita Acara (BA)">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                                    </a>
+                                @endif
+                                <button class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all" title="Lihat Detail">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                 </button>
                             </div>

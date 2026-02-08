@@ -26,8 +26,6 @@ class ItemExport implements FromCollection, WithHeadings
             'kode_satuan',
             'nie',
             'pabrikan',
-            'stok_min',
-            'stok_max',
             'resep',
             'penyimpanan'
         ];

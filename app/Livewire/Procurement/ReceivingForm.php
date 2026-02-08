@@ -13,9 +13,12 @@ use App\Models\Warehouse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class ReceivingForm extends Component
 {
+    use WithFileUploads;
+
     public $receivingId;
     public $receiving_number;
     public $purchase_order_id;
@@ -24,6 +27,8 @@ class ReceivingForm extends Component
     public $receiving_date;
     public $invoice_number;
     public $invoice_date;
+    public $invoice_file;
+    public $invoice_file_path;
     public $notes;
     public $status = 'draft';
 
@@ -42,6 +47,7 @@ class ReceivingForm extends Component
         'warehouse_id' => 'required|exists:warehouses,id',
         'invoice_number' => 'required|string',
         'invoice_date' => 'required|date',
+        'invoice_file' => 'nullable|image|max:2048', // Max 2MB
         'rows.*.item_id' => 'required|exists:items,id',
         'rows.*.qty_received' => 'required|numeric|min:1',
         'rows.*.batch_number' => 'required|string',
@@ -90,6 +96,7 @@ class ReceivingForm extends Component
         $this->receiving_date = $rcv->receiving_date->format('Y-m-d');
         $this->invoice_number = $rcv->invoice_number;
         $this->invoice_date = $rcv->invoice_date->format('Y-m-d');
+        $this->invoice_file_path = $rcv->invoice_file;
         $this->notes = $rcv->notes;
         $this->status = $rcv->status;
 
@@ -214,10 +221,16 @@ class ReceivingForm extends Component
                         'ppn_amount' => $this->ppn_amount,
                         'grand_total' => $this->grand_total,
                         'notes' => $this->notes,
-                        'status' => ($status === 'posted') ? 'posted' : 'draft',
+                        'status' => ($status === 'posted') ? 'approved' : (($status === 'approved') ? 'approved' : 'draft'),
                         'created_by' => auth()->id(),
                     ]
                 );
+
+                if ($this->invoice_file) {
+                    $fileName = 'invoice_' . time() . '.' . $this->invoice_file->getClientOriginalExtension();
+                    $path = $this->invoice_file->storeAs('invoices', $fileName, 'public');
+                    $rcv->update(['invoice_file' => $path]);
+                }
 
                 $rcv->details()->delete();
                 foreach ($this->rows as $row) {
@@ -225,7 +238,7 @@ class ReceivingForm extends Component
                 }
 
                 if ($status === 'posted') {
-                    $this->processPosting($rcv);
+                    app(\App\Services\Inventory\ReceivingService::class)->post($rcv);
                 }
             });
 
@@ -238,67 +251,6 @@ class ReceivingForm extends Component
         }
     }
 
-    protected function processPosting($rcv)
-    {
-        foreach ($rcv->details as $detail) {
-            // 1. Update/Create Batch
-            $batch = ItemBatch::create([
-                'item_id' => $detail->item_id,
-                'warehouse_id' => $rcv->warehouse_id,
-                'batch_number' => $detail->batch_number,
-                'expired_date' => $detail->expired_date,
-                'initial_qty' => $detail->qty_received,
-                'current_qty' => $detail->qty_received,
-                'purchase_price' => $detail->purchase_price,
-                'is_active' => true,
-            ]);
-
-            // 2. Create Stock Card
-            StockCard::create([
-                'item_id' => $detail->item_id,
-                'warehouse_id' => $rcv->warehouse_id,
-                'item_batch_id' => $batch->id,
-                'transaction_date' => $rcv->receiving_date,
-                'reference_type' => 'receiving',
-                'reference_id' => $rcv->id,
-                'qty_in' => $detail->qty_received,
-                'qty_out' => 0,
-                'last_stock' => $this->calculateLastStock($detail->item_id, $rcv->warehouse_id) + $detail->qty_received,
-                'notes' => 'Penerimaan No: ' . $rcv->receiving_number,
-            ]);
-
-            // 3. Update PO Detail if applicable
-            if ($rcv->purchase_order_id) {
-                $poDetail = \App\Models\PurchaseOrderDetail::where('purchase_order_id', $rcv->purchase_order_id)
-                    ->where('item_id', $detail->item_id)
-                    ->first();
-                if ($poDetail) {
-                    $poDetail->increment('qty_received', $detail->qty_received);
-                }
-            }
-        }
-
-        // 4. Update PO Status if applicable
-        if ($rcv->purchase_order_id) {
-            $po = PurchaseOrder::with('details')->find($rcv->purchase_order_id);
-            $fullyReceived = true;
-            foreach ($po->details as $d) {
-                if ($d->qty_received < $d->qty_ordered) {
-                    $fullyReceived = false;
-                    break;
-                }
-            }
-            $po->update(['status' => $fullyReceived ? 'completed' : 'partial_received']);
-        }
-    }
-
-    protected function calculateLastStock($itemId, $warehouseId)
-    {
-        return ItemBatch::where('item_id', $itemId)
-            ->where('warehouse_id', $warehouseId)
-            ->where('is_active', true)
-            ->sum('current_qty');
-    }
 
     public function updatedItemSearch($value)
     {
@@ -355,7 +307,7 @@ class ReceivingForm extends Component
         return view('livewire.procurement.receiving-form', [
             'suppliers' => Supplier::orderBy('name')->get(),
             'warehouses' => Warehouse::orderBy('name')->get(),
-            'purchaseOrders' => PurchaseOrder::whereIn('status', ['sent', 'partial_received'])->latest()->get(),
+            'purchaseOrders' => PurchaseOrder::whereIn('status', ['approved', 'sent', 'partial_received'])->latest()->get(),
         ]);
     }
 }

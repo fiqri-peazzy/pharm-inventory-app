@@ -12,6 +12,7 @@ class PermissionSeeder extends Seeder
     {
         $modules = [
             'dashboard' => ['view'],
+            'inventory-dashboard' => ['view-all', 'view-own', 'export'],
             'master-items' => ['view', 'create', 'update', 'delete'],
             'master-categories' => ['view', 'create', 'update', 'delete'],
             'master-suppliers' => ['view', 'create', 'update', 'delete'],
@@ -50,12 +51,13 @@ class PermissionSeeder extends Seeder
     {
         // Super Admin - All permissions
         $superAdmin = Role::findByName('super-admin');
-        $superAdmin->givePermissionTo(Permission::all());
+        $superAdmin->syncPermissions(Permission::all());
 
-        // Kepala Farmasi
+        // Kepala Farmasi - Full Procurement Oversight
         $kepalaFarmasi = Role::findByName('kepala-farmasi');
-        $kepalaFarmasi->givePermissionTo([
+        $kepalaFarmasi->syncPermissions([
             'dashboard.view',
+            'inventory-dashboard.view-all',
             'master-items.view', 'master-categories.view', 'master-suppliers.view', 'master-warehouses.view',
             'purchase-requests.view', 'purchase-requests.approve',
             'purchase-orders.view', 'purchase-orders.approve',
@@ -71,51 +73,50 @@ class PermissionSeeder extends Seeder
             'reports-accounting.view', 'reports-accounting.export',
         ]);
 
-        // Apoteker
+        // Apoteker (Depot PJ) - Daily Clinic Operations
         $apoteker = Role::findByName('apoteker');
-        $apoteker->givePermissionTo([
+        $apoteker->syncPermissions([
             'dashboard.view',
+            'inventory-dashboard.view-own',
             'master-items.view',
+            'purchase-requests.view', 'purchase-requests.create',
             'stocks.view',
-            'distributions.view', 'distributions.create',
+            'distributions.view',
             'prescriptions.view', 'prescriptions.create', 'prescriptions.process',
             'returns.view', 'returns.create',
             'reports-stock.view',
         ]);
 
-        // Petugas Gudang
+        // Petugas Gudang - Logistics & Storage
         $petugasGudang = Role::findByName('petugas-gudang');
-        $petugasGudang->givePermissionTo([
+        $petugasGudang->syncPermissions([
             'dashboard.view',
             'master-items.view', 'master-suppliers.view',
+            'purchase-requests.view',
+            'purchase-orders.view',
             'receivings.view', 'receivings.create', 'receivings.update',
             'stocks.view',
-            'distributions.view', 'distributions.create',
+            'distributions.view', 'distributions.create', 'distributions.update',
             'stock-opnames.view', 'stock-opnames.create',
             'returns.view', 'returns.create',
             'disposals.view', 'disposals.create',
             'reports-stock.view',
         ]);
 
-        // Keuangan BLUD
+        // Keuangan BLUD - Financial Audit
         $keuangan = Role::findByName('keuangan-blud');
-        $keuangan->givePermissionTo([
+        $keuangan->syncPermissions([
             'dashboard.view',
             'receivings.view',
             'stocks.view',
-            'distributions.view',
-            'prescriptions.view',
-            'stock-opnames.view',
-            'returns.view',
-            'disposals.view',
             'reports-stock.view', 'reports-stock.export',
             'reports-accounting.view', 'reports-accounting.export',
             'journals.view', 'journals.create', 'journals.post',
         ]);
 
-        // Auditor
+        // Auditor - Full View Access
         $auditor = Role::findByName('auditor');
-        $auditor->givePermissionTo([
+        $auditor->syncPermissions([
             'dashboard.view',
             'master-items.view', 'master-categories.view', 'master-suppliers.view', 'master-warehouses.view',
             'purchase-requests.view',
@@ -133,19 +134,20 @@ class PermissionSeeder extends Seeder
             'journals.view',
         ]);
 
-        // Bupati - Transparansi
+        // Bupati - Monitoring & Transparency
         $bupati = Role::findByName('bupati');
-        $bupati->givePermissionTo([
+        $bupati->syncPermissions([
             'dashboard.view',
             'reports-stock.view', 'reports-stock.export',
             'reports-accounting.view', 'reports-accounting.export',
             'reports-transparency.view', 'reports-transparency.export',
         ]);
 
-        // Direktur
+        // Direktur - high level approval
         $direktur = Role::findByName('direktur');
-        $direktur->givePermissionTo([
+        $direktur->syncPermissions([
             'dashboard.view',
+            'inventory-dashboard.view-all',
             'purchase-orders.view', 'purchase-orders.direktur-approve',
             'reports-stock.view', 'reports-accounting.view',
         ]);

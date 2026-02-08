@@ -100,6 +100,15 @@ class PurchaseOrderIndex extends Component
         $this->dispatch('notify', ['type' => 'error', 'message' => 'Anda tidak memiliki otoritas atau status PO tidak sesuai.']);
     }
 
+    public function markAsSent($id)
+    {
+        $po = PurchaseOrder::findOrFail($id);
+        if ($po->status === 'approved') {
+            $po->update(['status' => 'sent']);
+            $this->dispatch('notify', ['type' => 'success', 'message' => 'PO ditandai sebagai Terkirim ke Supplier.']);
+        }
+    }
+
     public function reject($id, $reason)
     {
         $po = PurchaseOrder::findOrFail($id);

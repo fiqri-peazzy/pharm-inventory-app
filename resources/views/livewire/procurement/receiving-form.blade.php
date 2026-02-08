@@ -160,6 +160,32 @@
                 <input wire:model="invoice_number" type="text" placeholder="Faktur-12345" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 transition-all outline-none">
                 @error('invoice_number') <span class="text-[10px] text-red-500 font-bold block">Wajib diisi</span> @enderror
             </div>
+
+            <div class="space-y-1">
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Upload Foto Faktur</label>
+                <div class="relative group">
+                    <input type="file" wire:model="invoice_file" class="hidden" id="invoice_file">
+                    <label for="invoice_file" class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 hover:bg-white hover:border-brand-500 transition-all cursor-pointer">
+                        @if($invoice_file)
+                            <div class="flex items-center gap-2 text-brand-600">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                <span class="text-xs font-bold">File Terpilih</span>
+                            </div>
+                        @elseif($invoice_file_path)
+                            <div class="flex flex-col items-center">
+                                <span class="text-[8px] font-black text-brand-500 uppercase">Lihat Dokumen</span>
+                                <a href="{{ asset('storage/' . $invoice_file_path) }}" target="_blank" class="text-xs text-brand-600 font-bold hover:underline">Faktur Terunggah</a>
+                            </div>
+                        @else
+                            <svg class="text-gray-400 mb-1" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        @endif
+                    </label>
+                    <div wire:loading wire:target="invoice_file" class="absolute inset-0 bg-white/80 flex items-center justify-center rounded-xl">
+                        <svg class="animate-spin h-5 w-5 text-brand-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    </div>
+                </div>
+                @error('invoice_file') <span class="text-[10px] text-red-500 font-bold block mt-1">{{ $message }}</span> @enderror
+            </div>
         </div>
 
         <!-- Summary & Totals -->

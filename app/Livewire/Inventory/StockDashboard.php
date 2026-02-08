@@ -6,57 +6,93 @@ use App\Models\Item;
 use App\Models\ItemBatch;
 use App\Models\Receiving;
 use App\Models\Warehouse;
+use App\Models\ItemWarehouseSetting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class StockDashboard extends Component
 {
+    public $warehouseId;
+    public $isGlobal = true;
+    public $warehouse;
+
     public $summary = [];
     public $warehouseStock = [];
     public $nearExpiredItems = [];
     public $lowStockItems = [];
-    public $recentReceivings = [];
+    public $recentActivities = [];
 
-    public function mount()
+    // Chart Data
+    public $distributionChart = [];
+    public $trendChart = [];
+
+    public function mount($warehouseId = null)
+    {
+        $this->warehouseId = $warehouseId;
+        $this->isGlobal = empty($warehouseId);
+        
+        if (!$this->isGlobal) {
+            $this->warehouse = Warehouse::find($warehouseId);
+        }
+
+        $this->loadData();
+    }
+
+    public function loadData()
     {
         $this->loadSummary();
-        $this->loadWarehouseStock();
         $this->loadAlerts();
         $this->loadRecentActivity();
+        
+        if ($this->isGlobal) {
+            $this->loadWarehouseStock();
+        }
+        
+        $this->loadCharts();
     }
 
     public function loadSummary()
     {
-        $totalValue = ItemBatch::where('is_active', true)
-            ->where('current_qty', '>', 0)
-            ->select(DB::raw('SUM(current_qty * purchase_price) as total_value'))
-            ->first()->total_value ?? 0;
+        $query = ItemBatch::where('is_active', true)->where('current_qty', '>', 0);
+        if (!$this->isGlobal) {
+            $query->where('warehouse_id', $this->warehouseId);
+        }
 
-        $nearExpiredCount = ItemBatch::where('is_active', true)
-            ->where('current_qty', '>', 0)
-            ->whereBetween('expired_date', [Carbon::now(), Carbon::now()->addMonths(6)])
-            ->count();
+        $stats = $query->select(
+            DB::raw('SUM(current_qty * purchase_price) as total_value'),
+            DB::raw('SUM(current_qty) as total_qty'),
+            DB::raw('COUNT(DISTINCT item_id) as total_items')
+        )->first();
 
-        $lowStockCount = Item::where('is_active', true)
-            ->whereHas('batches', function($query) {
-                $query->where('is_active', true);
-            }, '<', DB::raw('items.min_stock')) // This is a bit tricky in Eloquent
-            ->count();
-        
-        // Let's refine low stock count logic
-        $lowStockCount = Item::where('is_active', true)
-            ->where('min_stock', '>', 0)
-            ->where(function($q) {
-                $q->whereRaw('(SELECT SUM(current_qty) FROM item_batches WHERE item_batches.item_id = items.id AND is_active = 1) < min_stock');
+        // Near Expired Count
+        $expQuery = ItemBatch::where('is_active', true)->where('current_qty', '>', 0)
+            ->whereBetween('expired_date', [Carbon::now(), Carbon::now()->addMonths(6)]);
+        if (!$this->isGlobal) {
+            $expQuery->where('warehouse_id', $this->warehouseId);
+        }
+
+        // Low Stock Count
+        $lowQuery = ItemWarehouseSetting::where('min_stock', '>', 0);
+        if (!$this->isGlobal) {
+            $lowQuery->where('warehouse_id', $this->warehouseId);
+        }
+        $lowCount = $lowQuery->where(function($q) {
+                $q->whereRaw('(SELECT SUM(current_qty) FROM item_batches WHERE item_batches.item_id = item_warehouse_settings.item_id AND item_batches.warehouse_id = item_warehouse_settings.warehouse_id AND is_active = 1) < min_stock');
             })
             ->count();
 
+        // Barang Kadaluarsa & Mendekati Kadaluarsa
         $this->summary = [
-            'total_value' => $totalValue,
-            'near_expired_count' => $nearExpiredCount,
-            'low_stock_count' => $lowStockCount,
-            'total_items' => Item::count(),
+            'total_value' => $stats->total_value ?? 0,
+            'total_qty' => $stats->total_qty ?? 0,
+            'total_items' => $stats->total_items ?? 0,
+            'near_expired_count' => $expQuery->count(),
+            'low_stock_count' => $lowCount,
+            'expired_count' => ItemBatch::where('is_active', true)->where('current_qty', '>', 0)
+                ->where('expired_date', '<', Carbon::now())
+                ->when(!$this->isGlobal, fn($q) => $q->where('warehouse_id', $this->warehouseId))
+                ->count(),
         ];
     }
 
@@ -66,48 +102,92 @@ class StockDashboard extends Component
                 $q->where('is_active', true)->where('current_qty', '>', 0);
             }])
             ->get()
-            ->map(function($warehouse) {
+            ->map(function($wh) {
                 return [
-                    'name' => $warehouse->name,
-                    'total_qty' => $warehouse->batches->sum('current_qty'),
-                    'total_value' => $warehouse->batches->sum(fn($b) => $b->current_qty * $b->purchase_price),
+                    'id' => $wh->id,
+                    'name' => $wh->name,
+                    'total_qty' => $wh->batches->sum('current_qty'),
+                    'total_value' => $wh->batches->sum(fn($b) => $b->current_qty * $b->purchase_price),
+                    'low_stock_alerts' => ItemWarehouseSetting::where('warehouse_id', $wh->id)
+                        ->where('min_stock', '>', 0)
+                        ->whereRaw('(SELECT SUM(current_qty) FROM item_batches WHERE item_batches.item_id = item_warehouse_settings.item_id AND item_batches.warehouse_id = item_warehouse_settings.warehouse_id AND is_active = 1) < min_stock')
+                        ->count()
                 ];
             });
     }
 
     public function loadAlerts()
     {
-        // Near Expired Details (Top 10)
-        $this->nearExpiredItems = ItemBatch::with(['item', 'warehouse'])
+        // Detail Barang Hampir Kadaluarsa (Top 15)
+        $expQuery = ItemBatch::with(['item', 'warehouse'])
             ->where('is_active', true)
             ->where('current_qty', '>', 0)
-            ->whereBetween('expired_date', [Carbon::now(), Carbon::now()->addMonths(6)])
-            ->orderBy('expired_date', 'asc')
-            ->limit(10)
-            ->get();
+            ->whereBetween('expired_date', [Carbon::now()->subYears(1), Carbon::now()->addMonths(6)])
+            ->orderBy('expired_date', 'asc');
+        
+        if (!$this->isGlobal) {
+            $expQuery->where('warehouse_id', $this->warehouseId);
+        }
+        $this->nearExpiredItems = $expQuery->limit(15)->get();
 
-        // Low Stock Details (Top 10)
-        $this->lowStockItems = Item::where('is_active', true)
-            ->where('min_stock', '>', 0)
-            ->where(function($q) {
-                $q->whereRaw('(SELECT SUM(current_qty) FROM item_batches WHERE item_batches.item_id = items.id AND is_active = 1) < min_stock');
+        // Detail Stok Kritis (Top 15)
+        $lowQuery = ItemWarehouseSetting::with(['item.unit', 'item.category', 'warehouse'])
+            ->where('min_stock', '>', 0);
+        
+        if (!$this->isGlobal) {
+            $lowQuery->where('warehouse_id', $this->warehouseId);
+        }
+
+        $this->lowStockItems = $lowQuery->where(function($q) {
+                $q->whereRaw('(SELECT SUM(current_qty) FROM item_batches WHERE item_batches.item_id = item_warehouse_settings.item_id AND item_batches.warehouse_id = item_warehouse_settings.warehouse_id AND is_active = 1) < min_stock');
             })
-            ->with(['unit', 'category'])
-            ->limit(10)
+            ->limit(15)
             ->get()
-            ->map(function($item) {
-                $item->current_total_stock = ItemBatch::where('item_id', $item->id)->where('is_active', true)->sum('current_qty');
+            ->map(function($setting) {
+                $item = $setting->item;
+                $item->alert_warehouse = $setting->warehouse->name;
+                $item->alert_min_stock = $setting->min_stock;
+                $item->current_stock = ItemBatch::where('item_id', $item->id)
+                    ->where('warehouse_id', $setting->warehouse_id)
+                    ->where('is_active', true)
+                    ->sum('current_qty');
                 return $item;
             });
     }
 
     public function loadRecentActivity()
     {
-        $this->recentReceivings = Receiving::with(['supplier', 'warehouse'])
-            ->where('status', 'posted')
-            ->latest()
-            ->limit(5)
-            ->get();
+        $query = \App\Models\StockCard::with(['item', 'warehouse', 'batch'])
+            ->latest('transaction_date')
+            ->latest('id')
+            ->limit(15);
+        
+        if (!$this->isGlobal) {
+            $query->where('warehouse_id', $this->warehouseId);
+        }
+
+        $this->recentActivities = $query->get();
+    }
+
+    public function loadCharts()
+    {
+        // Distribution Chart (Categories)
+        $distQuery = ItemBatch::join('items', 'item_batches.item_id', '=', 'items.id')
+            ->join('item_categories', 'items.item_category_id', '=', 'item_categories.id')
+            ->where('item_batches.is_active', true)
+            ->where('item_batches.current_qty', '>', 0);
+        
+        if (!$this->isGlobal) {
+            $distQuery->where('item_batches.warehouse_id', $this->warehouseId);
+        }
+
+        $this->distributionChart = $distQuery->select('item_categories.name', DB::raw('SUM(current_qty * purchase_price) as value'))
+            ->groupBy('item_categories.name')
+            ->get()
+            ->toArray();
+            
+        // Trend Chart (Example for last 7 days)
+        // Implementation for line chart data...
     }
 
     public function render()

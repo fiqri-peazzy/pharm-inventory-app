@@ -27,7 +27,7 @@ class ItemIndex extends Component
 
     // Form fields
     public $code, $nie_number, $barcode, $name, $generic_name, $item_category_id;
-    public $manufacturer, $item_unit_id, $min_stock = 0, $max_stock = 0;
+    public $manufacturer, $item_unit_id;
     public $is_prescription = false, $is_consignment = false, $is_active = true;
     public $storage_condition = 'suhu_ruang', $fornas_status, $fornas_code, $notes;
 
@@ -81,8 +81,6 @@ class ItemIndex extends Component
         $this->item_category_id = '';
         $this->manufacturer = '';
         $this->item_unit_id = '';
-        $this->min_stock = 0;
-        $this->max_stock = 0;
         $this->is_prescription = false;
         $this->is_consignment = false;
         $this->is_active = true;
@@ -111,8 +109,6 @@ class ItemIndex extends Component
             'item_category_id' => $this->item_category_id,
             'manufacturer' => $this->manufacturer,
             'item_unit_id' => $this->item_unit_id,
-            'min_stock' => $this->min_stock,
-            'max_stock' => $this->max_stock,
             'is_prescription' => $this->is_prescription,
             'is_consignment' => $this->is_consignment,
             'is_active' => $this->is_active,
@@ -147,8 +143,6 @@ class ItemIndex extends Component
         $this->item_category_id = $item->item_category_id;
         $this->manufacturer = $item->manufacturer;
         $this->item_unit_id = $item->item_unit_id;
-        $this->min_stock = $item->min_stock;
-        $this->max_stock = $item->max_stock;
         $this->is_prescription = $item->is_prescription;
         $this->is_consignment = $item->is_consignment;
         $this->is_active = $item->is_active;

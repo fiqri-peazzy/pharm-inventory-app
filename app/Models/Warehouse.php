@@ -83,6 +83,7 @@ class Warehouse extends Model
             'depo_igd' => 'Depo IGD',
             'depo_ranap' => 'Depo Rawat Inap',
             'depo_rajal' => 'Depo Rawat Jalan',
+            'depo_bmhp' => 'Depo BMHP',
             default => $this->type,
         };
     }

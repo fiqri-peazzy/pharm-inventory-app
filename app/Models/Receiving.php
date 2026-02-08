@@ -20,6 +20,7 @@ class Receiving extends Model
         'total_amount',
         'ppn_amount',
         'grand_total',
+        'invoice_file',
         'notes',
         'status',
         'created_by',

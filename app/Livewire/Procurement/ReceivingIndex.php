@@ -22,6 +22,17 @@ class ReceivingIndex extends Component
         $this->resetPage();
     }
 
+    public function post($id)
+    {
+        try {
+            $rcv = Receiving::with('details')->findOrFail($id);
+            app(\App\Services\Inventory\ReceivingService::class)->post($rcv);
+            $this->dispatch('notify', ['type' => 'success', 'message' => 'Penerimaan berhasil diposting ke stok.']);
+        } catch (\Exception $e) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
+
     public function render()
     {
         $query = Receiving::with(['supplier', 'warehouse', 'purchaseOrder', 'creator'])

@@ -56,10 +56,23 @@ class PurchaseRequestForm extends Component
             $this->loadRequest();
         } else {
             $this->generateRequestNumber();
-            // Default select first main warehouse if any
-            $mainWh = Warehouse::where('is_main', true)->first();
-            if ($mainWh) {
-                $this->warehouse_id = $mainWh->id;
+            
+            // Check for pre-fill parameters
+            $fillItemId = request()->query('item_id');
+            $fillWarehouseId = request()->query('warehouse_id');
+
+            if ($fillWarehouseId) {
+                $this->warehouse_id = $fillWarehouseId;
+            } else {
+                // Default select first main warehouse if any
+                $mainWh = Warehouse::where('is_main', true)->first();
+                if ($mainWh) {
+                    $this->warehouse_id = $mainWh->id;
+                }
+            }
+
+            if ($fillItemId) {
+                $this->addItem($fillItemId);
             }
         }
     }
@@ -134,12 +147,21 @@ class PurchaseRequestForm extends Component
 
         $item = Item::findOrFail($itemId);
         
+        $currentStock = \App\Models\ItemBatch::where('item_id', $item->id)
+            ->where('warehouse_id', $this->warehouse_id)
+            ->where('is_active', true)
+            ->sum('current_qty');
+        
+        $setting = \App\Models\ItemWarehouseSetting::where('item_id', $item->id)
+            ->where('warehouse_id', $this->warehouse_id)
+            ->first();
+
         $this->rows[] = [
             'item_id' => $item->id,
             'item_name' => $item->name,
             'item_code' => $item->code,
-            'current_stock' => 0, // In real app, fetch from stock_cards or item_batches
-            'average_usage' => 0,
+            'current_stock' => $currentStock,
+            'average_usage' => $setting?->usage_rate_per_day ?? 0,
             'requested_qty' => 1,
             'notes' => '',
         ];

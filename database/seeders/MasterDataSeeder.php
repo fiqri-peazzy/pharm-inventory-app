@@ -148,8 +148,6 @@ class MasterDataSeeder extends Seeder
                     'item_category_id' => $item['item_category_id'],
                     'item_unit_id' => $unitId,
                     'is_active' => true,
-                    'min_stock' => 10,
-                    'max_stock' => 1000,
                     'storage_condition' => 'suhu_ruang'
                 ]
             );

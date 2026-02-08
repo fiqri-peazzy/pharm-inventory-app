@@ -29,8 +29,6 @@ class ItemImport implements ToModel, WithHeadingRow, WithValidation
             'item_unit_id'     => $unit->id,
             'nie_number'       => $row['nie'] ?? null,
             'manufacturer'     => $row['pabrikan'] ?? null,
-            'min_stock'        => $row['stok_min'] ?? 0,
-            'max_stock'        => $row['stok_max'] ?? 0,
             'is_prescription'  => ($row['resep'] ?? 'tidak') === 'ya',
             'storage_condition'=> $row['penyimpanan'] ?? 'suhu_ruang',
             'is_active'        => true,

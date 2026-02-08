@@ -67,8 +67,15 @@
         <nav class="mb-6">
             <div class="flex flex-col gap-4">
                 @foreach ($menuGroups as $groupIndex => $menuGroup)
-                    <div>
-                        <h2 class="mb-4 text-xs uppercase flex leading-[20px] text-gray-400"
+                    @php
+                        $visibleItems = array_filter($menuGroup['items'], function($item) {
+                            return !isset($item['permission']) || auth()->user()->can($item['permission']);
+                        });
+                    @endphp
+
+                    @if(!empty($visibleItems))
+                        <div>
+                            <h2 class="mb-4 text-xs uppercase flex leading-[20px] text-gray-400"
                             :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
                             'lg:justify-center' : 'justify-start'">
                             <template x-if="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen">
@@ -82,7 +89,7 @@
                         </h2>
 
                         <ul class="flex flex-col gap-1">
-                            @foreach ($menuGroup['items'] as $itemIndex => $item)
+                            @foreach ($visibleItems as $itemIndex => $item)
                                 <li>
                                     @if (isset($item['subItems']))
                                         <button @click="toggleSubmenu({{ $groupIndex }}, {{ $itemIndex }})"
@@ -113,13 +120,15 @@
                                         <div x-show="isSubmenuOpen({{ $groupIndex }}, {{ $itemIndex }}) && ($store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen)">
                                             <ul class="mt-2 space-y-1 ml-9">
                                                 @foreach ($item['subItems'] as $subItem)
-                                                    <li>
-                                                        <a href="{{ $subItem['path'] }}" class="menu-dropdown-item"
-                                                            :class="isActive('{{ $subItem['path'] }}') ?
-                                                                'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'">
-                                                            {{ $subItem['name'] }}
-                                                        </a>
-                                                    </li>
+                                                    @if(!isset($subItem['permission']) || auth()->user()->can($subItem['permission']))
+                                                        <li>
+                                                            <a href="{{ $subItem['path'] }}" class="menu-dropdown-item"
+                                                                :class="isActive('{{ $subItem['path'] }}') ?
+                                                                    'menu-dropdown-item-active' : 'menu-dropdown-item-inactive'">
+                                                                {{ $subItem['name'] }}
+                                                            </a>
+                                                        </li>
+                                                    @endif
                                                 @endforeach
                                             </ul>
                                         </div>
@@ -144,6 +153,7 @@
                             @endforeach
                         </ul>
                     </div>
+                    @endif
                 @endforeach
             </div>
         </nav>

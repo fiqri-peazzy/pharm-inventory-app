@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->string('name');
-            $table->enum('type', ['gudang_utama', 'depo_farmasi', 'depo_ok', 'depo_igd', 'depo_ranap', 'depo_rajal']);
+            $table->enum('type', ['gudang_utama', 'depo_farmasi', 'depo_ok', 'depo_igd', 'depo_ranap', 'depo_rajal', 'depo_bmhp']);
             $table->boolean('is_main')->default(false);
             $table->boolean('is_active')->default(true);
             $table->string('pic_name')->nullable();

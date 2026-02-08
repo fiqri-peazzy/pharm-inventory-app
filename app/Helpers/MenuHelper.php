@@ -14,11 +14,19 @@ class MenuHelper
                         'name' => 'Dashboard Stok',
                         'path' => '/inventory/dashboard',
                         'icon' => 'bar-chart',
+                        'permission' => 'dashboard.view',
                     ],
                     [
                         'name' => 'Retur & Pemusnahan',
                         'path' => '/inventory/disposals',
                         'icon' => 'rotate-ccw',
+                        'permission' => 'disposals.view',
+                    ],
+                    [
+                        'name' => 'Optimasi Stok',
+                        'path' => '/inventory/thresholds',
+                        'icon' => 'activity',
+                        'permission' => 'stocks.view',
                     ],
                 ]
             ],
@@ -28,44 +36,54 @@ class MenuHelper
                     [
                         'name' => 'Data Master',
                         'icon' => 'database',
+                        'permission' => 'master-items.view',
                         'subItems' => [
                             [
                                 'name' => 'Kategori Item',
                                 'path' => '/master/categories',
+                                'permission' => 'master-categories.view',
                             ],
                             [
                                 'name' => 'Satuan Item',
                                 'path' => '/master/units',
+                                'permission' => 'master-items.view',
                             ],
                             [
                                 'name' => 'Item (Obat & BMHP)',
                                 'path' => '/master/items',
+                                'permission' => 'master-items.view',
                             ],
                             [
                                 'name' => 'Supplier',
                                 'path' => '/master/suppliers',
+                                'permission' => 'master-suppliers.view',
                             ],
                             [
                                 'name' => 'Gudang/Depo',
                                 'path' => '/master/warehouses',
+                                'permission' => 'master-warehouses.view',
                             ],
                             [
                                 'name' => 'Unit Layanan',
                                 'path' => '/master/service-units',
+                                'permission' => 'master-warehouses.view',
                             ],
                         ]
                     ],
                     [
                         'name' => 'Pengguna',
                         'icon' => 'users',
+                        'permission' => 'master-users.view',
                         'subItems' => [
                             [
                                 'name' => 'Manajemen User',
                                 'path' => '/master/users',
+                                'permission' => 'master-users.view',
                             ],
                             [
                                 'name' => 'Role & Permission',
                                 'path' => '/master/roles',
+                                'permission' => 'master-users.view',
                             ],
                         ]
                     ],
@@ -78,26 +96,37 @@ class MenuHelper
                         'name' => 'E-Catalog Harga',
                         'path' => '/procurement/prices',
                         'icon' => 'tag',
+                        'permission' => 'master-items.view',
                     ],
                     [
-                        'name' => 'Permintaan (PR)',
+                        'name' => 'Permintaan',
                         'path' => '/procurement/requests',
                         'icon' => 'file-text',
+                        'permission' => 'purchase-requests.view',
                     ],
                     [
                         'name' => 'Approval Direktur',
                         'path' => '/procurement/approvals',
                         'icon' => 'check-square',
+                        'permission' => 'purchase-orders.direktur-approve',
                     ],
                     [
-                        'name' => 'Dropping Incoming',
+                        'name' => 'Pemesanan Barang',
                         'path' => '/procurement/orders',
                         'icon' => 'shopping-cart',
+                        'permission' => 'purchase-orders.view',
                     ],
                     [
-                        'name' => 'Dropping Outgoing',
+                        'name' => 'Penerimaan Barang',
                         'path' => '/procurement/receivings',
                         'icon' => 'package',
+                        'permission' => 'receivings.view',
+                    ],
+                    [
+                        'name' => 'Distribusi Barang',
+                        'path' => '/inventory/distributions',
+                        'icon' => 'truck',
+                        'permission' => 'distributions.view',
                     ],
                 ]
             ],
@@ -108,11 +137,13 @@ class MenuHelper
                         'name' => 'Laporan Stok',
                         'path' => '/reports/stock',
                         'icon' => 'file-text',
+                        'permission' => 'reports-stock.view',
                     ],
                     [
                         'name' => 'Laporan Distribusi',
                         'path' => '/reports/distribution',
                         'icon' => 'file-text',
+                        'permission' => 'distributions.view',
                     ],
                 ]
             ],
@@ -123,11 +154,13 @@ class MenuHelper
                         'name' => 'Pengaturan',
                         'path' => '/settings',
                         'icon' => 'settings',
+                        'permission' => 'settings.view',
                     ],
                     [
                         'name' => 'Activity Log',
                         'path' => '/activity-logs',
                         'icon' => 'activity',
+                        'permission' => 'settings.view',
                     ],
                 ]
             ],
@@ -157,6 +190,7 @@ class MenuHelper
             'package' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>',
             'bar-chart' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>',
             'rotate-ccw' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>',
+            'truck' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>',
         ];
 
         return $icons[$iconName] ?? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" fill="currentColor"/></svg>';

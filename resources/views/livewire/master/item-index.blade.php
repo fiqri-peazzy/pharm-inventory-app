@@ -41,7 +41,6 @@
                     <th class="px-4 py-3">Item</th>
                     <th class="px-4 py-3">Kategori</th>
                     <th class="px-4 py-3">Satuan</th>
-                    <th class="px-4 py-3">Stok Min/Max</th>
                     <th class="px-4 py-3">Status</th>
                     <th class="px-4 py-3 text-right">Aksi</th>
                 </tr>
@@ -61,10 +60,6 @@
                                 class="text-xs font-medium text-gray-600 dark:text-gray-400">{{ $item->category->name }}</span>
                         </td>
                         <td class="px-4 py-3 text-gray-500">{{ $item->unit->name }}</td>
-                        <td class="px-4 py-3">
-                            <span class="text-xs text-gray-600 dark:text-gray-400">{{ $item->min_stock }} /
-                                {{ $item->max_stock }}</span>
-                        </td>
                         <td class="px-4 py-3">
                             @if ($item->is_active)
                                 <span
@@ -199,20 +194,7 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Stok
-                                Minimum</label>
-                            <input type="number" wire:model="min_stock"
-                                class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
-                        </div>
-                        <div>
-                            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Stok
-                                Maksimum</label>
-                            <input type="number" wire:model="max_stock"
-                                class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
-                        </div>
-                    </div>
+                    {{-- Global Stock Fields Removed - Now managed per warehouse --}}
 
                     <div class="flex flex-wrap gap-4">
                         <div class="flex items-center gap-2">

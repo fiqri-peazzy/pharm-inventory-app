@@ -19,6 +19,6 @@
         </div>
     </div>
 
-    @livewire('inventory.stock-dashboard')
+    @livewire('inventory.stock-dashboard', ['warehouseId' => $warehouseId ?? null])
 </div>
 @endsection

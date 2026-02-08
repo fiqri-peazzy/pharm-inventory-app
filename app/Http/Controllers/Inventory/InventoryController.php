@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
-    public function dashboard()
+    public function dashboard($warehouse = null)
     {
-        return view('pages.inventory.dashboard');
+        return view('pages.inventory.dashboard', [
+            'warehouseId' => $warehouse
+        ]);
     }
 
     public function stockReport()
@@ -27,10 +29,39 @@ class InventoryController extends Controller
         return view('pages.inventory.disposals.form');
     }
 
+    public function thresholds()
+    {
+        return view('pages.inventory.thresholds');
+    }
+
     public function editDisposal($id)
     {
         return view('pages.inventory.disposals.form', [
             'disposalId' => $id
+        ]);
+    }
+
+    public function distributions()
+    {
+        return view('pages.inventory.distributions.index');
+    }
+
+    public function createDistributionRequest()
+    {
+        return view('pages.inventory.distributions.request');
+    }
+
+    public function processDistribution($id)
+    {
+        return view('pages.inventory.distributions.process', [
+            'distributionId' => $id
+        ]);
+    }
+
+    public function receiveDistribution($id)
+    {
+        return view('pages.inventory.distributions.receive', [
+            'distributionId' => $id
         ]);
     }
 }
