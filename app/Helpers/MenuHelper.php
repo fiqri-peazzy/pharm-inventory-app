@@ -8,7 +8,7 @@ class MenuHelper
     {
         return [
             [
-                'title' => 'MENU',
+                'title' => 'OVERVIEW',
                 'items' => [
                     [
                         'name' => 'Dashboard Stok',
@@ -16,17 +16,34 @@ class MenuHelper
                         'icon' => 'bar-chart',
                         'permission' => 'dashboard.view',
                     ],
+                ]
+            ],
+            [
+                'title' => 'KONTROL STOK',
+                'items' => [
                     [
-                        'name' => 'Retur & Pemusnahan',
-                        'path' => '/inventory/disposals',
-                        'icon' => 'rotate-ccw',
-                        'permission' => 'disposals.view',
+                        'name' => 'Kartu Stok',
+                        'path' => '/inventory/stocks/cards',
+                        'icon' => 'file-text',
+                        'permission' => 'stocks.view',
+                    ],
+                    [
+                        'name' => 'Monitoring Batch',
+                        'path' => '/inventory/stocks/batches',
+                        'icon' => 'package',
+                        'permission' => 'stocks.view',
                     ],
                     [
                         'name' => 'Optimasi Stok',
                         'path' => '/inventory/thresholds',
                         'icon' => 'activity',
                         'permission' => 'stocks.view',
+                    ],
+                    [
+                        'name' => 'Retur & Pemusnahan',
+                        'path' => '/inventory/disposals',
+                        'icon' => 'rotate-ccw',
+                        'permission' => 'disposals.view',
                     ],
                 ]
             ],

@@ -40,4 +40,33 @@ class ItemBatch extends Model
     {
         return $this->hasMany(StockCard::class);
     }
+
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true)->where('current_qty', '>', 0);
+    }
+
+    public function scopeExpired($query)
+    {
+        return $query->where('expired_date', '<=', now());
+    }
+
+    public function scopeNearExpired($query, $days = 90)
+    {
+        return $query->where('expired_date', '>', now())
+            ->where('expired_date', '<=', now()->addDays($days));
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        if ($this->expired_date <= now()) {
+            return (object) ['label' => 'EXPIRED', 'color' => 'bg-red-50 text-red-600 border-red-100'];
+        }
+
+        if ($this->expired_date <= now()->addDays(90)) {
+            return (object) ['label' => 'NEAR EXPIRED', 'color' => 'bg-amber-50 text-amber-600 border-amber-100'];
+        }
+
+        return (object) ['label' => 'ACTIVE', 'color' => 'bg-emerald-50 text-emerald-600 border-emerald-100'];
+    }
 }

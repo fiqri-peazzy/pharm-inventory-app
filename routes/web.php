@@ -63,5 +63,9 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/distributions/request', [App\Http\Controllers\Inventory\InventoryController::class, 'createDistributionRequest'])->name('distributions.request');
         Route::get('/distributions/{id}/process', [App\Http\Controllers\Inventory\InventoryController::class, 'processDistribution'])->name('distributions.process');
         Route::get('/distributions/{id}/receive', [App\Http\Controllers\Inventory\InventoryController::class, 'receiveDistribution'])->name('distributions.receive');
+
+        // Stock Cards & Batches
+        Route::get('/stocks/cards', [App\Http\Controllers\Inventory\InventoryController::class, 'stockCards'])->name('stocks.cards');
+        Route::get('/stocks/batches', [App\Http\Controllers\Inventory\InventoryController::class, 'batches'])->name('stocks.batches');
     });
 });

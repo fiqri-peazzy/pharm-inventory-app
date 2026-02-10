@@ -37,6 +37,7 @@ class ReceivingService
                     'warehouse_id' => $rcv->warehouse_id,
                     'item_batch_id' => $batch->id,
                     'transaction_date' => $rcv->receiving_date,
+                    'transaction_type' => 'receiving',
                     'reference_type' => 'receiving',
                     'reference_id' => $rcv->id,
                     'qty_in' => $detail->qty_received,

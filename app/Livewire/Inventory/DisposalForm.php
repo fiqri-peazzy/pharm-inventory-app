@@ -216,13 +216,14 @@ class DisposalForm extends Component
                             'item_id' => $row['item_id'],
                             'warehouse_id' => $this->warehouse_id,
                             'item_batch_id' => $row['item_batch_id'],
+                            'transaction_date' => $this->disposal_date,
                             'transaction_type' => $this->type === 'disposal' ? 'disposal' : 'return_to_supplier',
-                            'reference_number' => $this->disposal_number,
+                            'reference_type' => Disposal::class,
+                            'reference_id' => $disposal->id,
+                            'qty_in' => 0,
                             'qty_out' => $row['qty'],
-                            'before_qty' => $oldQty,
-                            'after_qty' => $oldQty - $row['qty'],
+                            'last_stock' => $oldQty - $row['qty'],
                             'notes' => $row['reason'],
-                            'created_by' => Auth::id(),
                         ]);
                     }
                 }

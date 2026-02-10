@@ -11,6 +11,7 @@ class StockCard extends Model
         'warehouse_id',
         'item_batch_id',
         'transaction_date',
+        'transaction_type',
         'reference_type',
         'reference_id',
         'qty_in',

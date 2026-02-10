@@ -64,4 +64,14 @@ class InventoryController extends Controller
             'distributionId' => $id
         ]);
     }
+
+    public function stockCards()
+    {
+        return view('pages.inventory.stocks.cards');
+    }
+
+    public function batches()
+    {
+        return view('pages.inventory.stocks.batches');
+    }
 }
