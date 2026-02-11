@@ -156,7 +156,7 @@ class DisposalForm extends Component
             'reason' => 'Rusak/ED',
         ];
 
-        $this->showItemModal = false;
+        $this->dispatch('close-item-modal');
         $this->itemSearch = '';
         $this->searchResults = [];
         $this->selectedItemForBatch = null;

@@ -149,65 +149,101 @@
     </div>
 
     <!-- Item Search Modal -->
-    <div x-data="{ open: @entangle('showItemModal') }" 
+    <div x-data="{ open: false }" 
+         @open-item-modal.window="open = true" 
+         @close-item-modal.window="open = false" 
          x-show="open" 
-         @open-item-modal.window="open = true"
-         class="fixed inset-0 z-[1000] overflow-y-auto" style="display: none;">
-        <div class="flex min-h-screen items-center justify-center p-4">
-            <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" @click="open = false"></div>
+         class="fixed inset-0 z-[1000000] overflow-y-auto font-sans" style="display: none;">
+        
+        <!-- Backdrop -->
+        <div x-show="open" 
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @click="open = false" 
+             class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
 
-            <div class="relative w-full max-w-2xl rounded-2xl bg-white p-8 shadow-2xl dark:bg-gray-900 border border-white/10">
-                <div class="flex items-center justify-between mb-8 border-b border-gray-50 dark:border-gray-800 pb-4">
+        <!-- Modal Content Container -->
+        <div class="flex min-h-screen items-center justify-center p-4">
+            <div x-show="open"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100"
+                 x-transition:leave-end="opacity-0 scale-95"
+                 class="relative w-full max-w-2xl rounded-2xl bg-white p-0 shadow-2xl dark:bg-gray-900 border border-white/10 overflow-hidden transform transition-all">
+                
+                <div class="flex items-center justify-between p-6 border-b border-gray-50 dark:border-gray-800 bg-gray-50/50 dark:bg-white/5">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         </div>
                         <div>
-                            <h3 class="text-lg font-black uppercase tracking-tighter text-gray-900 dark:text-white leading-tight">Cari Perbekalan Farmasi</h3>
-                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Master Item Obat & BMHP</p>
+                            <h3 class="text-base font-black uppercase tracking-tighter text-gray-900 dark:text-white leading-tight">Cari Perbekalan Farmasi</h3>
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-0.5">MASTER ITEM OBAT & BMHP</p>
                         </div>
                     </div>
-                    <button @click="open = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                    <button @click="open = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"></path></svg>
                     </button>
                 </div>
 
-                <div class="relative mb-6">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    </span>
-                    <input type="text" wire:model.live.debounce.300ms="itemSearch" placeholder="Ketik nama obat atau kode barang (Min. 2 karakter)..." class="w-full rounded-xl border border-gray-200 bg-gray-50 py-4 pl-12 pr-4 text-sm font-bold focus:bg-white focus:ring-2 focus:ring-emerald-500/20 outline-none dark:border-gray-800 dark:bg-gray-800 transition-all">
-                </div>
+                <div class="p-6">
+                    <div class="relative mb-6">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </span>
+                        <input type="text" wire:model.live.debounce.300ms="itemSearch" placeholder="Ketik nama obat atau kode barang..." class="w-full rounded-xl border border-gray-200 bg-gray-50 py-4 pl-12 pr-4 text-sm font-bold focus:bg-white focus:ring-2 focus:ring-emerald-500/20 outline-none dark:border-gray-800 dark:bg-gray-800 dark:text-white transition-all shadow-inner">
+                    </div>
 
-                <div class="max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-                    @if(count($searchResults) > 0)
-                        <div class="grid grid-cols-1 gap-2">
-                            @foreach($searchResults as $item)
-                                <button wire:click="addItem({{ $item->id }})" class="flex items-center justify-between p-4 rounded-xl border border-gray-50 bg-white hover:border-emerald-500 hover:bg-emerald-50/30 transition-all text-left group dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-emerald-500/5">
-                                    <div class="flex flex-col">
-                                        <span class="text-sm font-black text-gray-900 dark:text-white group-hover:text-emerald-600 uppercase tracking-tight">{{ $item->name }}</span>
-                                        <div class="flex items-center gap-2 mt-1">
-                                            <span class="text-[10px] font-mono text-gray-400 uppercase tracking-tighter">{{ $item->code }}</span>
-                                            <span class="w-1 h-1 rounded-full bg-gray-300"></span>
-                                            <span class="text-[10px] font-bold text-gray-500 italic">{{ $item->unit?->name }}</span>
+                    <div class="max-h-[400px] overflow-y-auto custom-scrollbar pr-2 divide-y divide-gray-50 dark:divide-gray-800">
+                        <!-- Loading State -->
+                        <div wire:loading wire:target="itemSearch" class="py-12 text-center">
+                            <svg class="animate-spin h-8 w-8 text-emerald-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">Mencari Data...</p>
+                        </div>
+
+                        <!-- Results -->
+                        <div wire:loading.remove wire:target="itemSearch">
+                            @forelse($searchResults as $item)
+                                <button wire:click="addItem({{ $item->id }})" class="w-full flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-all text-left group">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg flex items-center justify-center font-black text-sm">
+                                            {{ substr($item->name, 0, 1) }}
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <span class="text-sm font-black text-gray-900 dark:text-white group-hover:text-emerald-600 transition-colors uppercase tracking-tight">{{ $item->name }}</span>
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <span class="text-[10px] font-mono text-gray-400 uppercase tracking-tighter">{{ $item->code }}</span>
+                                                <span class="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600"></span>
+                                                <span class="text-[10px] font-bold text-gray-500 italic">{{ $item->unit?->name }}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <span class="rounded-lg bg-emerald-500 px-3 py-1.5 text-[10px] font-black text-white uppercase tracking-widest shadow-lg shadow-emerald-500/20">Pilih</span>
+                                    <div class="opacity-0 group-hover:opacity-100 transition-all">
+                                        <span class="rounded-lg bg-emerald-500 px-4 py-2 text-[10px] font-black text-white uppercase tracking-widest shadow-lg shadow-emerald-500/20">PILIH</span>
                                     </div>
                                 </button>
-                            @endforeach
+                            @empty
+                                <div class="py-16 text-center text-gray-400">
+                                    @if(strlen($itemSearch) >= 2)
+                                        <svg class="w-12 h-12 mx-auto mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                        <span class="text-[10px] font-black uppercase tracking-widest">Maaf, item tidak ditemukan</span>
+                                    @else
+                                        <svg class="w-12 h-12 mx-auto mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        <p class="text-[10px] font-black uppercase tracking-widest">Ketik nama obat untuk mencari</p>
+                                    @endif
+                                </div>
+                            @endforelse
                         </div>
-                    @elseif(strlen($itemSearch) >= 2)
-                        <div class="py-12 text-center text-gray-400 italic">
-                            <svg class="w-12 h-12 mx-auto mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <span class="text-sm">Item tidak ditemukan.</span>
-                        </div>
-                    @else
-                        <div class="py-12 text-center text-gray-400 italic">
-                            <p class="text-xs uppercase font-bold tracking-widest opacity-40">Mulai mengetik untuk mencari...</p>
-                        </div>
-                    @endif
+                    </div>
                 </div>
             </div>
         </div>

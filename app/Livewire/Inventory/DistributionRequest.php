@@ -15,6 +15,7 @@ class DistributionRequest extends Component
     public $items = []; // [[item_id, name, qty]]
     
     // Search
+    public $showItemModal = false;
     public $search = '';
     public $searchResults = [];
 
@@ -61,6 +62,7 @@ class DistributionRequest extends Component
             'qty' => 1
         ];
 
+        $this->dispatch('close-item-modal');
         $this->search = '';
         $this->searchResults = [];
     }

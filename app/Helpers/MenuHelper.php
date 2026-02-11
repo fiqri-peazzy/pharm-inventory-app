@@ -148,6 +148,23 @@ class MenuHelper
                 ]
             ],
             [
+                'title' => 'KLINIK & PELAYANAN',
+                'items' => [
+                    [
+                        'name' => 'Resep Pasien',
+                        'path' => '/clinical/prescriptions',
+                        'icon' => 'file-text',
+                        'permission' => 'prescriptions.view',
+                    ],
+                    [
+                        'name' => 'Permintaan Ruangan',
+                        'path' => '/clinical/ward-requests',
+                        'icon' => 'package',
+                        'permission' => 'ward-requests.view',
+                    ],
+                ]
+            ],
+            [
                 'title' => 'LAPORAN',
                 'items' => [
                     [

@@ -24,6 +24,7 @@ class PermissionSeeder extends Seeder
             'stocks' => ['view', 'adjust'],
             'distributions' => ['view', 'create', 'update', 'delete', 'approve'],
             'prescriptions' => ['view', 'create', 'process'],
+            'ward-requests' => ['view', 'create', 'approve', 'process'],
             'stock-opnames' => ['view', 'create', 'update', 'delete', 'approve'],
             'adjustments' => ['view', 'create', 'approve'],
             'returns' => ['view', 'create', 'update', 'delete', 'approve'],
@@ -65,6 +66,7 @@ class PermissionSeeder extends Seeder
             'stocks.view',
             'distributions.view', 'distributions.approve',
             'prescriptions.view',
+            'ward-requests.view', 'ward-requests.approve',
             'stock-opnames.view', 'stock-opnames.approve',
             'adjustments.view', 'adjustments.approve',
             'returns.view', 'returns.approve',
@@ -83,6 +85,7 @@ class PermissionSeeder extends Seeder
             'stocks.view',
             'distributions.view',
             'prescriptions.view', 'prescriptions.create', 'prescriptions.process',
+            'ward-requests.view', 'ward-requests.create', 'ward-requests.process',
             'returns.view', 'returns.create',
             'reports-stock.view',
         ]);
@@ -151,5 +154,8 @@ class PermissionSeeder extends Seeder
             'purchase-orders.view', 'purchase-orders.direktur-approve',
             'reports-stock.view', 'reports-accounting.view',
         ]);
+
+        $doctor = Role::firstOrCreate(['name' => 'doctor']);
+        $doctor->syncPermissions(['dashboard.view', 'master-items.view', 'prescriptions.view', 'prescriptions.create']);
     }
 }

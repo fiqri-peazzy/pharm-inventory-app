@@ -233,7 +233,7 @@ class PurchaseOrderForm extends Component
         ];
 
         $this->calculateTotals();
-        $this->showItemModal = false;
+        $this->dispatch('close-item-modal');
         $this->itemSearch = '';
         $this->searchResults = [];
     }

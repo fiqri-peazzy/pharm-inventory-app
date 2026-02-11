@@ -166,7 +166,7 @@ class PurchaseRequestForm extends Component
             'notes' => '',
         ];
 
-        $this->showItemModal = false;
+        $this->dispatch('close-item-modal');
         $this->itemSearch = '';
         $this->searchResults = [];
     }

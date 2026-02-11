@@ -132,72 +132,115 @@
     </div>
 
     <!-- Search & Batch Modal -->
-    <div x-data="{ open: @entangle('showItemModal') }" 
+    <div x-data="{ open: false }" 
+         @open-item-modal.window="open = true" 
+         @close-item-modal.window="open = false" 
          x-show="open" 
-         @open-item-modal.window="open = true"
-         class="fixed inset-0 z-[1000] overflow-y-auto" style="display: none;">
-        <div class="flex min-h-screen items-center justify-center p-4">
-            <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" @click="open = false"></div>
+         class="fixed inset-0 z-[1000000] overflow-y-auto font-sans" style="display: none;">
+         
+        <!-- Backdrop -->
+        <div x-show="open" 
+             x-transition:enter="ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @click="open = false" 
+             class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
 
-            <div class="relative w-full max-w-3xl rounded-2xl bg-white p-8 shadow-2xl dark:bg-gray-900 border border-white/10">
-                <div class="flex items-center justify-between mb-8 border-b border-gray-50 dark:border-gray-800 pb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-600/30">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <!-- Modal Content Container -->
+        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+            <div x-show="open"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 class="relative inline-block w-full max-w-4xl text-left bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all align-middle">
+                
+                <!-- Header -->
+                <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center text-xs uppercase font-black tracking-widest text-slate-500">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center text-white shadow-sm">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         </div>
-                        <div>
-                            <h3 class="text-lg font-black uppercase tracking-tighter text-gray-900 dark:text-white leading-tight">Cari & Pilih Batch Barang</h3>
-                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Hanya menampilkan batch yang tersedia di gudang terpilih</p>
-                        </div>
+                        Cari & Pilih Batch Barang
                     </div>
-                    <button @click="open = false" class="text-gray-400 hover:text-gray-600 transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>
+                    <button @click="open = false" class="text-slate-400 hover:text-slate-600 transition-colors bg-white w-8 h-8 rounded-lg border border-slate-100 flex items-center justify-center shadow-sm">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                    </button>
                 </div>
+                
+                <div class="p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Left: Item Search -->
+                        <div class="space-y-4">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 block px-1">1. Cari Nama Barang</label>
+                            <div class="relative">
+                                <input type="text" wire:model.live.debounce.300ms="itemSearch" class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 font-bold text-slate-700 shadow-inner text-sm" placeholder="Ketik nama barang...">
+                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                </div>
+                            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Left: Search Results -->
-                    <div class="space-y-4">
-                        <div class="relative">
-                            <input type="text" wire:model.live.debounce.300ms="itemSearch" placeholder="Cari nama barang..." class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-4 pr-10 text-sm font-bold focus:bg-white focus:ring-2 focus:ring-red-500/20 outline-none dark:border-gray-800 dark:bg-gray-800 transition-all">
-                        </div>
-                        <div class="max-h-[350px] overflow-y-auto pr-2 flex flex-col gap-2">
-                            @foreach($searchResults as $item)
-                                <button wire:click="selectItem({{ $item->id }})" class="w-full flex items-center justify-between p-3 rounded-lg border {{ $selectedItemForBatch?->id == $item->id ? 'border-red-500 bg-red-50/50' : 'border-gray-50 bg-white' }} hover:border-red-500 transition-all text-left group dark:bg-gray-800">
-                                    <div class="flex flex-col">
-                                        <span class="text-xs font-black text-gray-800 dark:text-white group-hover:text-red-500 uppercase tracking-tight">{{ $item->name }}</span>
-                                        <span class="text-[9px] font-mono text-gray-400">{{ $item->code }}</span>
-                                    </div>
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="{{ $selectedItemForBatch?->id == $item->id ? 'text-red-500' : 'text-gray-200' }}"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                                </button>
-                            @endforeach
-                        </div>
-                    </div>
-
-                    <!-- Right: Batch List -->
-                    <div class="bg-gray-50/50 dark:bg-white/[0.02] rounded-xl p-4 border border-gray-100 dark:border-gray-800">
-                        <label class="text-[10px] font-black uppercase text-gray-400 mb-3 block">Pilih Batch Tersedia:</label>
-                        @if($selectedItemForBatch)
-                            <div class="flex flex-col gap-2">
-                                @forelse($itemBatches as $batch)
-                                    <button wire:click="addBatchRow({{ $batch->id }})" class="flex items-center justify-between p-3 rounded-lg bg-white border border-gray-50 hover:bg-red-50 hover:border-red-300 transition-all text-left dark:bg-gray-800 dark:border-gray-700">
+                            <div class="max-h-[350px] overflow-y-auto pr-2 flex flex-col gap-2 custom-scrollbar">
+                                @forelse($searchResults as $item)
+                                    <button wire:click="selectItem({{ $item->id }})" class="w-full flex items-center justify-between p-4 rounded-xl border {{ $selectedItemForBatch?->id == $item->id ? 'border-red-500 bg-red-50/50 ring-1 ring-red-500' : 'border-slate-100 bg-white' }} hover:border-red-500 transition-all text-left group shadow-sm">
                                         <div class="flex flex-col">
-                                            <span class="text-xs font-black text-indigo-600 dark:text-indigo-400 capitalize">{{ $batch->batch_number }}</span>
-                                            <span class="text-[10px] font-bold text-red-500 uppercase">ED: {{ $batch->expiry_date->format('d/m/Y') }}</span>
+                                            <span class="text-xs font-black text-slate-800 group-hover:text-red-600 uppercase tracking-tight">{{ $item->name }}</span>
+                                            <span class="text-[9px] font-mono text-slate-400 mt-1 uppercase">{{ $item->code }}</span>
                                         </div>
-                                        <div class="text-right">
-                                            <span class="text-[10px] font-black text-gray-900 dark:text-white">Stok: {{ number_format($batch->current_qty) }}</span>
-                                            <p class="text-[9px] font-bold text-emerald-500 uppercase tracking-widest mt-0.5">Pilih ↗</p>
-                                        </div>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="{{ $selectedItemForBatch?->id == $item->id ? 'text-red-600' : 'text-slate-200' }}"><polyline points="9 18 15 12 9 6"></polyline></svg>
                                     </button>
                                 @empty
-                                    <p class="py-12 text-center text-gray-400 text-xs italic">Tidak ada stok tersedia di gudang ini.</p>
+                                    @if(strlen($itemSearch) >= 2)
+                                        <p class="py-12 text-center text-slate-300 text-[10px] font-black uppercase tracking-widest italic">Barang tidak ditemukan</p>
+                                    @endif
                                 @endforelse
                             </div>
-                        @else
-                            <div class="py-20 text-center text-gray-300 opacity-50 italic text-xs">
-                                <p><- Silakan pilih item di sebelah kiri</p>
-                            </div>
-                        @endif
+                        </div>
+
+                        <!-- Right: Batch Selection -->
+                        <div class="bg-slate-50/50 rounded-2xl p-6 border border-slate-100 flex flex-col h-full ring-1 ring-slate-100">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5 block">2. Pilih Batch Tersedia</label>
+                            
+                            @if($selectedItemForBatch)
+                                <div class="flex flex-col gap-3 flex-1 overflow-y-auto pr-1">
+                                    @forelse($itemBatches as $batch)
+                                        <button wire:click="addBatchRow({{ $batch->id }})" class="flex items-center justify-between p-4 rounded-xl bg-white border border-slate-100 hover:bg-emerald-50 hover:border-emerald-500 hover:ring-1 hover:ring-emerald-500 transition-all text-left shadow-sm group">
+                                            <div class="flex flex-col">
+                                                <span class="text-xs font-black text-indigo-700 uppercase tracking-tight">{{ $batch->batch_number }}</span>
+                                                <span class="text-[10px] font-bold text-red-500 uppercase mt-1">ED: {{ $batch->expiry_date->format('d/m/Y') }}</span>
+                                            </div>
+                                            <div class="text-right">
+                                                <span class="text-[10px] font-black text-slate-900 block">Stok: {{ number_format($batch->current_qty) }}</span>
+                                                <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Pilih ↗</p>
+                                            </div>
+                                        </button>
+                                    @empty
+                                        <div class="flex flex-col items-center justify-center flex-1 py-20 text-center text-slate-400 bg-white/50 rounded-xl border border-dashed border-slate-200">
+                                            <svg class="w-10 h-10 opacity-20 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                                            <p class="text-[10px] font-black uppercase tracking-widest px-6 italic">Tidak ada stok tersedia di gudang ini</p>
+                                        </div>
+                                    @endforelse
+                                </div>
+                            @else
+                                <div class="flex flex-col items-center justify-center flex-1 py-10 text-center">
+                                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-inner mb-4 border border-slate-50">
+                                        <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                                    </div>
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-300 px-10 italic">Silakan pilih barang di panel sebelah kiri untuk melihat daftar batch</p>
+                                </div>
+                            @endif
+                        </div>
                     </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="px-8 py-4 bg-slate-50 border-t border-slate-100 text-[9px] text-slate-400 font-bold uppercase tracking-widest italic text-center">
+                    * Hanya menampilkan batch dengan stok > 0 di gudang yang dipilih
                 </div>
             </div>
         </div>

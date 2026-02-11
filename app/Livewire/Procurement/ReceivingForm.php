@@ -38,6 +38,7 @@ class ReceivingForm extends Component
     public $grand_total = 0;
 
     public $rows = [];
+    public $showItemModal = false;
     public $itemSearch = '';
     public $searchResults = [];
 
@@ -297,6 +298,7 @@ class ReceivingForm extends Component
                 ];
             }
         }
+        $this->dispatch('close-item-modal');
         $this->itemSearch = '';
         $this->searchResults = [];
         $this->calculateTotals();

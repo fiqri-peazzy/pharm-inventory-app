@@ -68,4 +68,14 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/stocks/cards', [App\Http\Controllers\Inventory\InventoryController::class, 'stockCards'])->name('stocks.cards');
         Route::get('/stocks/batches', [App\Http\Controllers\Inventory\InventoryController::class, 'batches'])->name('stocks.batches');
     });
+
+    // Clinical Routes
+    Route::prefix('clinical')->name('clinical.')->group(function () {
+        Route::get('/prescriptions', [App\Http\Controllers\Clinical\ClinicalController::class, 'prescriptions'])->name('prescriptions.index');
+        Route::get('/prescriptions/create', [App\Http\Controllers\Clinical\ClinicalController::class, 'createPrescription'])->name('prescriptions.create');
+        Route::get('/prescriptions/{id}/dispense', [App\Http\Controllers\Clinical\ClinicalController::class, 'dispensePrescription'])->name('prescriptions.dispense');
+
+        Route::get('/ward-requests', [App\Http\Controllers\Clinical\ClinicalController::class, 'wardRequests'])->name('ward-requests.index');
+        Route::get('/ward-requests/create', [App\Http\Controllers\Clinical\ClinicalController::class, 'createWardRequest'])->name('ward-requests.create');
+    });
 });
