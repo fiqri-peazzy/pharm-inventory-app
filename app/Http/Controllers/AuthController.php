@@ -104,17 +104,7 @@ class AuthController extends Controller
 
     private function redirectPath(User $user): string
     {
-        // High-level access -> Global Inventory Dashboard
-        if ($user->hasAnyRole(['super-admin', 'kepala-farmasi', 'direktur', 'bupati'])) {
-            return route('inventory.dashboard');
-        }
-
-        // Warehouse specific access -> Warehouse Dashboard
-        if ($user->warehouse_id) {
-            return route('inventory.dashboard', ['warehouse' => $user->warehouse_id]);
-        }
-
-        return '/dashboard';
+        return $user->getHomeRoute();
     }
 
     public function showResetPassword()

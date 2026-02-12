@@ -13,6 +13,8 @@ use DB;
 
 class PrescriptionForm extends Component
 {
+    public $prescriptionId;
+    public $isEdit = false;
     // Header
     public $prescription_number;
     public $patient_name;
@@ -38,18 +40,54 @@ class PrescriptionForm extends Component
         'rows.*.qty' => 'required|numeric|min:0.1',
     ];
 
-    public function mount()
+    public function mount($prescriptionId = null)
     {
         $this->prescription_date = date('Y-m-d');
-        $this->generateNumber();
         
-        // Default warehouse (Pharmacy)
-        $pharmacy = Warehouse::where('type', 'depo_farmasi')->first();
-        if ($pharmacy) $this->warehouse_id = $pharmacy->id;
+        if ($prescriptionId) {
+            $this->prescriptionId = $prescriptionId;
+            $this->isEdit = true;
+            $rx = Prescription::with('details.item')->findOrFail($prescriptionId);
+            
+            $this->prescription_number = $rx->prescription_number;
+            $this->patient_name = $rx->patient_name;
+            $this->medical_record_number = $rx->medical_record_number;
+            $this->service_unit_id = $rx->service_unit_id;
+            $this->warehouse_id = $rx->warehouse_id;
+            $this->prescription_date = $rx->prescription_date->format('Y-m-d');
+            
+            foreach ($rx->details as $detail) {
+                // Check stock in selected pharmacy
+                $stock = ItemBatch::where('item_id', $detail->item_id)
+                    ->where('warehouse_id', $this->warehouse_id)
+                    ->where('is_active', true)
+                    ->where('expired_date', '>', now())
+                    ->sum('current_qty');
 
-        // Default Service Unit
-        $unit = ServiceUnit::active()->first();
-        if ($unit) $this->service_unit_id = $unit->id;
+                $status = 'normal';
+                if ($stock <= 0) $status = 'out_of_stock';
+                elseif ($stock < 20) $status = 'low_stock';
+
+                $this->rows[] = [
+                    'item_id' => $detail->item_id,
+                    'item_name' => $detail->item->name,
+                    'qty' => $detail->qty,
+                    'instruction' => $detail->instruction,
+                    'available_stock' => $stock,
+                    'stock_status' => $status
+                ];
+            }
+        } else {
+            $this->generateNumber();
+            
+            // Default warehouse (Pharmacy)
+            $pharmacy = Warehouse::where('type', 'depo_farmasi')->first();
+            if ($pharmacy) $this->warehouse_id = $pharmacy->id;
+
+            // Default Service Unit
+            $unit = ServiceUnit::active()->first();
+            if ($unit) $this->service_unit_id = $unit->id;
+        }
     }
 
     public function generateNumber()
@@ -118,7 +156,7 @@ class PrescriptionForm extends Component
 
         try {
             DB::transaction(function () {
-                $prescription = Prescription::create([
+                $data = [
                     'prescription_number' => $this->prescription_number,
                     'patient_name' => $this->patient_name,
                     'medical_record_number' => $this->medical_record_number,
@@ -128,10 +166,18 @@ class PrescriptionForm extends Component
                     'warehouse_id' => $this->warehouse_id,
                     'prescription_date' => $this->prescription_date,
                     'status' => 'submitted',
-                ]);
+                ];
+
+                if ($this->isEdit) {
+                    $rx = Prescription::findOrFail($this->prescriptionId);
+                    $rx->update($data);
+                    $rx->details()->delete();
+                } else {
+                    $rx = Prescription::create($data);
+                }
 
                 foreach ($this->rows as $row) {
-                    $prescription->details()->create([
+                    $rx->details()->create([
                         'item_id' => $row['item_id'],
                         'qty' => $row['qty'],
                         'instruction' => $row['instruction'],
@@ -139,7 +185,7 @@ class PrescriptionForm extends Component
                 }
             });
 
-            session()->flash('notify', ['type' => 'success', 'message' => 'Resep berhasil dikirim ke Apotek.']);
+            session()->flash('notify', ['type' => 'success', 'message' => $this->isEdit ? 'Resep berhasil diperbarui.' : 'Resep berhasil dikirim ke Apotek.']);
             return redirect()->route('clinical.prescriptions.index');
 
         } catch (\Exception $e) {

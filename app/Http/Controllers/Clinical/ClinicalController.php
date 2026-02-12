@@ -17,6 +17,11 @@ class ClinicalController extends Controller
         return view('pages.clinical.prescriptions.form');
     }
 
+    public function editPrescription($id)
+    {
+        return view('pages.clinical.prescriptions.form', ['id' => $id]);
+    }
+
     public function dispensePrescription($id)
     {
         return view('pages.clinical.prescriptions.dispense', [
@@ -32,5 +37,10 @@ class ClinicalController extends Controller
     public function createWardRequest()
     {
         return view('pages.clinical.ward-requests.form');
+    }
+
+    public function editWardRequest($id)
+    {
+        return view('pages.clinical.ward-requests.form', ['id' => $id]);
     }
 }

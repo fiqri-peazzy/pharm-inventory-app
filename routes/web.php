@@ -57,6 +57,15 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/disposals', [App\Http\Controllers\Inventory\InventoryController::class, 'disposals'])->name('disposals.index');
         Route::get('/disposals/create', [App\Http\Controllers\Inventory\InventoryController::class, 'createDisposal'])->name('disposals.create');
         Route::get('/disposals/{id}/edit', [App\Http\Controllers\Inventory\InventoryController::class, 'editDisposal'])->name('disposals.edit');
+        
+        // Stock Opnames
+        Route::get('/stock-opnames', [App\Http\Controllers\Inventory\InventoryController::class, 'stockOpnames'])->name('stock-opnames.index');
+        Route::get('/stock-opnames/create', [App\Http\Controllers\Inventory\InventoryController::class, 'createStockOpname'])->name('stock-opnames.create');
+        Route::get('/stock-opnames/{id}/edit', [App\Http\Controllers\Inventory\InventoryController::class, 'editStockOpname'])->name('stock-opnames.edit');
+
+        // Adjustments & Returns (Placeholders for Stage 4 & 6)
+        Route::get('/adjustments', function() { return "Adjustment Module Coming Soon"; })->name('adjustments');
+        Route::get('/returns', function() { return "Returns Module Coming Soon"; })->name('returns');
 
         // Distributions
         Route::get('/distributions', [App\Http\Controllers\Inventory\InventoryController::class, 'distributions'])->name('distributions.index');
@@ -74,8 +83,10 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/prescriptions', [App\Http\Controllers\Clinical\ClinicalController::class, 'prescriptions'])->name('prescriptions.index');
         Route::get('/prescriptions/create', [App\Http\Controllers\Clinical\ClinicalController::class, 'createPrescription'])->name('prescriptions.create');
         Route::get('/prescriptions/{id}/dispense', [App\Http\Controllers\Clinical\ClinicalController::class, 'dispensePrescription'])->name('prescriptions.dispense');
+        Route::get('/prescriptions/{id}/edit', [App\Http\Controllers\Clinical\ClinicalController::class, 'editPrescription'])->name('prescriptions.edit');
 
         Route::get('/ward-requests', [App\Http\Controllers\Clinical\ClinicalController::class, 'wardRequests'])->name('ward-requests.index');
         Route::get('/ward-requests/create', [App\Http\Controllers\Clinical\ClinicalController::class, 'createWardRequest'])->name('ward-requests.create');
+        Route::get('/ward-requests/{id}/edit', [App\Http\Controllers\Clinical\ClinicalController::class, 'editWardRequest'])->name('ward-requests.edit');
     });
 });

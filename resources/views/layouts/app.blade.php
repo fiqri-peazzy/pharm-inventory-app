@@ -11,6 +11,9 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+
     <!-- Alpine.js -->
     {{-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
 
@@ -164,6 +167,11 @@
                     title: event.message
                 });
             });
+
+            // Initial session notification check
+            @if(session()->has('notify'))
+                Livewire.dispatch('notify', @json(session('notify')));
+            @endif
 
             // Confirmation Listener
             Livewire.on('confirm-delete', (data) => {

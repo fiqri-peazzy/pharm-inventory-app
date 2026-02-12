@@ -16,9 +16,41 @@ class PrescriptionIndex extends Component
     public $warehouse_id = '';
     public $service_unit_id = '';
 
+    // Modal states
+    public $showDetailModal = false;
+    public $showEtiketModal = false;
+    public $showPrintModal = false; // New modal for Salinan Resep
+    public $selectedPrescription = null;
+
     public function updatingSearch()
     {
         $this->resetPage();
+    }
+
+    public function printEtiket($id)
+    {
+        $this->selectedPrescription = Prescription::with(['details.item', 'serviceUnit'])->findOrFail($id);
+        $this->showEtiketModal = true;
+    }
+
+    public function printPrescription($id)
+    {
+        $this->selectedPrescription = Prescription::with(['details.item', 'warehouse', 'doctor', 'serviceUnit'])->findOrFail($id);
+        $this->showPrintModal = true;
+    }
+
+    public function viewDetails($id)
+    {
+        $this->selectedPrescription = Prescription::with(['details.item', 'warehouse', 'doctor', 'serviceUnit'])->findOrFail($id);
+        $this->showDetailModal = true;
+    }
+
+    public function closeModals()
+    {
+        $this->showDetailModal = false;
+        $this->showEtiketModal = false;
+        $this->showPrintModal = false;
+        $this->selectedPrescription = null;
     }
 
     public function render()

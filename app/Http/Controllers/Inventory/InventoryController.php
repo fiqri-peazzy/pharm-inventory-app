@@ -74,4 +74,21 @@ class InventoryController extends Controller
     {
         return view('pages.inventory.stocks.batches');
     }
+
+    public function stockOpnames()
+    {
+        return view('pages.inventory.stock-opnames.index');
+    }
+
+    public function createStockOpname()
+    {
+        return view('pages.inventory.stock-opnames.form');
+    }
+
+    public function editStockOpname($id)
+    {
+        return view('pages.inventory.stock-opnames.form', [
+            'opnameId' => $id
+        ]);
+    }
 }

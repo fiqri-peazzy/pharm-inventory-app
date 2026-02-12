@@ -98,4 +98,28 @@ class User extends Authenticatable
     {
         $this->update(['last_login_at' => now()]);
     }
+
+    public function getHomeRoute(): string
+    {
+        // High-level access -> Global Inventory Dashboard
+        if ($this->hasAnyRole(['super-admin', 'kepala-farmasi', 'direktur', 'bupati'])) {
+            return route('inventory.dashboard');
+        }
+
+        // Specific Roles (Doctor/Pharmacist)
+        if ($this->hasAnyRole(['doctor', 'apoteker'])) {
+            // If they have a warehouse assigned, go there, otherwise clinical dashboard
+            if ($this->warehouse_id) {
+                return route('inventory.dashboard', ['warehouse' => $this->warehouse_id]);
+            }
+            return route('clinical.prescriptions.index');
+        }
+
+        // Warehouse specific access -> Warehouse Dashboard
+        if ($this->warehouse_id) {
+            return route('inventory.dashboard', ['warehouse' => $this->warehouse_id]);
+        }
+
+        return route('dashboard');
+    }
 }

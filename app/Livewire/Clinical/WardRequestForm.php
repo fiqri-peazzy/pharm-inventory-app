@@ -12,6 +12,8 @@ use DB;
 
 class WardRequestForm extends Component
 {
+    public $requestId;
+    public $isEdit = false;
     // Header
     public $request_number;
     public $service_unit_id;
@@ -35,23 +37,45 @@ class WardRequestForm extends Component
         'rows.*.qty_requested' => 'required|numeric|min:1',
     ];
 
-    public function mount()
+    public function mount($requestId = null)
     {
         $this->request_date = date('Y-m-d');
-        $this->generateNumber();
-
-        // Try to pre-select unit based on user (optional logic)
-        $unit = ServiceUnit::active()->first();
-        if ($unit) {
-            $this->service_unit_id = $unit->id;
-            if ($unit->default_warehouse_id) {
-                $this->warehouse_id = $unit->default_warehouse_id;
+        
+        if ($requestId) {
+            $this->requestId = $requestId;
+            $this->isEdit = true;
+            $request = WardRequest::with('details.item')->findOrFail($requestId);
+            
+            $this->request_number = $request->request_number;
+            $this->service_unit_id = $request->service_unit_id;
+            $this->warehouse_id = $request->warehouse_id;
+            $this->request_date = $request->request_date->format('Y-m-d');
+            $this->notes = $request->notes;
+            
+            foreach ($request->details as $detail) {
+                $this->rows[] = [
+                    'item_id' => $detail->item_id,
+                    'item_name' => $detail->item->name,
+                    'qty_requested' => $detail->qty_requested,
+                    'notes' => $detail->notes
+                ];
             }
-        }
+        } else {
+            $this->generateNumber();
 
-        if (!$this->warehouse_id) {
-            $mainWh = Warehouse::where('is_main', true)->first();
-            if ($mainWh) $this->warehouse_id = $mainWh->id;
+            // Try to pre-select unit based on user (optional logic)
+            $unit = ServiceUnit::active()->first();
+            if ($unit) {
+                $this->service_unit_id = $unit->id;
+                if ($unit->default_warehouse_id) {
+                    $this->warehouse_id = $unit->default_warehouse_id;
+                }
+            }
+
+            if (!$this->warehouse_id) {
+                $mainWh = Warehouse::where('is_main', true)->first();
+                if ($mainWh) $this->warehouse_id = $mainWh->id;
+            }
         }
     }
 
@@ -108,7 +132,7 @@ class WardRequestForm extends Component
 
         try {
             DB::transaction(function () {
-                $request = WardRequest::create([
+                $data = [
                     'request_number' => $this->request_number,
                     'service_unit_id' => $this->service_unit_id,
                     'warehouse_id' => $this->warehouse_id,
@@ -116,7 +140,15 @@ class WardRequestForm extends Component
                     'status' => 'requested',
                     'notes' => $this->notes,
                     'requested_by' => Auth::id(),
-                ]);
+                ];
+
+                if ($this->isEdit) {
+                    $request = WardRequest::findOrFail($this->requestId);
+                    $request->update($data);
+                    $request->details()->delete();
+                } else {
+                    $request = WardRequest::create($data);
+                }
 
                 foreach ($this->rows as $row) {
                     $request->details()->create([
@@ -127,7 +159,7 @@ class WardRequestForm extends Component
                 }
             });
 
-            session()->flash('notify', ['type' => 'success', 'message' => 'Permintaan unit berhasil dikirim.']);
+            session()->flash('notify', ['type' => 'success', 'message' => $this->isEdit ? 'Permintaan unit berhasil diperbarui.' : 'Permintaan unit berhasil dikirim.']);
             return redirect()->route('clinical.ward-requests.index');
 
         } catch (\Exception $e) {
