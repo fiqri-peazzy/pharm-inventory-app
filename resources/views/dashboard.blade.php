@@ -14,7 +14,7 @@
             <div class="mt-4 flex items-end justify-between">
                 <div>
                     <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Stok Obat</h4>
-                    <h2 class="mt-1 text-2xl font-bold text-gray-800 dark:text-white/90">2.450</h2>
+                    <h2 class="mt-1 text-2xl font-bold text-gray-800 dark:text-white/90">{{ number_format($totalStock, 0, ',', '.') }}</h2>
                 </div>
                 <span class="flex items-center text-sm font-medium text-success-500">
                     <svg class="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 15V5M10 5L14 9M10 5L6 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -33,7 +33,7 @@
             <div class="mt-4 flex items-end justify-between">
                 <div>
                     <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400">Hampir Kadaluwarsa</h4>
-                    <h2 class="mt-1 text-2xl font-bold text-gray-800 dark:text-white/90">12</h2>
+                    <h2 class="mt-1 text-2xl font-bold text-gray-800 dark:text-white/90">{{ $nearExpiredCount }}</h2>
                 </div>
                 <span class="text-sm font-medium text-error-500">Kritis</span>
             </div>
@@ -87,16 +87,26 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-800 text-gray-600 dark:text-gray-300">
-                        <tr>
-                            <td class="py-3">02 Feb 2026</td>
-                            <td class="py-3">Penerimaan</td>
-                            <td class="py-3"><span class="rounded-full bg-success-50 px-2 py-0.5 text-xs text-success-600 dark:bg-success-500/10">Selesai</span></td>
-                        </tr>
-                        <tr>
-                            <td class="py-3">01 Feb 2026</td>
-                            <td class="py-3">Distribusi</td>
-                            <td class="py-3"><span class="rounded-full bg-orange-50 px-2 py-0.5 text-xs text-orange-600 dark:bg-orange-500/10">Pending</span></td>
-                        </tr>
+                        @forelse($recentActivities as $activity)
+                            <tr>
+                                <td class="py-3">{{ $activity->transaction_date->format('d M Y') }}</td>
+                                <td class="py-3">
+                                    <div class="flex flex-col">
+                                        <span class="font-medium text-gray-800 dark:text-white/90">{{ ucwords(str_replace('_', ' ', $activity->transaction_type)) }}</span>
+                                        <span class="text-xs text-gray-500">{{ $activity->item->name }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-3">
+                                    <span class="rounded-full px-2 py-0.5 text-xs {{ $activity->qty_in > 0 ? 'bg-success-50 text-success-600' : 'bg-rose-50 text-rose-600' }}">
+                                        {{ $activity->qty_in > 0 ? '+' . $activity->qty_in : '-' . $activity->qty_out }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="py-6 text-center text-gray-400">Belum ada transaksi terakhir.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

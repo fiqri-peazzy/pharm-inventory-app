@@ -20,7 +20,7 @@
             </div>
             <div>
                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Menunggu Hitung</p>
-                <h3 class="text-xl font-bold text-slate-800">{{ \App\Models\StockOpname::where('status', 'draft')->count() }} Document</h3>
+                <h3 class="text-xl font-bold text-slate-800">{{ $stats['draft'] }} Document</h3>
             </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
@@ -29,7 +29,7 @@
             </div>
             <div>
                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Sedang Review</p>
-                <h3 class="text-xl font-bold text-slate-800">{{ \App\Models\StockOpname::where('status', 'submitted')->count() }} Document</h3>
+                <h3 class="text-xl font-bold text-slate-800">{{ $stats['submitted'] }} Document</h3>
             </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
@@ -38,16 +38,16 @@
             </div>
             <div>
                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Selesai (Posted)</p>
-                <h3 class="text-xl font-bold text-slate-800">{{ \App\Models\StockOpname::where('status', 'posted')->count() }} Document</h3>
+                <h3 class="text-xl font-bold text-slate-800">{{ $stats['posted'] }} Document</h3>
             </div>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center">
+            <div class="w-12 h-12 {{ $stats['significant'] > 0 ? 'bg-rose-50 text-rose-600' : 'bg-slate-50 text-slate-400' }} rounded-xl flex items-center justify-center">
                 <i class="ph ph-warning-diamond text-2xl"></i>
             </div>
             <div>
                 <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Selisih Signifikan</p>
-                <h3 class="text-xl font-bold text-slate-800">4 Item</h3>
+                <h3 class="text-xl font-bold text-slate-800">{{ $stats['significant'] }} Item</h3>
             </div>
         </div>
     </div>
@@ -108,16 +108,31 @@
                                     {{ strtoupper($op->status) }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-right">
+                                    <td class="px-6 py-4 text-right">
                                 <div class="flex justify-end gap-2">
-                                    @if($op->status === 'draft')
-                                        <a href="{{ route('inventory.stock-opnames.edit', $op->id) }}" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="Mulai Hitung">
-                                            <i class="ph ph-pencil-line text-lg"></i>
+                                    @php
+                                        $canEdit = ($op->status === 'draft');
+                                        $canReview = ($op->status === 'submitted' && auth()->user()->can('stock-opnames.approve'));
+                                    @endphp
+                                    
+                                    @if($canEdit || $canReview)
+                                        <a href="{{ route('inventory.stock-opnames.edit', $op->id) }}" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="{{ $canReview ? 'Review & Setujui' : 'Mulai Hitung' }}">
+                                            <i class="ph {{ $canReview ? 'ph-check-square' : 'ph-pencil-line' }} text-lg"></i>
                                         </a>
                                     @endif
-                                    <button class="p-2 text-slate-400 hover:bg-slate-100 rounded-lg transition-all" title="Lihat Detail">
+                                    <a href="{{ route('inventory.stock-opnames.edit', $op->id) }}?view=1" class="p-2 text-slate-400 hover:bg-slate-100 rounded-lg transition-all" title="Lihat Detail">
                                         <i class="ph ph-eye text-lg"></i>
-                                    </button>
+                                    </a>
+                                    @if($op->status !== 'posted' && auth()->user()->can('stock-opnames.delete'))
+                                        <button @click="$dispatch('confirm-delete', { 
+                                            id: {{ $op->id }}, 
+                                            action: 'do-delete-opname',
+                                            message: 'Apakah Anda yakin ingin menghapus dokumen opname ini? Data yang dihapus tidak dapat dikembalikan.' 
+                                        })" 
+                                            class="p-2 text-rose-400 hover:bg-rose-50 rounded-lg transition-all" title="Hapus Dokumen">
+                                            <i class="ph ph-trash text-lg"></i>
+                                        </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

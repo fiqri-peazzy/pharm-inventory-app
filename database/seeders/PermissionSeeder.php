@@ -121,10 +121,11 @@ class PermissionSeeder extends Seeder
             'journals.view', 'journals.create', 'journals.post',
         ]);
 
-        // Auditor - Full View Access
+        // Auditor - Audit & Oversight
         $auditor = Role::findByName('auditor');
         $auditor->syncPermissions([
             'dashboard.view',
+            'inventory-dashboard.view-all',
             'master-items.view', 'master-categories.view', 'master-suppliers.view', 'master-warehouses.view',
             'purchase-requests.view',
             'purchase-orders.view',
@@ -132,10 +133,10 @@ class PermissionSeeder extends Seeder
             'stocks.view',
             'distributions.view',
             'prescriptions.view',
-            'stock-opnames.view',
-            'adjustments.view',
-            'returns.view',
-            'disposals.view',
+            'stock-opnames.view', 'stock-opnames.view-all', 'stock-opnames.review', 'stock-opnames.approve',
+            'stock-adjustments.view', 'stock-adjustments.view-all', 'stock-adjustments.approve',
+            'returns.view', 'returns.view-all', 'returns.approve',
+            'disposals.view', 'disposals.view-all', 'disposals.approve',
             'reports-stock.view', 'reports-stock.export',
             'reports-accounting.view', 'reports-accounting.export',
             'journals.view',

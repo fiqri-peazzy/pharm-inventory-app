@@ -68,6 +68,15 @@ class UserSeeder extends Seeder
                 'warehouse_id' => null,
                 'role' => 'doctor',
             ],
+            [
+                'name' => 'Auditor Farmasi',
+                'username' => 'auditor',
+                'email' => 'auditor@rsud.go.id',
+                'employee_id' => 'AUD001',
+                'phone' => '081234567896',
+                'warehouse_id' => null,
+                'role' => 'auditor',
+            ],
         ];
 
         // Add Depot Users

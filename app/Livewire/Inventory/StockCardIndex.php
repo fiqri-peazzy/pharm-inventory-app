@@ -51,6 +51,11 @@ class StockCardIndex extends Component
             ->when($this->transactionType, fn($q) => $q->where('transaction_type', $this->transactionType))
             ->when($this->startDate, fn($q) => $q->whereDate('transaction_date', '>=', $this->startDate))
             ->when($this->endDate, fn($q) => $q->whereDate('transaction_date', '<=', $this->endDate))
+            ->where(function ($q) {
+                $q->where('transaction_type', '!=', 'stock_opname')
+                  ->orWhere('qty_in', '>', 0)
+                  ->orWhere('qty_out', '>', 0);
+            })
             ->orderBy('id', 'desc');
 
         return view('livewire.inventory.stock-card-index', [

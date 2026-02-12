@@ -158,6 +158,11 @@ class StockDashboard extends Component
     public function loadRecentActivity()
     {
         $query = \App\Models\StockCard::with(['item', 'warehouse', 'batch'])
+            ->where(function ($q) {
+                $q->where('transaction_type', '!=', 'stock_opname')
+                  ->orWhere('qty_in', '>', 0)
+                  ->orWhere('qty_out', '>', 0);
+            })
             ->latest('transaction_date')
             ->latest('id')
             ->limit(15);
