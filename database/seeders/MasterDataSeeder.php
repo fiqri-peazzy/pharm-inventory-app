@@ -91,6 +91,7 @@ class MasterDataSeeder extends Seeder
                 [
                     'name' => $sup['name'],
                     'type' => 'pbf',
+                    'email' => strtolower($sup['code']) . '@mailtrap.io', // Added for testing
                     'is_active' => true,
                     'tax_status' => 'pkp',
                     'payment_term' => 30

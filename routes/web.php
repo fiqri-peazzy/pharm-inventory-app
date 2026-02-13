@@ -61,9 +61,15 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/stock-opnames/create', [App\Http\Controllers\Inventory\InventoryController::class, 'createStockOpname'])->name('stock-opnames.create');
         Route::get('/stock-opnames/{id}/edit', [App\Http\Controllers\Inventory\InventoryController::class, 'editStockOpname'])->name('stock-opnames.edit');
 
-        // Adjustments & Returns (Placeholders for Stage 4 & 6)
-        Route::get('/adjustments', function() { return "Adjustment Module Coming Soon"; })->name('adjustments');
-        Route::get('/returns', function() { return "Returns Module Coming Soon"; })->name('returns');
+        // Adjustments
+        Route::get('/adjustments', [App\Http\Controllers\Inventory\InventoryController::class, 'adjustments'])->name('adjustments.index');
+        Route::get('/adjustments/create', [App\Http\Controllers\Inventory\InventoryController::class, 'createAdjustment'])->name('adjustments.create');
+        Route::get('/adjustments/{id}/edit', [App\Http\Controllers\Inventory\InventoryController::class, 'editAdjustment'])->name('adjustments.edit');
+        
+        // Returns
+        Route::get('/returns', [\App\Http\Controllers\Inventory\InventoryController::class, 'returns'])->name('returns.index');
+        Route::get('/returns/create', [\App\Http\Controllers\Inventory\InventoryController::class, 'createReturn'])->name('returns.create');
+        Route::get('/returns/{id}/edit', [\App\Http\Controllers\Inventory\InventoryController::class, 'editReturn'])->name('returns.edit');
 
         // Distributions
         Route::get('/distributions', [App\Http\Controllers\Inventory\InventoryController::class, 'distributions'])->name('distributions.index');

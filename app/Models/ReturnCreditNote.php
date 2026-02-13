@@ -15,6 +15,7 @@ class ReturnCreditNote extends Model
         'amount',
         'type',
         'note_date',
+        'status', // pending, received, applied
     ];
 
     protected $casts = [

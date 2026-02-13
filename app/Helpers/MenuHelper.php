@@ -51,7 +51,7 @@ class MenuHelper
                         'permission' => 'stock-opnames.view',
                     ],
                     [
-                        'name' => 'Adjusment Stok',
+                        'name' => 'Adjustment Stok',
                         'path' => '/inventory/adjustments',
                         'icon' => 'activity',
                         'permission' => 'stock-adjustments.view',

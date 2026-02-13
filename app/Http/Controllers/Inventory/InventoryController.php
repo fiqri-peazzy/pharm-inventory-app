@@ -91,4 +91,38 @@ class InventoryController extends Controller
             'opnameId' => $id
         ]);
     }
+
+    public function adjustments()
+    {
+        return view('pages.inventory.adjustments.index');
+    }
+
+    public function createAdjustment()
+    {
+        return view('pages.inventory.adjustments.form');
+    }
+
+    public function editAdjustment($id)
+    {
+        return view('pages.inventory.adjustments.form', [
+            'adjustmentId' => $id
+        ]);
+    }
+
+    public function returns()
+    {
+        return view('pages.inventory.returns.index');
+    }
+
+    public function createReturn()
+    {
+        return view('pages.inventory.returns.form');
+    }
+
+    public function editReturn($id)
+    {
+        return view('pages.inventory.returns.form', [
+            'returnId' => $id
+        ]);
+    }
 }

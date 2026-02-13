@@ -1,125 +1,270 @@
 <div class="space-y-6">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Sidebar -->
+    {{-- Header Section --}}
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-8 opacity-5">
+            <i class="ph-bold ph-trash text-8xl text-rose-600"></i>
+        </div>
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+            <div>
+                <a href="{{ route('inventory.disposals.index') }}" class="text-xs font-bold text-rose-600 hover:text-rose-700 flex items-center gap-1 mb-2 group transition-all">
+                    <i class="ph-bold ph-arrow-left transition-transform group-hover:-translate-x-1"></i> KEMBALI KE DAFTAR
+                </a>
+                <h1 class="text-2xl font-black text-slate-800 tracking-tight italic">
+                    {{ strtoupper($type === 'disposal' ? 'PEMUSNAHAN BARANG' : 'RETUR KE SUPPLIER') }}
+                </h1>
+                <p class="text-slate-500 text-sm font-medium uppercase tracking-widest mt-1">
+                    {{ $disposal_number }} • <span class="{{ $status === 'draft' ? 'text-amber-500' : ($status === 'submitted' ? 'text-indigo-500' : 'text-emerald-500') }}">{{ strtoupper($status) }}</span>
+                </p>
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+                @if($status === 'draft' && !$isViewOnly)
+                    <button wire:click="saveDraft" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2">
+                        <i class="ph-bold ph-floppy-disk"></i> Simpan Draft
+                    </button>
+                    <button wire:click="submitForReview" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-slate-200 flex items-center gap-2">
+                        <i class="ph-bold ph-paper-plane-tilt"></i> Ajukan Review
+                    </button>
+                @endif
+
+                @if($status === 'submitted' && auth()->user()->can('disposals.approve'))
+                    <button wire:click="reject" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2">
+                        <i class="ph-bold ph-x-circle"></i> Tolak (Draft)
+                    </button>
+                    <button wire:click="approve" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-emerald-200 flex items-center gap-2">
+                        <i class="ph-bold ph-check-circle"></i> Setujui & Potong Stok
+                    </button>
+                @endif
+
+                @if($status === 'posted')
+                    <div class="bg-emerald-50 text-emerald-700 px-6 py-2.5 rounded-xl font-bold text-sm border border-emerald-100 flex items-center gap-2">
+                        <i class="ph-bold ph-check-square"></i> SUDAH TERBIT (POSTED)
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {{-- Left: Order Details --}}
         <div class="lg:col-span-1 space-y-6">
-            <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-sm">
-                <h3 class="text-xs font-black uppercase tracking-widest text-gray-400 mb-5">Header Berita Acara</h3>
-                
+            {{-- Basic Info --}}
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
+                <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 uppercase tracking-tighter">
+                    <i class="ph-bold ph-info text-rose-500"></i> INFORMASI DASAR
+                </h3>
                 <div class="space-y-4">
                     <div>
-                        <label class="mb-1.5 block text-[10px] font-black tracking-widest uppercase text-gray-500">No. Berita Acara</label>
-                        <input type="text" wire:model="disposal_number" readonly class="w-full rounded-lg border border-gray-100 bg-gray-50 px-4 py-2.5 text-sm font-mono font-bold text-red-600 dark:border-gray-800 dark:bg-gray-800 dark:text-red-400">
-                    </div>
-
-                    <div>
-                        <label class="mb-1.5 block text-[10px] font-black tracking-widest uppercase text-gray-500">Tipe Transaksi</label>
-                        <select wire:model.live="type" class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-red-500 outline-none dark:border-gray-800 dark:bg-gray-900">
-                            <option value="disposal text-red-500">Pemusnahan (Disposal)</option>
-                            <option value="return_to_supplier text-orange-500">Retur ke Supplier</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="mb-1.5 block text-[10px] font-black tracking-widest uppercase text-gray-500">Gudang Asal</label>
-                        <select wire:model.live="warehouse_id" @if(!empty($rows)) disabled @endif class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-red-500 outline-none dark:border-gray-800 dark:bg-gray-900 @if(!empty($rows)) opacity-50 @endif">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Gudang / Depo</label>
+                        <select wire:model.live="warehouse_id" {{ $isEdit || $isViewOnly || !empty($rows) ? 'disabled' : '' }} class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-rose-500 transition-all font-bold text-slate-700 @if(!empty($rows)) opacity-50 @endif">
+                            <option value="">Pilih Gudang...</option>
                             @foreach($warehouses as $wh)
                                 <option value="{{ $wh->id }}">{{ $wh->name }}</option>
                             @endforeach
                         </select>
-                        @if(!empty($rows))
-                            <p class="text-[9px] text-gray-400 mt-1 italic">* Gudang tidak bisa diubah jika item sudah dipilih.</p>
+                        @if(!empty($rows) && !$isViewOnly)
+                            <p class="text-[9px] text-amber-600 font-bold mt-1 italic uppercase tracking-tighter">* Gudang dikunci (item sudah ada)</p>
                         @endif
                     </div>
-
                     <div>
-                        <label class="mb-1.5 block text-[10px] font-black tracking-widest uppercase text-gray-500">Tanggal Proses</label>
-                        <input type="date" wire:model="disposal_date" class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-red-500 outline-none dark:border-gray-800 dark:bg-gray-900">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Tipe Transaksi</label>
+                        <select wire:model.live="type" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-rose-500 transition-all font-bold text-slate-700">
+                            <option value="disposal">Pemusnahan (Disposal)</option>
+                            <option value="return_to_supplier">Retur ke Supplier</option>
+                        </select>
                     </div>
-
                     <div>
-                        <label class="mb-1.5 block text-[10px] font-black tracking-widest uppercase text-gray-500">Catatan / Alasan Umum</label>
-                        <textarea wire:model="notes" rows="3" placeholder="Misal: Pemusnahan rutin triwulan atau retur barang cacat..." class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-red-500 outline-none dark:border-gray-800 dark:bg-gray-900 font-medium italic"></textarea>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Tanggal Proses</label>
+                        <input type="date" wire:model="disposal_date" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-rose-500 transition-all font-bold text-slate-700">
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-3">
-                <button wire:click="save('draft')" wire:loading.attr="disabled" class="w-full rounded-xl border border-gray-200 bg-white py-4 text-xs font-black uppercase tracking-widest text-gray-600 hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400">
-                    <span wire:loading.remove wire:target="save('draft')">Simpan Draft</span>
-                    <span wire:loading wire:target="save('draft')">Memproses...</span>
-                </button>
-                <button wire:click="save('posted')" wire:loading.attr="disabled" class="w-full rounded-xl bg-red-600 py-4 text-xs font-black uppercase tracking-widest text-white hover:bg-red-700 shadow-lg shadow-red-600/20">
-                    <span wire:loading.remove wire:target="save('posted')">Post & Potong Stok ⚡</span>
-                    <span wire:loading wire:target="save('posted')">Posting...</span>
-                </button>
+            {{-- Audit Integration (Smart Load) --}}
+            @if(!$isViewOnly)
+                <div class="bg-rose-50/50 rounded-3xl border border-rose-100 p-6">
+                    <h3 class="text-sm font-black text-rose-800 mb-4 flex items-center gap-2 uppercase tracking-tighter">
+                        <i class="ph-bold ph-cpu text-rose-600"></i> INTEGRASI AUDIT
+                    </h3>
+                    <p class="text-[10px] text-rose-600 font-bold mb-4 uppercase leading-tight italic">
+                        Tarik barang dari hasil audit/perhitungan sebelumnya secara otomatis:
+                    </p>
+                    <div class="space-y-2">
+                        <button wire:click="loadExpiredItems" class="w-full bg-white hover:bg-rose-600 hover:text-white text-rose-600 p-3 rounded-xl text-[10px] font-black uppercase tracking-widest border border-rose-200 transition-all flex items-center justify-between group shadow-sm">
+                            <span>Barang Kadaluarsa</span>
+                            <i class="ph-bold ph-calendar-x opacity-30 group-hover:opacity-100"></i>
+                        </button>
+                        <button wire:click="loadDamagedFromAdjustments" class="w-full bg-white hover:bg-rose-600 hover:text-white text-rose-600 p-3 rounded-xl text-[10px] font-black uppercase tracking-widest border border-rose-200 transition-all flex items-center justify-between group shadow-sm">
+                            <span>Barang Rusak (Adjust)</span>
+                            <i class="ph-bold ph-wrench opacity-30 group-hover:opacity-100"></i>
+                        </button>
+                    </div>
+                </div>
+            @endif
+
+            {{-- Official Execution Details --}}
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
+                <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 uppercase tracking-tighter">
+                    <i class="ph-bold ph-article text-indigo-500"></i> BERITA ACARA
+                </h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Nomor BA Resmi</label>
+                        <input type="text" wire:model="ba_number" {{ $isViewOnly ? 'disabled' : '' }} placeholder="Contoh: BA/2026/001" class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Metode Pemusnahan</label>
+                        <input type="text" wire:model="method" {{ $isViewOnly ? 'disabled' : '' }} placeholder="Contoh: Incinerator / Dikubur" class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Lokasi</label>
+                        <input type="text" wire:model="location" {{ $isViewOnly ? 'disabled' : '' }} placeholder="Nama tempat/unit..." class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Saksi 1 (Kepala/Direktur)</label>
+                        <input type="text" wire:model="witness_1" {{ $isViewOnly ? 'disabled' : '' }} placeholder="Nama saksi utama..." class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
+                    </div>
+                </div>
             </div>
-            <a href="{{ route('inventory.disposals.index') }}" class="block text-center text-xs font-bold text-gray-400 uppercase tracking-tighter hover:text-gray-600 transition-colors">Kembali ke Daftar</a>
         </div>
 
-        <!-- Main Items -->
-        <div class="lg:col-span-2">
-            <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden flex flex-col h-full min-h-[600px]">
-                <div class="p-6 border-b border-gray-50 dark:border-gray-800 flex items-center justify-between bg-gray-50/30">
-                    <div>
-                        <h3 class="text-sm font-black uppercase tracking-widest text-gray-900 dark:text-white">Daftar Item Rusak/Expired</h3>
-                        <p class="text-[10px] text-gray-500 mt-1 uppercase font-bold tracking-tight">Pilih stok berdasarkan Batch & ED</p>
+        {{-- Right: Item List --}}
+        <div class="lg:col-span-3 space-y-6">
+            @if(!$isViewOnly)
+                <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 overflow-hidden relative">
+                    <div class="absolute -right-4 -top-4 opacity-10">
+                         <i class="ph-bold ph-magnifying-glass text-8xl text-slate-300"></i>
                     </div>
-                    <button @click="$dispatch('open-item-modal')" class="flex items-center gap-2 rounded-lg bg-emerald-500 px-4 py-2 text-xs font-black text-white hover:bg-emerald-600 transition-all uppercase tracking-widest shadow-lg shadow-emerald-500/20">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        Cari Item Stok
-                    </button>
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 uppercase tracking-tighter">
+                        <i class="ph-bold ph-plus-circle text-rose-500"></i> CARI ITEM MANUAL
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+                        <div class="relative">
+                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Cari Nama / Kode</label>
+                            <div class="relative">
+                                <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-300"></i>
+                                <input type="text" wire:model.live.debounce.300ms="itemSearch" placeholder="Cari nama barang..." class="w-full pl-11 pr-4 py-3 bg-slate-50 border-none rounded-xl font-bold text-slate-700 focus:ring-2 focus:ring-rose-500 transition-all text-sm">
+                            </div>
+                            
+                            @if(!empty($searchResults))
+                                <div class="absolute z-50 w-full mt-2 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+                                    @foreach($searchResults as $result)
+                                        <button wire:click="selectItem({{ $result->id }})" class="w-full px-4 py-3 text-left hover:bg-slate-50 flex items-center justify-between group transition-all">
+                                            <div>
+                                                <p class="text-xs font-black text-slate-700 group-hover:text-rose-600 uppercase tracking-tight">{{ $result->name }}</p>
+                                                <p class="text-[9px] text-slate-400 font-mono uppercase">{{ $result->code }}</p>
+                                            </div>
+                                            <i class="ph-bold ph-plus text-slate-300 group-hover:text-rose-600"></i>
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+
+                        <div>
+                            @if($selectedItemForBatch)
+                                <div class="animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Pilih Batch (Stok > 0)</label>
+                                    <div class="grid grid-cols-1 gap-2">
+                                        @forelse($itemBatches as $b)
+                                            <button wire:click="addBatchRow({{ $b->id }})" class="w-full bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-xl p-3 text-left border border-rose-100 transition-all flex items-center justify-between group">
+                                                <div>
+                                                    <span class="text-[10px] font-black uppercase">{{ $b->batch_number }}</span>
+                                                    <span class="text-[10px] text-rose-500 font-bold ml-2">ED: {{ $b->expired_date->format('d/m/y') }}</span>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-[10px] font-black">STOK: {{ number_format($b->current_qty) }}</span>
+                                                    <i class="ph-bold ph-plus-circle opacity-30 group-hover:opacity-100"></i>
+                                                </div>
+                                            </button>
+                                        @empty
+                                            <div class="p-3 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                                                <p class="text-[10px] font-bold text-slate-400 uppercase italic">Stok habis di gudang ini.</p>
+                                            </div>
+                                        @endforelse
+                                    </div>
+                                </div>
+                            @else
+                                <div class="h-full flex items-center justify-center border-2 border-dashed border-slate-100 rounded-2xl p-4 opacity-40">
+                                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Pilih barang disamping dulu...</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-slate-50 flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-tighter">
+                        <i class="ph-bold ph-list-bullets text-rose-500"></i> DAFTAR BARANG YANG AKAN {{ strtoupper($type === 'disposal' ? 'DIMUSNAHKAN' : 'DIRETUR') }}
+                    </h3>
+                    <span class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-[10px] font-black uppercase">{{ count($rows) }} ITEM</span>
                 </div>
 
-                <div class="flex-1 overflow-x-auto">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead class="bg-gray-50/50 text-[10px] uppercase font-black text-gray-400 dark:bg-white/[0.02] border-b border-gray-100 dark:border-gray-800">
-                            <tr>
-                                <th class="px-6 py-4 w-10">No</th>
-                                <th class="px-6 py-4">Item & Batch</th>
-                                <th class="px-6 py-4 text-center">Batch / ED</th>
-                                <th class="px-6 py-4 text-center w-24">Stok</th>
-                                <th class="px-6 py-4 text-center w-28">QTY Keluar</th>
-                                <th class="px-6 py-4">Alasan Spesifik</th>
-                                <th class="px-6 py-4 w-10"></th>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse text-left">
+                        <thead>
+                            <tr class="bg-slate-50/50">
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest w-12">#</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Barang & Batch</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Batch / ED</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center w-24">Stok</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center w-32">Qty Out</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Alasan / Catatan</th>
+                                @if(!$isViewOnly)
+                                    <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Aksi</th>
+                                @endif
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                        <tbody class="divide-y divide-slate-50">
                             @forelse($rows as $index => $row)
-                                <tr class="hover:bg-gray-50/30 dark:hover:bg-white/[0.01]">
-                                    <td class="px-6 py-4 text-xs font-bold text-gray-300">{{ $index + 1 }}</td>
+                                <tr class="group hover:bg-rose-50/20 transition-all border-l-4 border-transparent hover:border-rose-500">
                                     <td class="px-6 py-4">
-                                        <div class="flex flex-col">
-                                            <span class="font-bold text-gray-900 dark:text-white uppercase leading-tight">{{ $row['item_name'] }}</span>
-                                            <span class="text-[9px] font-mono text-gray-400">{{ $row['item_code'] }}</span>
-                                        </div>
+                                        <span class="text-[10px] font-black text-slate-300 group-hover:text-rose-500">0{{ $index + 1 }}</span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <p class="text-xs font-black text-slate-700 uppercase leading-tight">{{ $row['item_name'] }}</p>
+                                        <p class="text-[9px] font-mono text-slate-400 uppercase">{{ $row['item_code'] }}</p>
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <div class="flex flex-col items-center">
-                                            <span class="text-xs font-black text-indigo-600 dark:text-indigo-400 capitalize">{{ $row['batch_number'] }}</span>
-                                            <span class="text-[9px] font-bold text-red-500 uppercase tracking-tighter">ED: {{ $row['expiry_date'] }}</span>
-                                        </div>
+                                        <span class="text-[10px] font-black text-indigo-700 block">{{ $row['batch_number'] }}</span>
+                                        <span class="text-[9px] font-bold text-rose-500 bg-rose-50 px-1.5 rounded uppercase leading-none">ED: {{ $row['expiry_date'] }}</span>
                                     </td>
-                                    <td class="px-6 py-4 text-center font-mono font-bold text-xs text-gray-500">
+                                    <td class="px-6 py-4 text-center font-bold text-slate-400 text-xs">
                                         {{ number_format($row['available_qty']) }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        <input type="number" step="0.01" wire:model.live="rows.{{ $index }}.qty" class="w-full rounded-lg border border-gray-100 py-1.5 px-2 text-xs font-black text-center focus:border-red-500 outline-none dark:bg-gray-800">
+                                        @if(!$isViewOnly)
+                                            <input type="number" step="0.01" wire:model.live="rows.{{ $index }}.qty" class="w-full bg-slate-50 border-none rounded-xl text-xs font-black text-center py-2 focus:ring-2 focus:ring-rose-500">
+                                        @else
+                                            <p class="text-sm font-black text-slate-800 text-center">{{ number_format($row['qty'], 2) }}</p>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4">
-                                        <input type="text" wire:model="rows.{{ $index }}.reason" placeholder="..." class="w-full bg-transparent border-none p-0 text-xs italic text-gray-500 focus:ring-0">
+                                        @if(!$isViewOnly)
+                                            <input type="text" wire:model="rows.{{ $index }}.reason" placeholder="..." class="w-full bg-transparent border-none text-[11px] font-medium text-slate-600 focus:ring-0 placeholder:opacity-30 italic">
+                                        @else
+                                            <p class="text-[11px] text-slate-600 italic">{{ $row['reason'] ?: '-' }}</p>
+                                        @endif
                                     </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <button wire:click="removeRow({{ $index }})" class="text-gray-300 hover:text-red-500"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>
-                                    </td>
+                                    @if(!$isViewOnly)
+                                        <td class="px-6 py-4 text-right">
+                                            <button wire:click="removeRow({{ $index }})" class="p-2 text-slate-300 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all">
+                                                <i class="ph-bold ph-trash text-lg"></i>
+                                            </button>
+                                        </td>
+                                    @endif
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-32 text-center opacity-30 italic text-sm">
-                                        <div class="flex flex-col items-center justify-center">
-                                            <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                            </div>
-                                            <p class="text-xs font-black uppercase tracking-widest text-gray-500">Belum ada item dipilih</p>
+                                    <td colspan="7" class="px-6 py-20 text-center">
+                                        <div class="flex flex-col items-center gap-3 opacity-20">
+                                            <i class="ph-fill ph-warning-circle text-6xl text-slate-300"></i>
+                                            <p class="text-xs font-black uppercase tracking-widest italic">Belum ada item yang akan diproses.</p>
+                                            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest -mt-2">Gunakan INTEGRASI AUDIT di samping untuk memuat barang otomatis</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -127,120 +272,11 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Search & Batch Modal -->
-    <div x-data="{ open: false }" 
-         @open-item-modal.window="open = true" 
-         @close-item-modal.window="open = false" 
-         x-show="open" 
-         class="fixed inset-0 z-[1000000] overflow-y-auto font-sans" style="display: none;">
-         
-        <!-- Backdrop -->
-        <div x-show="open" 
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             @click="open = false" 
-             class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
-
-        <!-- Modal Content Container -->
-        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
-            <div x-show="open"
-                 x-transition:enter="ease-out duration-300"
-                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                 x-transition:leave="ease-in duration-200"
-                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                 class="relative inline-block w-full max-w-4xl text-left bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all align-middle">
-                
-                <!-- Header -->
-                <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center text-xs uppercase font-black tracking-widest text-slate-500">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center text-white shadow-sm">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        </div>
-                        Cari & Pilih Batch Barang
-                    </div>
-                    <button @click="open = false" class="text-slate-400 hover:text-slate-600 transition-colors bg-white w-8 h-8 rounded-lg border border-slate-100 flex items-center justify-center shadow-sm">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-                
-                <div class="p-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Left: Item Search -->
-                        <div class="space-y-4">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 block px-1">1. Cari Nama Barang</label>
-                            <div class="relative">
-                                <input type="text" wire:model.live.debounce.300ms="itemSearch" class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 font-bold text-slate-700 shadow-inner text-sm" placeholder="Ketik nama barang...">
-                                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                </div>
-                            </div>
-
-                            <div class="max-h-[350px] overflow-y-auto pr-2 flex flex-col gap-2 custom-scrollbar">
-                                @forelse($searchResults as $item)
-                                    <button wire:click="selectItem({{ $item->id }})" class="w-full flex items-center justify-between p-4 rounded-xl border {{ $selectedItemForBatch?->id == $item->id ? 'border-red-500 bg-red-50/50 ring-1 ring-red-500' : 'border-slate-100 bg-white' }} hover:border-red-500 transition-all text-left group shadow-sm">
-                                        <div class="flex flex-col">
-                                            <span class="text-xs font-black text-slate-800 group-hover:text-red-600 uppercase tracking-tight">{{ $item->name }}</span>
-                                            <span class="text-[9px] font-mono text-slate-400 mt-1 uppercase">{{ $item->code }}</span>
-                                        </div>
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="{{ $selectedItemForBatch?->id == $item->id ? 'text-red-600' : 'text-slate-200' }}"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                                    </button>
-                                @empty
-                                    @if(strlen($itemSearch) >= 2)
-                                        <p class="py-12 text-center text-slate-300 text-[10px] font-black uppercase tracking-widest italic">Barang tidak ditemukan</p>
-                                    @endif
-                                @endforelse
-                            </div>
-                        </div>
-
-                        <!-- Right: Batch Selection -->
-                        <div class="bg-slate-50/50 rounded-2xl p-6 border border-slate-100 flex flex-col h-full ring-1 ring-slate-100">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-5 block">2. Pilih Batch Tersedia</label>
-                            
-                            @if($selectedItemForBatch)
-                                <div class="flex flex-col gap-3 flex-1 overflow-y-auto pr-1">
-                                    @forelse($itemBatches as $batch)
-                                        <button wire:click="addBatchRow({{ $batch->id }})" class="flex items-center justify-between p-4 rounded-xl bg-white border border-slate-100 hover:bg-emerald-50 hover:border-emerald-500 hover:ring-1 hover:ring-emerald-500 transition-all text-left shadow-sm group">
-                                            <div class="flex flex-col">
-                                                <span class="text-xs font-black text-indigo-700 uppercase tracking-tight">{{ $batch->batch_number }}</span>
-                                                <span class="text-[10px] font-bold text-red-500 uppercase mt-1">ED: {{ $batch->expiry_date->format('d/m/Y') }}</span>
-                                            </div>
-                                            <div class="text-right">
-                                                <span class="text-[10px] font-black text-slate-900 block">Stok: {{ number_format($batch->current_qty) }}</span>
-                                                <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Pilih ↗</p>
-                                            </div>
-                                        </button>
-                                    @empty
-                                        <div class="flex flex-col items-center justify-center flex-1 py-20 text-center text-slate-400 bg-white/50 rounded-xl border border-dashed border-slate-200">
-                                            <svg class="w-10 h-10 opacity-20 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                                            <p class="text-[10px] font-black uppercase tracking-widest px-6 italic">Tidak ada stok tersedia di gudang ini</p>
-                                        </div>
-                                    @endforelse
-                                </div>
-                            @else
-                                <div class="flex flex-col items-center justify-center flex-1 py-10 text-center">
-                                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-inner mb-4 border border-slate-50">
-                                        <svg class="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                                    </div>
-                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-300 px-10 italic">Silakan pilih barang di panel sebelah kiri untuk melihat daftar batch</p>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="px-8 py-4 bg-slate-50 border-t border-slate-100 text-[9px] text-slate-400 font-bold uppercase tracking-widest italic text-center">
-                    * Hanya menampilkan batch dengan stok > 0 di gudang yang dipilih
+                <div class="p-6 bg-slate-50 border-t border-slate-100 italic">
+                    <p class="text-[10px] font-medium text-slate-400 leading-relaxed uppercase tracking-tighter shadow-inner bg-white/50 p-3 rounded-xl border border-slate-200">
+                        <i class="ph-bold ph-warning text-amber-500 mr-1"></i> DISCLAIMER: {{ $type === 'disposal' ? 'Proses pemusnahan ini akan memotong stok fisik secara permanen dari sistem. Pastikan Berita Acara sudah ditandatangani oleh saksi yang berwenang.' : 'Proses retur ini akan memotong stok fisik dan harus disertai bukti dokumen retur ke supplier.' }}
+                    </p>
                 </div>
             </div>
         </div>

@@ -16,6 +16,8 @@ class StockAdjustmentDetail extends Model
         'system_qty',
         'adjusted_qty',
         'difference',
+        'unit_price',
+        'total_value',
         'notes',
     ];
 

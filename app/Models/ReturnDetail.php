@@ -15,6 +15,7 @@ class ReturnDetail extends Model
         'item_batch_id',
         'qty',
         'price',
+        'total_value',
         'notes',
     ];
 

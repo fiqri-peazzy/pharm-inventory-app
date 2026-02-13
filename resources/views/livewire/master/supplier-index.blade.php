@@ -124,6 +124,12 @@
                         <div>
                             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Telepon/WA</label>
                             <input type="text" wire:model="phone" class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
+                            @error('phone') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Email (Untuk Notifikasi)</label>
+                            <input type="email" wire:model="email" class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
+                            @error('email') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                         </div>
                     </div>
 
