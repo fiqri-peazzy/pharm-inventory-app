@@ -503,6 +503,61 @@ class ReturnForm extends Component
                 'approved_at' => now(),
             ]);
 
+            // Accounting Integration (Auto-Posting Return)
+            if ($returnDoc->type === 'supplier') {
+                try {
+                    $accountingService = app(\App\Services\AccountingService::class);
+                    $entries = [];
+                    $summaryByAccount = [];
+
+                    foreach ($returnDoc->details as $detail) {
+                        $inventoryAccount = $accountingService->getInventoryAccountByCategory($detail->item->category?->type);
+                        $apAccount = $accountingService->getAPAccountBySupplier($returnDoc->supplier_id);
+                        
+                        $amount = $detail->qty * $detail->batch->purchase_price;
+
+                        // Credit Inventory
+                        if (!isset($summaryByAccount['inv_' . $inventoryAccount->id])) {
+                            $summaryByAccount['inv_' . $inventoryAccount->id] = ['account' => $inventoryAccount, 'debit' => 0, 'credit' => 0];
+                        }
+                        $summaryByAccount['inv_' . $inventoryAccount->id]['credit'] += $amount;
+
+                        // Debit AP
+                        if (!isset($summaryByAccount['ap_' . $apAccount->id])) {
+                            $summaryByAccount['ap_' . $apAccount->id] = ['account' => $apAccount, 'debit' => 0, 'credit' => 0];
+                        }
+                        $summaryByAccount['ap_' . $apAccount->id]['debit'] += $amount;
+                    }
+
+                    foreach ($summaryByAccount as $key => $data) {
+                        if ($data['debit'] > 0 || $data['credit'] > 0) {
+                            $entries[] = [
+                                'account_id' => $data['account']->id,
+                                'debit' => $data['debit'],
+                                'credit' => $data['credit'],
+                                'description' => 'Return: ' . $returnDoc->return_number
+                            ];
+                        }
+                    }
+
+                    if (count($entries) > 0) {
+                        $accountingService->createJournalEntry([
+                            'journal_number' => $returnDoc->return_number,
+                            'journal_date' => now(),
+                            'type' => 'standard',
+                            'transaction_type' => 'return',
+                            'transaction_id' => $returnDoc->id,
+                            'description' => 'Auto-journal for return ' . $returnDoc->return_number,
+                            'status' => 'posted',
+                            'entries' => $entries
+                        ]);
+                    }
+
+                } catch (\Exception $e) {
+                    \Log::error('Accounting auto-posting failed for return ' . $returnDoc->return_number . ': ' . $e->getMessage());
+                }
+            }
+
             DB::commit();
             $this->dispatch('notify', ['type' => 'success', 'message' => 'Retur disetujui & Stok diperbarui.']);
             $this->loadReturn();

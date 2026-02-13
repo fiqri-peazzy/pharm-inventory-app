@@ -338,6 +338,72 @@ class StockAdjustmentForm extends Component
                 'approved_at' => now(),
             ]);
 
+            // Accounting Integration (Auto-Posting Adjustment)
+            try {
+                $accountingService = app(\App\Services\AccountingService::class);
+                $entries = [];
+                $summaryByAccount = [];
+
+                foreach ($adjustment->details as $detail) {
+                    $inventoryAccount = $accountingService->getInventoryAccountByCategory($detail->item->category?->type);
+                    $adjustmentIncomeAcc = $accountingService->getAdjustmentIncomeAccount();
+                    $adjustmentExpenseAcc = $accountingService->getAdjustmentExpenseAccount();
+                    
+                    $amount = abs($detail->total_value);
+
+                    if ($detail->difference > 0) {
+                        // Plus: Debit Inventory, Credit Income
+                        if (!isset($summaryByAccount['inv_' . $inventoryAccount->id])) {
+                            $summaryByAccount['inv_' . $inventoryAccount->id] = ['account' => $inventoryAccount, 'debit' => 0, 'credit' => 0];
+                        }
+                        $summaryByAccount['inv_' . $inventoryAccount->id]['debit'] += $amount;
+
+                        if (!isset($summaryByAccount['inc_' . $adjustmentIncomeAcc->id])) {
+                            $summaryByAccount['inc_' . $adjustmentIncomeAcc->id] = ['account' => $adjustmentIncomeAcc, 'debit' => 0, 'credit' => 0];
+                        }
+                        $summaryByAccount['inc_' . $adjustmentIncomeAcc->id]['credit'] += $amount;
+                    } else {
+                        // Minus: Debit Expense, Credit Inventory
+                        if (!isset($summaryByAccount['exp_' . $adjustmentExpenseAcc->id])) {
+                            $summaryByAccount['exp_' . $adjustmentExpenseAcc->id] = ['account' => $adjustmentExpenseAcc, 'debit' => 0, 'credit' => 0];
+                        }
+                        $summaryByAccount['exp_' . $adjustmentExpenseAcc->id]['debit'] += $amount;
+
+                        if (!isset($summaryByAccount['inv_out_' . $inventoryAccount->id])) {
+                            $summaryByAccount['inv_out_' . $inventoryAccount->id] = ['account' => $inventoryAccount, 'debit' => 0, 'credit' => 0];
+                        }
+                        $summaryByAccount['inv_out_' . $inventoryAccount->id]['credit'] += $amount;
+                    }
+                }
+
+                foreach ($summaryByAccount as $key => $data) {
+                    if ($data['debit'] > 0 || $data['credit'] > 0) {
+                        $entries[] = [
+                            'account_id' => $data['account']->id,
+                            'debit' => $data['debit'],
+                            'credit' => $data['credit'],
+                            'description' => 'Adjustment: ' . $adjustment->adjustment_number
+                        ];
+                    }
+                }
+
+                if (count($entries) > 0) {
+                    $accountingService->createJournalEntry([
+                        'journal_number' => $adjustment->adjustment_number,
+                        'journal_date' => now(),
+                        'type' => 'adjusting',
+                        'transaction_type' => 'adjustment',
+                        'transaction_id' => $adjustment->id,
+                        'description' => 'Auto-journal for stock adjustment ' . $adjustment->adjustment_number,
+                        'status' => 'posted',
+                        'entries' => $entries
+                    ]);
+                }
+
+            } catch (\Exception $e) {
+                \Log::error('Accounting auto-posting failed for adjustment ' . $adjustment->adjustment_number . ': ' . $e->getMessage());
+            }
+
             DB::commit();
             $this->dispatch('notify', ['type' => 'success', 'message' => 'Adjustment berhasil disetujui & diposting.']);
             return redirect()->route('inventory.adjustments.index');

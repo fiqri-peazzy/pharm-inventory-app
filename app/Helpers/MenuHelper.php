@@ -42,7 +42,7 @@ class MenuHelper
                 ]
             ],
             [
-                'title' => 'AUDIT & KONTROL',
+                'title' => 'AUDIT & KONTROL INTERNAL',
                 'items' => [
                     [
                         'name' => 'Stock Opname',
@@ -56,6 +56,7 @@ class MenuHelper
                         'icon' => 'activity',
                         'permission' => 'stock-adjustments.view',
                     ],
+                    
                     [
                         'name' => 'Retur Barang',
                         'path' => '/inventory/returns',
@@ -188,6 +189,35 @@ class MenuHelper
                 ]
             ],
             [
+                'title' => 'AKUNTANSI',
+                'items' => [
+                    [
+                        'name' => 'Bagan Akun (CoA)',
+                        'path' => '/accounting/coa',
+                        'icon' => 'database',
+                        'permission' => 'master-accounts.view',
+                    ],
+                    [
+                        'name' => 'Jurnal Akuntansi',
+                        'path' => '/accounting/journals',
+                        'icon' => 'file-text',
+                        'permission' => 'journals.view',
+                    ],
+                    [
+                        'name' => 'Buku Besar',
+                        'path' => '/accounting/reports/general-ledger',
+                        'icon' => 'activity',
+                        'permission' => 'reports-accounting.view',
+                    ],
+                    [
+                        'name' => 'Neraca Saldo',
+                        'path' => '/accounting/reports/trial-balance',
+                        'icon' => 'bar-chart',
+                        'permission' => 'reports-accounting.view',
+                    ],
+                ]
+            ],
+            [
                 'title' => 'LAPORAN',
                 'items' => [
                     [
@@ -214,10 +244,10 @@ class MenuHelper
                         'permission' => 'settings.view',
                     ],
                     [
-                        'name' => 'Activity Log',
+                        'name' => 'Log Audit Sistem',
                         'path' => '/activity-logs',
-                        'icon' => 'activity',
-                        'permission' => 'settings.view',
+                        'icon' => 'file-text',
+                        'permission' => 'audit-logs.view',
                     ],
                 ]
             ],

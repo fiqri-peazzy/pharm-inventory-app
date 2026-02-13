@@ -116,6 +116,60 @@ class PrescriptionDispense extends Component
                     'processed_at' => now(),
                     'processed_by' => Auth::id()
                 ]);
+
+                // 4. Accounting Integration (Auto-Posting COGS)
+                try {
+                    $accountingService = app(\App\Services\AccountingService::class);
+                    $entries = [];
+                    $summaryByAccount = [];
+
+                    foreach ($this->prescription->details as $detail) {
+                        $inventoryAccount = $accountingService->getInventoryAccountByCategory($detail->item->category?->type);
+                        $cogsAccount = $accountingService->getCOGSAccountByCategory($detail->item->category?->type);
+                        
+                        $costAmount = $detail->subtotal; // Using subtotal which is cost-based in this system
+
+                        // Group by Inventory Account (Credit)
+                        if (!isset($summaryByAccount['inv_' . $inventoryAccount->id])) {
+                            $summaryByAccount['inv_' . $inventoryAccount->id] = ['account' => $inventoryAccount, 'amount' => 0];
+                        }
+                        $summaryByAccount['inv_' . $inventoryAccount->id]['amount'] += $costAmount;
+
+                        // Group by COGS Account (Debit)
+                        if (!isset($summaryByAccount['cogs_' . $cogsAccount->id])) {
+                            $summaryByAccount['cogs_' . $cogsAccount->id] = ['account' => $cogsAccount, 'amount' => 0];
+                        }
+                        $summaryByAccount['cogs_' . $cogsAccount->id]['amount'] += $costAmount;
+                    }
+
+                    foreach ($summaryByAccount as $key => $data) {
+                        if ($data['amount'] > 0) {
+                            $isDebit = str_starts_with($key, 'cogs_');
+                            $entries[] = [
+                                'account_id' => $data['account']->id,
+                                'debit' => $isDebit ? $data['amount'] : 0,
+                                'credit' => $isDebit ? 0 : $data['amount'],
+                                'description' => ($isDebit ? 'Beban: ' : 'Persediaan: ') . $this->prescription->prescription_number
+                            ];
+                        }
+                    }
+
+                    if (count($entries) > 0) {
+                        $accountingService->createJournalEntry([
+                            'journal_number' => $this->prescription->prescription_number,
+                            'journal_date' => now(),
+                            'type' => 'standard',
+                            'transaction_type' => 'prescription',
+                            'transaction_id' => $this->prescription->id,
+                            'description' => 'Auto-journal (COGS) for prescription ' . $this->prescription->prescription_number,
+                            'status' => 'posted',
+                            'entries' => $entries
+                        ]);
+                    }
+
+                } catch (\Exception $e) {
+                    \Log::error('Accounting auto-posting failed for prescription ' . $this->prescription->prescription_number . ': ' . $e->getMessage());
+                }
             });
 
             session()->flash('notify', ['type' => 'success', 'message' => 'Resep berhasil diproses (Dispensed).']);

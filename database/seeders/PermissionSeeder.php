@@ -32,8 +32,10 @@ class PermissionSeeder extends Seeder
             'reports-stock' => ['view', 'export'],
             'reports-accounting' => ['view', 'export'],
             'reports-transparency' => ['view', 'export'],
-            'journals' => ['view', 'create', 'post'],
+            'journals' => ['view', 'create', 'post', 'approve'],
+            'master-accounts' => ['view', 'create', 'update', 'delete'],
             'settings' => ['view', 'update'],
+            'audit-logs' => ['view'],
         ];
 
         foreach ($modules as $module => $actions) {
@@ -53,6 +55,10 @@ class PermissionSeeder extends Seeder
         // Super Admin - All permissions
         $superAdmin = Role::findByName('super-admin');
         $superAdmin->syncPermissions(Permission::all());
+
+        // Kepala Gudang - All permissions (as requested)
+        $kepalaGudang = Role::firstOrCreate(['name' => 'kepala-gudang']);
+        $kepalaGudang->syncPermissions(Permission::all());
 
         // Kepala Farmasi - Full Procurement Oversight
         $kepalaFarmasi = Role::findByName('kepala-farmasi');
@@ -119,7 +125,8 @@ class PermissionSeeder extends Seeder
             'reports-stock.view', 'reports-stock.export',
             'reports-accounting.view', 'reports-accounting.export',
             'returns.view-all', 'returns.input-credit-note', 'returns.track-refund',
-            'journals.view', 'journals.create', 'journals.post',
+            'journals.view', 'journals.create', 'journals.post', 'journals.approve',
+            'master-accounts.view', 'master-accounts.create', 'master-accounts.update',
         ]);
 
         // Auditor - Audit & Oversight
@@ -143,23 +150,22 @@ class PermissionSeeder extends Seeder
             'journals.view',
         ]);
 
-        // Bupati - Monitoring & Transparency
-        $bupati = Role::findByName('bupati');
-        $bupati->syncPermissions([
-            'dashboard.view',
-            'reports-stock.view', 'reports-stock.export',
-            'reports-accounting.view', 'reports-accounting.export',
-            'reports-transparency.view', 'reports-transparency.export',
-        ]);
-
-        // Direktur - high level approval
+        // Direktur - All permissions EXCEPT master data (Update: more inclusive for transparency)
         $direktur = Role::findByName('direktur');
-        $direktur->syncPermissions([
-            'dashboard.view',
-            'inventory-dashboard.view-all',
-            'purchase-orders.view', 'purchase-orders.direktur-approve',
-            'reports-stock.view', 'reports-accounting.view',
-        ]);
+        $allPermissions = Permission::all();
+        $direkturPermissions = $allPermissions->filter(function ($permission) {
+            // Keep master data restricted but allow viewing everything else
+            return !str_starts_with($permission->name, 'master-') || str_contains($permission->name, '.view');
+        })->filter(function ($permission) {
+            // Explicitly ensure they can't manage users/permissions even if they can view them
+            $restricted = ['master-users.create', 'master-users.update', 'master-users.delete'];
+            return !in_array($permission->name, $restricted);
+        });
+        $direktur->syncPermissions($direkturPermissions);
+
+        // Bupati - Same as Direktur
+        $bupati = Role::findByName('bupati');
+        $bupati->syncPermissions($direkturPermissions);
 
         $doctor = Role::firstOrCreate(['name' => 'doctor']);
         $doctor->syncPermissions(['dashboard.view', 'master-items.view', 'prescriptions.view', 'prescriptions.create']);

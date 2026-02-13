@@ -26,7 +26,8 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/service-units', [App\Http\Controllers\Master\ServiceUnitController::class, 'index'])->name('service-units.index');
         
         // Settings/Users
-        Route::get('/users', [App\Http\Controllers\Master\WarehouseController::class, 'index'])->name('users.index'); // Placeholder
+        Route::get('/users', [App\Http\Controllers\MasterController::class, 'users'])->name('users.index');
+        Route::get('/roles', [App\Http\Controllers\MasterController::class, 'roles'])->name('roles.index');
     });
 
     // Procurement Routes
@@ -93,4 +94,22 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/ward-requests/create', [App\Http\Controllers\Clinical\ClinicalController::class, 'createWardRequest'])->name('ward-requests.create');
         Route::get('/ward-requests/{id}/edit', [App\Http\Controllers\Clinical\ClinicalController::class, 'editWardRequest'])->name('ward-requests.edit');
     });
+
+    // Accounting Routes
+    Route::prefix('accounting')->name('accounting.')->group(function () {
+        Route::get('/journals', [App\Http\Controllers\Accounting\AccountingController::class, 'journals'])->name('journals.index');
+        Route::get('/journals/create', [App\Http\Controllers\Accounting\AccountingController::class, 'createJournal'])->name('journals.create');
+        Route::get('/journals/{id}/edit', [App\Http\Controllers\Accounting\AccountingController::class, 'editJournal'])->name('journals.edit');
+        Route::get('/journals/{id}', [App\Http\Controllers\Accounting\AccountingController::class, 'showJournal'])->name('journals.show');
+        
+        Route::get('/coa', [App\Http\Controllers\Accounting\AccountingController::class, 'coa'])->name('coa.index');
+        
+        // Reports
+        Route::get('/reports/general-ledger', [App\Http\Controllers\Accounting\AccountingController::class, 'generalLedger'])->name('reports.general-ledger');
+        Route::get('/reports/trial-balance', [App\Http\Controllers\Accounting\AccountingController::class, 'trialBalance'])->name('reports.trial-balance');
+    });
+
+    // Settings & Activity Log
+    Route::get('/settings', function() { return view('pages.settings.index'); })->name('settings');
+    Route::get('/activity-logs', function() { return view('pages.settings.activity-log'); })->name('activity-logs');
 });

@@ -156,6 +156,11 @@ class StockOpnameForm extends Component
                     'approved_at' => now(),
                 ]);
 
+                // Accounting Integration Prep
+                $accountingService = app(\App\Services\AccountingService::class);
+                $entries = [];
+                $summaryByAccount = [];
+
                 // 2. Post to Inventory (Stock Card & ItemBatch)
                 foreach ($opname->details as $detail) {
                     // Only post if there is a difference
@@ -181,7 +186,63 @@ class StockOpnameForm extends Component
                             'last_stock' => $detail->physical_qty,
                             'notes' => 'Stock Opname Adjustment: ' . ($detail->notes ?: 'No notes'),
                         ]);
+
+                        // Journal Entry Logic
+                        $inventoryAccount = $accountingService->getInventoryAccountByCategory($detail->item->category?->type);
+                        $adjustmentIncomeAcc = $accountingService->getAdjustmentIncomeAccount(); // Stock Gain
+                        $adjustmentExpenseAcc = $accountingService->getAdjustmentExpenseAccount(); // Stock Loss
+                        
+                        $amount = abs($detail->difference) * $batch->purchase_price;
+
+                        if ($detail->difference > 0) {
+                            // Plus: Debit Inventory, Credit Income
+                            if (!isset($summaryByAccount['inv_' . $inventoryAccount->id])) {
+                                $summaryByAccount['inv_' . $inventoryAccount->id] = ['account' => $inventoryAccount, 'debit' => 0, 'credit' => 0];
+                            }
+                            $summaryByAccount['inv_' . $inventoryAccount->id]['debit'] += $amount;
+
+                            if (!isset($summaryByAccount['inc_' . $adjustmentIncomeAcc->id])) {
+                                $summaryByAccount['inc_' . $adjustmentIncomeAcc->id] = ['account' => $adjustmentIncomeAcc, 'debit' => 0, 'credit' => 0];
+                            }
+                            $summaryByAccount['inc_' . $adjustmentIncomeAcc->id]['credit'] += $amount;
+                        } else {
+                            // Minus: Debit Expense, Credit Inventory
+                            if (!isset($summaryByAccount['exp_' . $adjustmentExpenseAcc->id])) {
+                                $summaryByAccount['exp_' . $adjustmentExpenseAcc->id] = ['account' => $adjustmentExpenseAcc, 'debit' => 0, 'credit' => 0];
+                            }
+                            $summaryByAccount['exp_' . $adjustmentExpenseAcc->id]['debit'] += $amount;
+
+                            if (!isset($summaryByAccount['inv_out_' . $inventoryAccount->id])) {
+                                $summaryByAccount['inv_out_' . $inventoryAccount->id] = ['account' => $inventoryAccount, 'debit' => 0, 'credit' => 0];
+                            }
+                            $summaryByAccount['inv_out_' . $inventoryAccount->id]['credit'] += $amount;
+                        }
                     }
+                }
+
+                // Create Journal Entries
+                foreach ($summaryByAccount as $key => $data) {
+                    if ($data['debit'] > 0 || $data['credit'] > 0) {
+                        $entries[] = [
+                            'account_id' => $data['account']->id,
+                            'debit' => $data['debit'],
+                            'credit' => $data['credit'],
+                            'description' => 'Stock Opname: ' . $opname->opname_number
+                        ];
+                    }
+                }
+
+                if (count($entries) > 0) {
+                    $accountingService->createJournalEntry([
+                        'journal_number' => $opname->opname_number,
+                        'journal_date' => now(),
+                        'type' => 'adjusting',
+                        'transaction_type' => 'stock_opname',
+                        'transaction_id' => $opname->id,
+                        'description' => 'Auto-journal for stock opname ' . $opname->opname_number,
+                        'status' => 'posted',
+                        'entries' => $entries
+                    ]);
                 }
             });
 

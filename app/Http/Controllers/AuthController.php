@@ -109,7 +109,7 @@ class AuthController extends Controller
 
     public function showResetPassword()
     {
-        return view('auth.reset-password');
+        return view('pages.auth.reset-password');
     }
 
     public function resetPassword(Request $request)

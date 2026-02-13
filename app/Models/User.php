@@ -102,7 +102,7 @@ class User extends Authenticatable
     public function getHomeRoute(): string
     {
         // High-level access -> Global Inventory Dashboard
-        if ($this->hasAnyRole(['super-admin', 'kepala-farmasi', 'direktur', 'bupati'])) {
+        if ($this->hasAnyRole(['super-admin', 'kepala-farmasi', 'direktur', 'bupati', 'kepala-gudang'])) {
             return route('inventory.dashboard');
         }
 
