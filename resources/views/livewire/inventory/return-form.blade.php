@@ -210,9 +210,21 @@
         <div class="lg:col-span-3 space-y-6">
             @if(!$isViewOnly)
                 <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 relative">
-                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 uppercase tracking-tighter">
-                        <i class="ph-bold ph-magnifying-glass text-indigo-500"></i> CARI ITEM DARI STOK ({{ $from_warehouse_id ? 'AKTIF' : 'BELUM PILIH GUDANG' }})
-                    </h3>
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-tighter">
+                            <i class="ph-bold ph-magnifying-glass text-indigo-500"></i> CARI ITEM DARI STOK ({{ $from_warehouse_id ? 'AKTIF' : 'BELUM PILIH GUDANG' }})
+                        </h3>
+                        
+                        {{-- Smart Load Buttons --}}
+                        <div class="flex gap-2">
+                             <button type="button" wire:click="loadExpiredItems" class="px-3 py-1.5 bg-rose-50 text-rose-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-rose-100 hover:bg-rose-600 hover:text-white transition-all flex items-center gap-1.5">
+                                <i class="ph-bold ph-calendar-x"></i> EXPIRED
+                            </button>
+                            <button type="button" wire:click="loadDamagedFromAdjustments" class="px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg text-[9px] font-black uppercase tracking-widest border border-amber-100 hover:bg-amber-600 hover:text-white transition-all flex items-center gap-1.5">
+                                <i class="ph-bold ph-wrench"></i> ADJUSTMENT
+                            </button>
+                        </div>
+                    </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="relative">
@@ -283,7 +295,14 @@
                                 <tr class="group hover:bg-slate-50/30 transition-all border-l-4 border-transparent hover:border-indigo-500">
                                     <td class="px-6 py-4 text-left">
                                         <p class="text-xs font-black text-slate-700 uppercase leading-tight">{{ $item['item_name'] }}</p>
-                                        <p class="text-[9px] font-mono text-slate-400 uppercase tracking-tighter">B: {{ $item['batch_number'] }} • ED: {{ $item['expired_date'] }}</p>
+                                        <div class="flex items-center gap-2">
+                                            <p class="text-[9px] font-mono text-slate-400 uppercase tracking-tighter">B: {{ $item['batch_number'] }} • ED: {{ $item['expired_date'] }}</p>
+                                            @if(!empty($item['source_type']))
+                                                <span class="px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded text-[7px] font-black uppercase tracking-tighter flex items-center gap-1">
+                                                    <i class="ph-bold ph-link"></i> {{ $item['source_type'] === 'adjustment' ? 'ADJ' : 'OPNAME' }} #{{ $item['source_id'] }}
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 text-right text-xs font-bold text-slate-500">
                                         {{ number_format($item['price']) }}

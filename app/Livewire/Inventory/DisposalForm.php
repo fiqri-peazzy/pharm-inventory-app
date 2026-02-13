@@ -25,20 +25,27 @@ class DisposalForm extends Component
     public $disposal_number;
     public $warehouse_id;
     public $type = 'disposal'; // disposal, return_to_supplier
+    public $disposal_type; // Expired, Damaged, Lost, etc.
+    public $method; // Incineration, Buried, etc.
+    public $disposal_method; // redundant but in migration? using 'method' as primary
+    public $ba_number;
+    public $location;
     public $disposal_date;
+    public $execution_date;
     public $notes;
     public $status = 'draft';
-    
-    // Execution Details (BA)
-    public $ba_number;
-    public $method; // Incineration, Buried, etc.
-    public $location;
-    public $witness_1;
-    public $witness_2;
-    public $witness_3;
+    public $total_value = 0;
+
+    // Witnesses (Mini-form)
+    public $witnesses = []; // {name, role}
+    public $new_witness_name;
+    public $new_witness_role;
+
+    // Evidence
+    public $evidences = []; // {file, type, notes}
 
     // Items
-    public $rows = []; // {item_id, item_name, item_code, item_batch_id, batch_number, expiry_date, available_qty, qty, reason}
+    public $rows = []; // {item_id, item_name, item_code, item_batch_id, batch_number, expiry_date, available_qty, qty, unit_price, total_value, reason}
 
     // Search state
     public $itemSearch = '';
@@ -51,6 +58,7 @@ class DisposalForm extends Component
         return [
             'warehouse_id' => 'required',
             'type' => 'required',
+            'disposal_type' => 'required',
             'disposal_date' => 'required|date',
             'rows.*.item_id' => 'required',
             'rows.*.item_batch_id' => 'required',
@@ -95,6 +103,9 @@ class DisposalForm extends Component
     {
         $d = Disposal::with('details.item', 'details.batch')->findOrFail($this->disposalId);
         
+        $this->rows = [];
+        $this->witnesses = [];
+        
         $this->status = $d->status;
         if ($this->status !== 'draft') {
             $this->isViewOnly = true;
@@ -103,14 +114,14 @@ class DisposalForm extends Component
         $this->disposal_number = $d->disposal_number;
         $this->warehouse_id = $d->warehouse_id;
         $this->type = $d->type;
-        $this->disposal_date = $d->disposal_date->format('Y-m-d');
-        $this->notes = $d->notes;
-        $this->ba_number = $d->ba_number;
+        $this->disposal_type = $d->disposal_type;
         $this->method = $d->method;
         $this->location = $d->location;
-        $this->witness_1 = $d->witness_1;
-        $this->witness_2 = $d->witness_2;
-        $this->witness_3 = $d->witness_3;
+        $this->disposal_date = $d->disposal_date->format('Y-m-d');
+        $this->execution_date = $d->execution_date ? $d->execution_date->format('Y-m-d') : null;
+        $this->notes = $d->notes;
+        $this->ba_number = $d->ba_number;
+        $this->total_value = $d->total_value;
 
         foreach ($d->details as $detail) {
             $this->rows[] = [
@@ -122,9 +133,47 @@ class DisposalForm extends Component
                 'expiry_date' => $detail->batch->expired_date->format('d/m/Y'),
                 'available_qty' => $detail->batch->current_qty,
                 'qty' => $detail->qty,
+                'unit_price' => $detail->batch->purchase_price,
+                'total_value' => $detail->qty * $detail->batch->purchase_price,
                 'reason' => $detail->reason,
+                'source_type' => $detail->source_type,
+                'source_id' => $detail->source_id,
             ];
         }
+
+        foreach ($d->witnesses as $w) {
+            $this->witnesses[] = [
+                'name' => $w->name,
+                'role' => $w->role,
+            ];
+        }
+    }
+
+    public function calculateTotal()
+    {
+        $this->total_value = collect($this->rows)->sum('total_value');
+    }
+
+    public function addWitness()
+    {
+        $this->validate([
+            'new_witness_name' => 'required',
+            'new_witness_role' => 'required',
+        ]);
+
+        $this->witnesses[] = [
+            'name' => $this->new_witness_name,
+            'role' => $this->new_witness_role,
+        ];
+
+        $this->new_witness_name = '';
+        $this->new_witness_role = '';
+    }
+
+    public function removeWitness($index)
+    {
+        unset($this->witnesses[$index]);
+        $this->witnesses = array_values($this->witnesses);
     }
 
     // --- INTERCONNECTION: Smart Load ---
@@ -164,39 +213,98 @@ class DisposalForm extends Component
             return;
         }
 
-        // Get posted adjustments with "Barang Rusak" category in this warehouse
+        // Get IDs that are already used in disposals OR returns
+        $usedAdjustmentIds = \App\Models\DisposalDetail::where('source_type', 'adjustment')
+            ->pluck('source_id')
+            ->toArray();
+        
+        $usedInReturns = \App\Models\ReturnDetail::where('source_type', 'adjustment')
+            ->pluck('source_id')
+            ->toArray();
+            
+        $allUsedIds = array_unique(array_merge($usedAdjustmentIds, $usedInReturns));
+
+        // Get posted adjustments with negative qty (minus) in this warehouse
         $damagedDetails = StockAdjustmentDetail::whereHas('adjustment', function($q) {
             $q->where('warehouse_id', $this->warehouse_id)
-              ->where('status', 'posted')
-              ->where('reason_category', 'Damaged Item');
-        })->with('item', 'batch')->get();
+              ->where('status', 'posted');
+        })
+        ->where('difference', '<', 0)
+        ->whereNotIn('id', $allUsedIds)
+        ->with('item', 'batch')->get();
 
         if ($damagedDetails->isEmpty()) {
-            $this->dispatch('notify', ['type' => 'info', 'message' => 'Tidak ada history adjustment "Barang Rusak" di gudang ini.']);
+            $this->dispatch('notify', ['type' => 'info', 'message' => 'Tidak ada history adjustment (Minus) di gudang ini.']);
             return;
         }
 
         $addedCount = 0;
         foreach ($damagedDetails as $detail) {
-            // Check if quantity is still > 0
-            if ($detail->batch->current_qty > 0) {
-                if ($this->addBatchToRows($detail->batch, 'Rusak (dari Adjustment)')) {
-                    $addedCount++;
-                }
+            // Pull the exact quantity that was adjusted out (absolute value)
+            $qtyToDispose = abs($detail->difference);
+            
+            if ($this->addBatchToRows($detail->batch, "Penyesuaian (ADJ-{$detail->id})", $qtyToDispose, 'adjustment', $detail->id)) {
+                $addedCount++;
             }
         }
 
-        $this->dispatch('notify', ['type' => 'success', 'message' => "$addedCount barang rusak berhasil ditarik."]);
+        $this->dispatch('notify', ['type' => 'success', 'message' => "$addedCount barang dari Adjustment berhasil ditarik."]);
     }
 
-    private function addBatchToRows($batch, $reason)
+    public function loadDamagedFromOpname()
+    {
+        if (!$this->warehouse_id) {
+            $this->dispatch('notify', ['type' => 'warning', 'message' => 'Pilih gudang terlebih dahulu.']);
+            return;
+        }
+
+        // Get posted opname details with negative difference
+        // Get IDs that are already used in disposals OR returns
+        $usedOpnameIds = \App\Models\DisposalDetail::where('source_type', 'opname')
+            ->pluck('source_id')
+            ->toArray();
+            
+        $usedInReturns = \App\Models\ReturnDetail::where('source_type', 'opname')
+            ->pluck('source_id')
+            ->toArray();
+            
+        $allUsedOpnameIds = array_unique(array_merge($usedOpnameIds, $usedInReturns));
+
+        $opnameDetails = \App\Models\StockOpnameDetail::whereHas('opname', function($q) {
+            $q->where('warehouse_id', $this->warehouse_id)
+              ->where('status', 'posted');
+        })
+        ->where('difference', '<', 0)
+        ->whereNotIn('id', $allUsedOpnameIds)
+        ->with('item', 'batch')->get();
+
+        if ($opnameDetails->isEmpty()) {
+            $this->dispatch('notify', ['type' => 'info', 'message' => 'Tidak ada hasil opname (Selisih Kurang) di gudang ini.']);
+            return;
+        }
+
+        $addedCount = 0;
+        foreach ($opnameDetails as $detail) {
+            $qtyToDispose = abs($detail->difference);
+            
+            if ($this->addBatchToRows($detail->batch, "Selisih Opname (SO-{$detail->id})", $qtyToDispose, 'opname', $detail->id)) {
+                $addedCount++;
+            }
+        }
+
+        $this->dispatch('notify', ['type' => 'success', 'message' => "$addedCount barang dari Opname berhasil ditarik."]);
+    }
+
+    private function addBatchToRows($batch, $reason, $qty = null, $sourceType = null, $sourceId = null)
     {
         // Check duplicate
         foreach ($this->rows as $row) {
-            if ($row['item_batch_id'] == $batch->id) {
+            if ($row['item_batch_id'] == $batch->id && ($row['source_type'] ?? null) == $sourceType && ($row['source_id'] ?? null) == $sourceId) {
                 return false;
             }
         }
+
+        $qtyFinal = $qty ?? $batch->current_qty;
 
         $this->rows[] = [
             'item_id' => $batch->item_id,
@@ -206,10 +314,15 @@ class DisposalForm extends Component
             'batch_number' => $batch->batch_number,
             'expiry_date' => $batch->expired_date->format('d/m/Y'),
             'available_qty' => $batch->current_qty,
-            'qty' => $batch->current_qty,
+            'qty' => $qtyFinal,
+            'unit_price' => $batch->purchase_price,
+            'total_value' => $qtyFinal * $batch->purchase_price,
             'reason' => $reason,
+            'source_type' => $sourceType,
+            'source_id' => $sourceId,
         ];
 
+        $this->calculateTotal();
         return true;
     }
 
@@ -236,6 +349,7 @@ class DisposalForm extends Component
             ->where('warehouse_id', $this->warehouse_id)
             ->where('is_active', true)
             ->where('current_qty', '>', 0)
+            ->orderBy('expired_date', 'asc')
             ->get();
     }
 
@@ -257,7 +371,24 @@ class DisposalForm extends Component
     {
         unset($this->rows[$index]);
         $this->rows = array_values($this->rows);
+        $this->calculateTotal();
     }
+
+    public function updateQty($index)
+    {
+        $this->rows[$index]['qty'] = (float) ($this->rows[$index]['qty'] ?: 0);
+        $this->rows[$index]['total_value'] = $this->rows[$index]['qty'] * $this->rows[$index]['unit_price'];
+        $this->calculateTotal();
+    }
+
+    public function updatedRows($value, $key)
+    {
+        if (str_contains($key, '.qty')) {
+            $index = explode('.', $key)[0];
+            $this->updateQty($index);
+        }
+    }
+
 
     // --- ACTIONS ---
 
@@ -273,11 +404,55 @@ class DisposalForm extends Component
 
     public function approve()
     {
-        if (!auth()->user()->can('disposals.approve')) {
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'Akses ditolak.']);
+        $adjustment = Disposal::findOrFail($this->disposalId);
+        $user = Auth::user();
+
+        // Approval Threshold Logic
+        $canApprove = false;
+        if ($user->hasRole('super-admin') || $user->hasRole('direktur')) {
+            $canApprove = true;
+        } elseif ($user->hasRole('kepala-farmasi') && $this->total_value <= 10000000) {
+            $canApprove = true;
+        }
+
+        if (!$canApprove) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Anda tidak memiliki wewenang untuk menyetujui disposal dengan nominal ini.']);
             return;
         }
 
+        try {
+            DB::beginTransaction();
+            $disposal = Disposal::findOrFail($this->disposalId);
+            $disposal->update([
+                'status' => 'approved',
+                'approved_by' => Auth::id(),
+                'approved_at' => now(),
+            ]);
+            DB::commit();
+            $this->dispatch('notify', ['type' => 'success', 'message' => 'Disposal disetujui.']);
+            $this->loadDisposal();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
+
+    public function markExecuted()
+    {
+        // Implementation for execution phase
+        $disposal = Disposal::findOrFail($this->disposalId);
+        $disposal->update([
+            'status' => 'executed',
+            'executed_by' => Auth::id(),
+            'executed_at' => now(),
+        ]);
+        $this->loadDisposal();
+        $this->dispatch('notify', ['type' => 'success', 'message' => 'Pemusnahan fisik telah selesai.']);
+    }
+
+    public function post()
+    {
+        // final posting, reduce stock
         try {
             DB::beginTransaction();
 
@@ -286,25 +461,36 @@ class DisposalForm extends Component
             foreach ($disposal->details as $detail) {
                 $batch = ItemBatch::findOrFail($detail->item_batch_id);
                 
-                if ($batch->current_qty < $detail->qty) {
-                    throw new \Exception("Stok tidak cukup untuk item: {$detail->item->name}");
+                // CRITICAL: Only decrement if not from source (Adjustment/Opname)
+                // because source transactions already deducted stock.
+                if (empty($detail->source_type)) {
+                    if ($batch->current_qty < $detail->qty) {
+                        throw new \Exception("Stok tidak cukup untuk item: {$detail->item->name}");
+                    }
+                    $batch->decrement('current_qty', $detail->qty);
+                    $qtyOut = $detail->qty;
+                    $notes = "DSP - " . $disposal->disposal_number . " ({$detail->reason})";
+                } else {
+                    // Just a documentary record, stock change is 0
+                    $qtyOut = 0;
+                    $notes = "DSP DOC - " . $disposal->disposal_number . " (Ref: " . strtoupper($detail->source_type) . " #{$detail->source_id})";
                 }
 
-                $batch->decrement('current_qty', $detail->qty);
-
-                StockCard::create([
-                    'item_id' => $detail->item_id,
-                    'item_batch_id' => $detail->item_batch_id,
-                    'warehouse_id' => $disposal->warehouse_id,
-                    'transaction_type' => $disposal->type === 'disposal' ? 'disposal' : 'return_to_supplier',
-                    'transaction_date' => now(),
-                    'reference_type' => Disposal::class,
-                    'reference_id' => $disposal->id,
-                    'qty_in' => 0,
-                    'qty_out' => $detail->qty,
-                    'last_stock' => $batch->current_qty,
-                    'notes' => strtoupper($disposal->type) . " - " . $disposal->disposal_number . " ({$detail->reason})",
-                ]);
+                if ($qtyOut > 0) {
+                    StockCard::create([
+                        'item_id' => $detail->item_id,
+                        'item_batch_id' => $detail->item_batch_id,
+                        'warehouse_id' => $disposal->warehouse_id,
+                        'transaction_type' => 'disposal',
+                        'transaction_date' => now(),
+                        'reference_type' => Disposal::class,
+                        'reference_id' => $disposal->id,
+                        'qty_in' => 0,
+                        'qty_out' => $qtyOut,
+                        'last_stock' => $batch->current_qty,
+                        'notes' => $notes,
+                    ]);
+                }
             }
 
             $disposal->update([
@@ -314,7 +500,7 @@ class DisposalForm extends Component
             ]);
 
             DB::commit();
-            $this->dispatch('notify', ['type' => 'success', 'message' => 'Data berhasil disetujui & stok diperbarui.']);
+            $this->dispatch('notify', ['type' => 'success', 'message' => 'Data berhasil di-posting & stok diperbarui.']);
             return redirect()->route('inventory.disposals.index');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -342,25 +528,28 @@ class DisposalForm extends Component
         try {
             DB::beginTransaction();
 
+            $this->calculateTotal();
+
             $data = [
                 'disposal_number' => $this->disposal_number,
                 'warehouse_id' => $this->warehouse_id,
                 'type' => $this->type,
-                'disposal_date' => $this->disposal_date,
-                'notes' => $this->notes,
-                'status' => $status,
-                'ba_number' => $this->ba_number,
+                'disposal_type' => $this->disposal_type,
                 'method' => $this->method,
                 'location' => $this->location,
-                'witness_1' => $this->witness_1,
-                'witness_2' => $this->witness_2,
-                'witness_3' => $this->witness_3,
+                'disposal_date' => $this->disposal_date,
+                'execution_date' => $this->execution_date,
+                'total_value' => $this->total_value,
+                'notes' => $this->notes,
+                'ba_number' => $this->ba_number,
+                'status' => $status,
             ];
 
             if ($this->isEdit) {
                 $disposal = Disposal::findOrFail($this->disposalId);
                 $disposal->update($data);
                 $disposal->details()->delete();
+                $disposal->witnesses()->delete();
             } else {
                 $data['created_by'] = Auth::id();
                 $disposal = Disposal::create($data);
@@ -372,6 +561,15 @@ class DisposalForm extends Component
                     'item_batch_id' => $row['item_batch_id'],
                     'qty' => $row['qty'],
                     'reason' => $row['reason'],
+                    'source_type' => $row['source_type'] ?? null,
+                    'source_id' => $row['source_id'] ?? null,
+                ]);
+            }
+
+            foreach ($this->witnesses as $w) {
+                $disposal->witnesses()->create([
+                    'name' => $w['name'],
+                    'role' => $w['role'],
                 ]);
             }
 

@@ -13,32 +13,50 @@
     </div>
 
     {{-- Stats Dashboard --}}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center">
-                <i class="ph ph-trash text-2xl"></i>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
+            <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center shrink-0">
+                <i class="ph ph-file-text text-xl"></i>
             </div>
-            <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Draft Pemusnahan</p>
-                <h3 class="text-xl font-bold text-slate-800">{{ $stats['draft'] }} <span class="text-sm font-normal text-slate-400">Dokumen</span></h3>
-            </div>
-        </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center">
-                <i class="ph ph-arrow-u-up-left text-2xl"></i>
-            </div>
-            <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Retur Supplier</p>
-                <h3 class="text-xl font-bold text-slate-800">{{ $stats['returns'] }} <span class="text-sm font-normal text-slate-400">Dokumen</span></h3>
+            <div class="overflow-hidden">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">Draft</p>
+                <h3 class="text-lg font-black text-slate-800">{{ $stats['draft'] }}</h3>
             </div>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
-                <i class="ph ph-check-circle text-2xl"></i>
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
+            <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+                <i class="ph ph-paper-plane-tilt text-xl"></i>
             </div>
-            <div>
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Lalai / Posted</p>
-                <h3 class="text-xl font-bold text-slate-800">{{ $stats['posted'] }} <span class="text-sm font-normal text-slate-400">Dokumen</span></h3>
+            <div class="overflow-hidden">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">Review</p>
+                <h3 class="text-lg font-black text-slate-800">{{ $stats['submitted'] }}</h3>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                <i class="ph ph-check-circle text-xl"></i>
+            </div>
+            <div class="overflow-hidden">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">Approved</p>
+                <h3 class="text-lg font-black text-slate-800">{{ $stats['approved'] }}</h3>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
+            <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center shrink-0">
+                <i class="ph ph-lightning text-xl"></i>
+            </div>
+            <div class="overflow-hidden">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">Executed</p>
+                <h3 class="text-lg font-black text-slate-800">{{ $stats['executed'] }}</h3>
+            </div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
+            <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center shrink-0">
+                <i class="ph ph-check-square text-xl"></i>
+            </div>
+            <div class="overflow-hidden">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest truncate">Posted</p>
+                <h3 class="text-lg font-black text-slate-800">{{ $stats['posted'] }}</h3>
             </div>
         </div>
     </div>
@@ -97,9 +115,11 @@
                                 <span class="text-xs font-bold text-slate-500 italic">{{ $d->ba_number ?: '-' }}</span>
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase border 
+                                <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase border 
                                     @if($d->status === 'draft') bg-amber-50 text-amber-600 border-amber-100 
                                     @elseif($d->status === 'submitted') bg-indigo-50 text-indigo-600 border-indigo-100 
+                                    @elseif($d->status === 'approved') bg-blue-50 text-blue-600 border-blue-100
+                                    @elseif($d->status === 'executed') bg-purple-50 text-purple-600 border-purple-100
                                     @else bg-emerald-50 text-emerald-600 border-emerald-100 @endif">
                                     {{ $d->status }}
                                 </span>
@@ -108,12 +128,15 @@
                                 <div class="flex justify-end gap-2">
                                     @php
                                         $canEdit = ($d->status === 'draft');
-                                        $canReview = ($d->status === 'submitted' && auth()->user()->can('disposals.approve'));
+                                        $canReview = ($d->status === 'submitted' && auth()->user()->hasRole(['super-admin', 'kepala-farmasi', 'direktur']));
+                                        $canExecute = ($d->status === 'approved');
+                                        $canPost = ($d->status === 'executed');
                                     @endphp
                                     
-                                    @if($canEdit || $canReview)
-                                        <a href="{{ route('inventory.disposals.edit', $d->id) }}" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" title="{{ $canReview ? 'Review & Approve' : 'Edit Dokumen' }}">
-                                            <i class="ph {{ $canReview ? 'ph-check-square' : 'ph-pencil-line' }} text-lg"></i>
+                                    @if($canEdit || $canReview || $canExecute || $canPost)
+                                        <a href="{{ route('inventory.disposals.edit', $d->id) }}" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all" 
+                                            title="{{ $canReview ? 'Review & Approve' : ($canExecute ? 'Eksekusi Fisik' : ($canPost ? 'Final Posting' : 'Edit Dokumen')) }}">
+                                            <i class="ph ph-pencil-line text-lg"></i>
                                         </a>
                                     @endif
                                     

@@ -15,6 +15,8 @@ class DisposalDetail extends Model
         'item_batch_id',
         'qty',
         'reason',
+        'source_type',
+        'source_id',
     ];
 
     public function disposal()

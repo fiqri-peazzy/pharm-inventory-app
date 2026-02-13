@@ -56,8 +56,11 @@ class DisposalIndex extends Component
             ->latest();
 
         $stats = [
-            'draft' => Disposal::where('status', 'draft')->where('type', 'disposal')->count(),
-            'returns' => Disposal::where('type', 'return_to_supplier')->count(),
+            'total' => Disposal::count(),
+            'draft' => Disposal::where('status', 'draft')->count(),
+            'submitted' => Disposal::where('status', 'submitted')->count(),
+            'approved' => Disposal::where('status', 'approved')->count(),
+            'executed' => Disposal::where('status', 'executed')->count(),
             'posted' => Disposal::where('status', 'posted')->count(),
         ];
 

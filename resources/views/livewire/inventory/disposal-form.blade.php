@@ -14,7 +14,16 @@
                     {{ strtoupper($type === 'disposal' ? 'PEMUSNAHAN BARANG' : 'RETUR KE SUPPLIER') }}
                 </h1>
                 <p class="text-slate-500 text-sm font-medium uppercase tracking-widest mt-1">
-                    {{ $disposal_number }} • <span class="{{ $status === 'draft' ? 'text-amber-500' : ($status === 'submitted' ? 'text-indigo-500' : 'text-emerald-500') }}">{{ strtoupper($status) }}</span>
+                    {{ $disposal_number }} • 
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-black tracking-tighter
+                        {{ $status === 'draft' ? 'bg-amber-100 text-amber-600' : '' }}
+                        {{ $status === 'submitted' ? 'bg-indigo-100 text-indigo-600' : '' }}
+                        {{ $status === 'approved' ? 'bg-blue-100 text-blue-600' : '' }}
+                        {{ $status === 'executed' ? 'bg-purple-100 text-purple-600' : '' }}
+                        {{ $status === 'posted' ? 'bg-emerald-100 text-emerald-600' : '' }}
+                    ">
+                        {{ strtoupper($status) }}
+                    </span>
                 </p>
             </div>
 
@@ -28,18 +37,32 @@
                     </button>
                 @endif
 
-                @if($status === 'submitted' && auth()->user()->can('disposals.approve'))
-                    <button wire:click="reject" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2">
-                        <i class="ph-bold ph-x-circle"></i> Tolak (Draft)
+                @if($status === 'submitted')
+                    @if(auth()->user()->hasRole(['super-admin', 'kepala-farmasi', 'direktur']))
+                        <button wire:click="reject" class="bg-rose-50 hover:bg-rose-100 text-rose-600 px-6 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center gap-2">
+                            <i class="ph-bold ph-x-circle"></i> Tolak (Draft)
+                        </button>
+                        <button wire:click="approve" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-emerald-200 flex items-center gap-2">
+                            <i class="ph-bold ph-check-circle"></i> Setujui (Approve)
+                        </button>
+                    @endif
+                @endif
+
+                @if($status === 'approved')
+                    <button wire:click="markExecuted" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-purple-200 flex items-center gap-2">
+                        <i class="ph-bold ph-lightning"></i> Tandai Sudah Eksekusi Fisik
                     </button>
-                    <button wire:click="approve" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-emerald-200 flex items-center gap-2">
-                        <i class="ph-bold ph-check-circle"></i> Setujui & Potong Stok
+                @endif
+
+                @if($status === 'executed')
+                    <button wire:click="post" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg shadow-emerald-200 flex items-center gap-2">
+                        <i class="ph-bold ph-check-square"></i> POSTING KE STOK & AKUNTANSI
                     </button>
                 @endif
 
                 @if($status === 'posted')
                     <div class="bg-emerald-50 text-emerald-700 px-6 py-2.5 rounded-xl font-bold text-sm border border-emerald-100 flex items-center gap-2">
-                        <i class="ph-bold ph-check-square"></i> SUDAH TERBIT (POSTED)
+                        <i class="ph-bold ph-check-square"></i> SELESAI (POSTED)
                     </div>
                 @endif
             </div>
@@ -68,15 +91,26 @@
                         @endif
                     </div>
                     <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Tipe Transaksi</label>
-                        <select wire:model.live="type" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-rose-500 transition-all font-bold text-slate-700">
-                            <option value="disposal">Pemusnahan (Disposal)</option>
-                            <option value="return_to_supplier">Retur ke Supplier</option>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Tipe Disposal</label>
+                        <select wire:model="disposal_type" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-rose-500 transition-all font-bold text-slate-700">
+                            <option value="">Pilih Tipe...</option>
+                            <option value="Expired">Kadaluarsa (Expired)</option>
+                            <option value="Damaged">Rusak (Damaged)</option>
+                            <option value="Lost">Hilang (Lost/Theft)</option>
+                            <option value="Recall">Ditarik (Recall)</option>
+                            <option value="Others">Lainnya</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Tanggal Proses</label>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Tanggal Pengajuan</label>
                         <input type="date" wire:model="disposal_date" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-rose-500 transition-all font-bold text-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Total Nilai (HPP)</label>
+                        <div class="w-full bg-rose-50 border-none rounded-xl text-sm py-3 px-4 font-black text-rose-700 flex items-center justify-between">
+                            <span>Rp</span>
+                            <span>{{ number_format($total_value, 0, ',', '.') }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -99,6 +133,10 @@
                             <span>Barang Rusak (Adjust)</span>
                             <i class="ph-bold ph-wrench opacity-30 group-hover:opacity-100"></i>
                         </button>
+                        <button wire:click="loadDamagedFromOpname" class="w-full bg-white hover:bg-indigo-600 hover:text-white text-indigo-600 p-3 rounded-xl text-[10px] font-black uppercase tracking-widest border border-indigo-200 transition-all flex items-center justify-between group shadow-sm">
+                            <span>Selisih Opname (Minus)</span>
+                            <i class="ph-bold ph-clipboard-text opacity-30 group-hover:opacity-100"></i>
+                        </button>
                     </div>
                 </div>
             @endif
@@ -110,20 +148,51 @@
                 </h3>
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Nomor BA Resmi</label>
-                        <input type="text" wire:model="ba_number" {{ $isViewOnly ? 'disabled' : '' }} placeholder="Contoh: BA/2026/001" class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Nomor BA</label>
+                        <input type="text" wire:model="ba_number" {{ $isViewOnly ? 'disabled' : '' }} placeholder="BA/DSP/2026/..." class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Metode Pemusnahan</label>
-                        <input type="text" wire:model="method" {{ $isViewOnly ? 'disabled' : '' }} placeholder="Contoh: Incinerator / Dikubur" class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Metode & Lokasi</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" wire:model="method" {{ $isViewOnly ? 'disabled' : '' }} placeholder="Metode..." class="w-full bg-slate-50 border-none rounded-xl text-[11px] py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
+                            <input type="text" wire:model="location" {{ $isViewOnly ? 'disabled' : '' }} placeholder="Lokasi..." class="w-full bg-slate-50 border-none rounded-xl text-[11px] py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Lokasi</label>
-                        <input type="text" wire:model="location" {{ $isViewOnly ? 'disabled' : '' }} placeholder="Nama tempat/unit..." class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Tanggal Eksekusi Fisik</label>
+                        <input type="date" wire:model="execution_date" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 tracking-widest">Saksi 1 (Kepala/Direktur)</label>
-                        <input type="text" wire:model="witness_1" {{ $isViewOnly ? 'disabled' : '' }} placeholder="Nama saksi utama..." class="w-full bg-slate-50 border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700">
+
+                    {{-- Witnesses List --}}
+                    <div class="pt-2 border-t border-slate-50">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Saksi-Saksi</label>
+                        <div class="space-y-2 mb-3">
+                            @foreach($witnesses as $idx => $w)
+                                <div class="bg-indigo-50/50 rounded-xl p-2.5 flex items-center justify-between group">
+                                    <div class="overflow-hidden">
+                                        <p class="text-[10px] font-black text-indigo-800 uppercase truncate">{{ $w['name'] }}</p>
+                                        <p class="text-[9px] font-bold text-indigo-400 uppercase tracking-tighter">{{ $w['role'] }}</p>
+                                    </div>
+                                    @if(!$isViewOnly)
+                                        <button wire:click="removeWitness({{ $idx }})" class="text-indigo-300 hover:text-rose-500 px-2 transition-all">
+                                            <i class="ph-bold ph-trash"></i>
+                                        </button>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+
+                        @if(!$isViewOnly)
+                            <div class="bg-slate-50 rounded-2xl p-3 border border-slate-100">
+                                <div class="grid grid-cols-1 gap-2">
+                                    <input type="text" wire:model="new_witness_name" placeholder="Nama saksi..." class="w-full bg-white border-none rounded-lg text-[10px] py-2 px-3 font-bold text-slate-700 shadow-sm">
+                                    <input type="text" wire:model="new_witness_role" placeholder="Jabatan (Apoteker/Keuangan)..." class="w-full bg-white border-none rounded-lg text-[10px] py-2 px-3 font-bold text-slate-700 shadow-sm">
+                                    <button wire:click="addWitness" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2 text-[10px] font-black uppercase tracking-widest transition-all">
+                                        TAMBAH SAKSI
+                                    </button>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -213,7 +282,9 @@
                                 <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Batch / ED</th>
                                 <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center w-24">Stok</th>
                                 <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center w-32">Qty Out</th>
-                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Alasan / Catatan</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right w-32">Harga (HPP)</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right w-32">Subtotal</th>
+                                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Alasan</th>
                                 @if(!$isViewOnly)
                                     <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Aksi</th>
                                 @endif
@@ -243,11 +314,26 @@
                                             <p class="text-sm font-black text-slate-800 text-center">{{ number_format($row['qty'], 2) }}</p>
                                         @endif
                                     </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <p class="text-[10px] font-black text-slate-400">Rp</p>
+                                        <p class="text-xs font-bold text-slate-700">{{ number_format($row['unit_price'], 0, ',', '.') }}</p>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <p class="text-[10px] font-black text-rose-400">Rp</p>
+                                        <p class="text-xs font-black text-rose-700">{{ number_format($row['total_value'], 0, ',', '.') }}</p>
+                                    </td>
                                     <td class="px-6 py-4">
                                         @if(!$isViewOnly)
                                             <input type="text" wire:model="rows.{{ $index }}.reason" placeholder="..." class="w-full bg-transparent border-none text-[11px] font-medium text-slate-600 focus:ring-0 placeholder:opacity-30 italic">
                                         @else
                                             <p class="text-[11px] text-slate-600 italic">{{ $row['reason'] ?: '-' }}</p>
+                                        @endif
+
+                                        @if(!empty($row['source_type']))
+                                            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 mt-1 bg-slate-100 text-slate-500 rounded text-[8px] font-black uppercase tracking-tighter">
+                                                <i class="ph-bold ph-link"></i>
+                                                {{ $row['source_type'] === 'adjustment' ? 'ADJ' : 'OPNAME' }} #{{ $row['source_id'] }}
+                                            </span>
                                         @endif
                                     </td>
                                     @if(!$isViewOnly)

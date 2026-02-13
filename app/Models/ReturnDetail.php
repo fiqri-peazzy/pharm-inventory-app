@@ -17,6 +17,8 @@ class ReturnDetail extends Model
         'price',
         'total_value',
         'notes',
+        'source_type',
+        'source_id',
     ];
 
     public function return()

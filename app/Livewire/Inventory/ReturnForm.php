@@ -156,6 +156,8 @@ class ReturnForm extends Component
                 'price' => $detail->price,
                 'total_value' => $detail->total_value,
                 'notes' => $detail->notes,
+                'source_type' => $detail->source_type,
+                'source_id' => $detail->source_id,
             ];
         }
     }
@@ -192,37 +194,109 @@ class ReturnForm extends Component
             ->get();
     }
 
-    public function addItem()
+    public function addItem($batchId = null, $reason = '', $qty = 1, $sourceType = null, $sourceId = null)
     {
-        if (!$this->selectedBatchId) {
+        $batchId = $batchId ?? $this->selectedBatchId;
+        if (!$batchId) {
             $this->dispatch('notify', ['type' => 'warning', 'message' => 'Pilih batch terlebih dahulu!']);
             return;
         }
 
-        $batch = ItemBatch::find($this->selectedBatchId);
+        $batch = ItemBatch::with('item')->find($batchId);
         
         foreach ($this->items as $item) {
-            if ($item['batch_id'] == $this->selectedBatchId) {
+            if ($item['batch_id'] == $batchId && ($item['source_type'] ?? null) == $sourceType && ($item['source_id'] ?? null) == $sourceId) {
                 $this->dispatch('notify', ['type' => 'info', 'message' => 'Batch ini sudah ada di daftar.']);
                 return;
             }
         }
 
         $this->items[] = [
-            'item_id' => $this->selectedItem->id,
-            'item_name' => $this->selectedItem->name,
+            'item_id' => $batch->item_id,
+            'item_name' => $batch->item->name,
             'batch_id' => $batch->id,
             'batch_number' => $batch->batch_number,
             'expired_date' => $batch->expired_date->format('d/m/y'),
             'available_qty' => $batch->current_qty,
-            'qty' => 1,
+            'qty' => $qty,
             'price' => $batch->purchase_price,
-            'total_value' => $batch->purchase_price,
-            'notes' => '',
+            'total_value' => $qty * floatval($batch->purchase_price),
+            'notes' => $reason,
+            'source_type' => $sourceType,
+            'source_id' => $sourceId,
         ];
 
         $this->resetItemSelection();
         $this->calculateGrandTotal();
+    }
+
+    // --- SMART LOAD ---
+
+    public function loadExpiredItems()
+    {
+        if (!$this->from_warehouse_id) {
+            $this->dispatch('notify', ['type' => 'warning', 'message' => 'Pilih gudang asal terlebih dahulu!']);
+            return;
+        }
+
+        $expiredBatches = ItemBatch::where('warehouse_id', $this->from_warehouse_id)
+            ->where('expired_date', '<=', now())
+            ->where('current_qty', '>', 0)
+            ->get();
+
+        if ($expiredBatches->isEmpty()) {
+            $this->dispatch('notify', ['type' => 'info', 'message' => 'Tidak ada barang kadaluarsa ditemukan.']);
+            return;
+        }
+
+        $count = 0;
+        foreach ($expiredBatches as $batch) {
+            $this->addItem($batch->id, 'Expired', $batch->current_qty);
+            $count++;
+        }
+
+        $this->dispatch('notify', ['type' => 'success', 'message' => "$count item kadaluarsa ditarik."]);
+    }
+
+    public function loadDamagedFromAdjustments()
+    {
+        if (!$this->from_warehouse_id) {
+            $this->dispatch('notify', ['type' => 'warning', 'message' => 'Pilih gudang asal terlebih dahulu!']);
+            return;
+        }
+
+        // Get IDs that are already used in returns OR disposals
+        $usedAdjustmentIds = \App\Models\ReturnDetail::where('source_type', 'adjustment')
+            ->pluck('source_id')
+            ->toArray();
+            
+        $usedInDisposals = \App\Models\DisposalDetail::where('source_type', 'adjustment')
+            ->pluck('source_id')
+            ->toArray();
+            
+        $allUsedAdjustmentIds = array_unique(array_merge($usedAdjustmentIds, $usedInDisposals));
+
+        $damagedDetails = \App\Models\StockAdjustmentDetail::whereHas('adjustment', function($q) {
+            $q->where('warehouse_id', $this->from_warehouse_id)
+              ->where('status', 'posted');
+        })
+        ->where('difference', '<', 0)
+        ->whereNotIn('id', $allUsedAdjustmentIds)
+        ->with('item', 'batch')->get();
+
+        if ($damagedDetails->isEmpty()) {
+            $this->dispatch('notify', ['type' => 'info', 'message' => 'Tidak ada history adjustment (Minus) ditemukan.']);
+            return;
+        }
+
+        $count = 0;
+        foreach ($damagedDetails as $detail) {
+            $qtyToReturn = abs($detail->difference);
+            $this->addItem($detail->item_batch_id, "ADJ-{$detail->id}", $qtyToReturn, 'adjustment', $detail->id);
+            $count++;
+        }
+
+        $this->dispatch('notify', ['type' => 'success', 'message' => "$count item dari Adjustment ditarik."]);
     }
 
     public function resetItemSelection()
@@ -239,6 +313,21 @@ class ReturnForm extends Component
         unset($this->items[$index]);
         $this->items = array_values($this->items);
         $this->calculateGrandTotal();
+    }
+
+    public function updateReturnQty($index)
+    {
+        $this->items[$index]['qty'] = (float) ($this->items[$index]['qty'] ?: 0);
+        $this->items[$index]['total_value'] = $this->items[$index]['qty'] * $this->items[$index]['price'];
+        $this->calculateGrandTotal();
+    }
+
+    public function updatedItems($value, $key)
+    {
+        if (str_contains($key, '.qty')) {
+            $index = explode('.', $key)[0];
+            $this->updateReturnQty($index);
+        }
     }
 
     public function updateQty($index)
@@ -314,6 +403,8 @@ class ReturnForm extends Component
                     'price' => $item['price'],
                     'total_value' => $item['total_value'],
                     'notes' => $item['notes'],
+                    'source_type' => $item['source_type'] ?? null,
+                    'source_id' => $item['source_id'] ?? null,
                 ]);
             }
 
@@ -343,24 +434,33 @@ class ReturnForm extends Component
             foreach ($returnDoc->details as $detail) {
                 $batch = ItemBatch::findOrFail($detail->item_batch_id);
                 
-                // Decrement from source
-                $batch->current_qty -= $detail->qty;
-                $batch->save();
+                // CRITICAL: Only decrement if not from source (Adjustment/Opname)
+                if (empty($detail->source_type)) {
+                    $batch->current_qty -= $detail->qty;
+                    $batch->save();
+                    $qtyOut = $detail->qty;
+                    $notes = "RTN - {$returnDoc->return_number}";
+                } else {
+                    $qtyOut = 0;
+                    $notes = "RTN DOC - {$returnDoc->return_number} (Ref: ".strtoupper($detail->source_type)." #{$detail->source_id})";
+                }
 
                 // Stock Card Out
-                StockCard::create([
-                    'item_id' => $detail->item_id,
-                    'item_batch_id' => $detail->item_batch_id,
-                    'warehouse_id' => $returnDoc->from_warehouse_id,
-                    'transaction_type' => $returnDoc->type === 'supplier' ? 'return_to_supplier' : 'internal_return_out',
-                    'transaction_date' => now(),
-                    'reference_type' => InventoryReturn::class,
-                    'reference_id' => $returnDoc->id,
-                    'qty_in' => 0,
-                    'qty_out' => $detail->qty,
-                    'last_stock' => $batch->current_qty,
-                    'notes' => "RTN - {$returnDoc->return_number}",
-                ]);
+                if ($qtyOut > 0) {
+                    StockCard::create([
+                        'item_id' => $detail->item_id,
+                        'item_batch_id' => $detail->item_batch_id,
+                        'warehouse_id' => $returnDoc->from_warehouse_id,
+                        'transaction_type' => $returnDoc->type === 'supplier' ? 'return_to_supplier' : 'internal_return_out',
+                        'transaction_date' => now(),
+                        'reference_type' => InventoryReturn::class,
+                        'reference_id' => $returnDoc->id,
+                        'qty_in' => 0,
+                        'qty_out' => $qtyOut,
+                        'last_stock' => $batch->current_qty,
+                        'notes' => $notes,
+                    ]);
+                }
 
                 // If Internal, increment destination
                 if ($returnDoc->type === 'internal') {
