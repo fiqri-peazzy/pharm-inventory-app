@@ -195,6 +195,11 @@ class StockDashboard extends Component
         // Implementation for line chart data...
     }
 
+    public function getTotalValueFormattedProperty()
+    {
+        return 'Rp ' . number_format($this->summary['total_value'] ?? 0, 0, ',', '.');
+    }
+
     public function render()
     {
         return view('livewire.inventory.stock-dashboard');
