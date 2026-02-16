@@ -81,96 +81,16 @@ class PrescriptionDispense extends Component
         }
 
         try {
-            DB::transaction(function () {
-                foreach ($this->details as $row) {
-                    $batch = ItemBatch::lockForUpdate()->find($row['batch_id']);
-                    $oldQty = $batch->current_qty;
-                    
-                    // Decrease stock
-                    $batch->decrement('current_qty', $row['qty_prescribed']);
+            $service = app(\App\Services\Clinical\PrescriptionService::class);
+            $items = array_map(function($row) {
+                return [
+                    'id' => $row['detail_id'],
+                    'qty_dispensed' => $row['qty_prescribed'],
+                    'item_batch_id' => $row['batch_id']
+                ];
+            }, $this->details);
 
-                    // Update detail with batch info
-                    PrescriptionDetail::where('id', $row['detail_id'])->update([
-                        'item_batch_id' => $batch->id,
-                        'price_per_unit' => $batch->purchase_price, // Assuming selling price logic later
-                        'subtotal' => $batch->purchase_price * $row['qty_prescribed']
-                    ]);
-
-                    // Stock Card
-                    StockCard::create([
-                        'item_id' => $row['item_id'],
-                        'warehouse_id' => $this->prescription->warehouse_id,
-                        'item_batch_id' => $batch->id,
-                        'transaction_date' => now(),
-                        'transaction_type' => 'prescription',
-                        'reference_type' => Prescription::class,
-                        'reference_id' => $this->prescription->id,
-                        'qty_out' => $row['qty_prescribed'],
-                        'last_stock' => $oldQty - $row['qty_prescribed'],
-                        'notes' => 'Dispensed for Rx: ' . $this->prescription->prescription_number,
-                    ]);
-                }
-
-                $this->prescription->update([
-                    'status' => 'completed',
-                    'processed_at' => now(),
-                    'processed_by' => Auth::id()
-                ]);
-
-                // 4. Accounting Integration (Auto-Posting COGS)
-                try {
-                    $accountingService = app(\App\Services\AccountingService::class);
-                    $entries = [];
-                    $summaryByAccount = [];
-
-                    foreach ($this->prescription->details as $detail) {
-                        $inventoryAccount = $accountingService->getInventoryAccountByCategory($detail->item->category?->type);
-                        $cogsAccount = $accountingService->getCOGSAccountByCategory($detail->item->category?->type);
-                        
-                        $costAmount = $detail->subtotal; // Using subtotal which is cost-based in this system
-
-                        // Group by Inventory Account (Credit)
-                        if (!isset($summaryByAccount['inv_' . $inventoryAccount->id])) {
-                            $summaryByAccount['inv_' . $inventoryAccount->id] = ['account' => $inventoryAccount, 'amount' => 0];
-                        }
-                        $summaryByAccount['inv_' . $inventoryAccount->id]['amount'] += $costAmount;
-
-                        // Group by COGS Account (Debit)
-                        if (!isset($summaryByAccount['cogs_' . $cogsAccount->id])) {
-                            $summaryByAccount['cogs_' . $cogsAccount->id] = ['account' => $cogsAccount, 'amount' => 0];
-                        }
-                        $summaryByAccount['cogs_' . $cogsAccount->id]['amount'] += $costAmount;
-                    }
-
-                    foreach ($summaryByAccount as $key => $data) {
-                        if ($data['amount'] > 0) {
-                            $isDebit = str_starts_with($key, 'cogs_');
-                            $entries[] = [
-                                'account_id' => $data['account']->id,
-                                'debit' => $isDebit ? $data['amount'] : 0,
-                                'credit' => $isDebit ? 0 : $data['amount'],
-                                'description' => ($isDebit ? 'Beban: ' : 'Persediaan: ') . $this->prescription->prescription_number
-                            ];
-                        }
-                    }
-
-                    if (count($entries) > 0) {
-                        $accountingService->createJournalEntry([
-                            'journal_number' => $this->prescription->prescription_number,
-                            'journal_date' => now(),
-                            'type' => 'standard',
-                            'transaction_type' => 'prescription',
-                            'transaction_id' => $this->prescription->id,
-                            'description' => 'Auto-journal (COGS) for prescription ' . $this->prescription->prescription_number,
-                            'status' => 'posted',
-                            'entries' => $entries
-                        ]);
-                    }
-
-                } catch (\Exception $e) {
-                    \Log::error('Accounting auto-posting failed for prescription ' . $this->prescription->prescription_number . ': ' . $e->getMessage());
-                }
-            });
+            $service->dispense($this->prescription, $items);
 
             session()->flash('notify', ['type' => 'success', 'message' => 'Resep berhasil diproses (Dispensed).']);
             return redirect()->route('clinical.prescriptions.index');

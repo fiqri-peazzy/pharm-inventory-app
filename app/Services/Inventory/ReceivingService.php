@@ -17,6 +17,10 @@ class ReceivingService
             throw new \Exception('Receiving already posted.');
         }
 
+        if (!$rcv->warehouse || !$rcv->warehouse->is_main) {
+            throw new \Exception('Penerimaan dari pihak luar (PBF) hanya diperbolehkan melalui Gudang Utama.');
+        }
+
         return DB::transaction(function () use ($rcv) {
             foreach ($rcv->details as $detail) {
                 // 1. Create Batch

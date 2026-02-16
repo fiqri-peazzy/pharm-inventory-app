@@ -49,6 +49,13 @@ class DistributionReceive extends Component
             'items.*.qty_received' => 'required|numeric|min:0',
         ]);
 
+        foreach ($this->items as $index => $item) {
+            if ($item['qty_received'] > $item['qty_sent']) {
+                $this->addError("items.$index.qty_received", "Jumlah diterima tidak boleh melebihi jumlah yang dikirim ({$item['qty_sent']}).");
+                return;
+            }
+        }
+
         try {
             $service->receiveOrder($this->distribution, $this->items);
 

@@ -217,22 +217,31 @@
                                     <th class="px-4 py-2 text-gray-400 font-black uppercase text-center">Info Barang
                                     </th>
                                     <th class="px-4 py-2 text-gray-400 font-black uppercase text-center">Stok</th>
-                                    <th class="px-4 py-2 text-gray-400 font-black uppercase text-center">Min</th>
+                                    <th class="px-4 py-2 text-gray-400 font-black uppercase text-center">RP & Min</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50">
                                 @forelse($lowStockItems as $item)
                                     <tr class="hover:bg-red-50/5 transition-colors">
                                         <td class="px-4 py-2">
-                                            <span class="font-bold text-gray-900">{{ $item->name }}</span>
+                                            <span
+                                                class="font-bold text-gray-900 leading-tight block">{{ $item->name }}</span>
                                             @if($isGlobal)
-                                            <div class="text-[8px] text-gray-400">{{ $item->alert_warehouse }}</div>@endif
+                                                <div class="text-[8px] text-brand-500 font-black uppercase italic">
+                                            {{ $item->alert_warehouse }}</div>@endif
                                         </td>
-                                        <td class="px-4 py-2 text-center font-black text-red-600">
-                                            {{ number_format($item->current_stock) }}
+                                        <td class="px-4 py-2 text-center">
+                                            <span
+                                                class="text-sm font-black text-red-600 tracking-tighter">{{ number_format($item->current_stock) }}</span>
                                         </td>
-                                        <td class="px-4 py-2 text-center text-gray-400">
-                                            {{ number_format($item->alert_min_stock) }}
+                                        <td class="px-4 py-2 text-center">
+                                            <div class="flex flex-col items-center">
+                                                <span
+                                                    class="text-[9px] font-black text-amber-500 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-100 mb-0.5">RP:
+                                                    {{ number_format($item->alert_reorder_point) }}</span>
+                                                <span class="text-[8px] font-bold text-gray-400">MIN:
+                                                    {{ number_format($item->alert_min_stock) }}</span>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty

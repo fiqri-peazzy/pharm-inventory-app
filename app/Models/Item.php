@@ -25,6 +25,8 @@ class Item extends Model
         'storage_condition',
         'fornas_status',
         'fornas_code',
+        'abc_classification',
+        'ven_classification',
         'notes',
         'created_by',
         'updated_by',

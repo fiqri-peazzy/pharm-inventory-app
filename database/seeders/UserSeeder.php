@@ -84,15 +84,24 @@ class UserSeeder extends Seeder
         foreach ($depots as $depot) {
             $username = strtolower(str_replace([' ', '-'], '_', $depot->code));
             $users[] = [
-                'name' => 'PJ ' . $depot->name,
+                'name' => 'Apoteker ' . $depot->name,
                 'username' => $username,
                 'email' => $username . '@rsud.go.id',
-                'employee_id' => 'DEP_' . $depot->code,
+                'employee_id' => 'APT_' . $depot->code,
+                'sipa_number' => 'SIPA/APT/' . rand(1000, 9999) . '/' . date('Y'),
                 'phone' => '081' . rand(100000000, 999999999),
                 'warehouse_id' => $depot->id,
                 'role' => 'apoteker',
             ];
         }
+
+        // Add special SIPA for Kepala Farmasi
+        foreach ($users as &$u) {
+            if ($u['role'] === 'kepala-farmasi') {
+                $u['sipa_number'] = 'SIPA/KPL/' . rand(1000, 9999) . '/' . date('Y');
+            }
+        }
+        unset($u);
 
         foreach ($users as $userData) {
             $role = $userData['role'];

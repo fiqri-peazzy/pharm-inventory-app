@@ -201,6 +201,13 @@ class ReceivingForm extends Component
     {
         $this->validate();
 
+        // Enforcement: Receiving from PBF must be to Main Warehouse
+        $warehouse = Warehouse::find($this->warehouse_id);
+        if (!$warehouse || !$warehouse->is_main) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Penerimaan barang dari PBF hanya diperbolehkan ke Gudang Utama.']);
+            return;
+        }
+
         if ($this->grand_total <= 0) {
             $this->dispatch('notify', ['type' => 'error', 'message' => 'Total penerimaan tidak boleh nol.']);
             return;
@@ -308,7 +315,7 @@ class ReceivingForm extends Component
     {
         return view('livewire.procurement.receiving-form', [
             'suppliers' => Supplier::orderBy('name')->get(),
-            'warehouses' => Warehouse::orderBy('name')->get(),
+            'warehouses' => Warehouse::where('is_main', true)->orderBy('name')->get(),
             'purchaseOrders' => PurchaseOrder::whereIn('status', ['approved', 'sent', 'partial_received'])->latest()->get(),
         ]);
     }

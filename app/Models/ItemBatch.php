@@ -59,14 +59,24 @@ class ItemBatch extends Model
 
     public function getStatusLabelAttribute()
     {
-        if ($this->expired_date <= now()) {
-            return (object) ['label' => 'EXPIRED', 'color' => 'bg-red-50 text-red-600 border-red-100'];
+        $daysToExpiry = now()->diffInDays($this->expired_date, false);
+
+        if ($daysToExpiry <= 0) {
+            return (object) ['label' => 'EXPIRED', 'color' => 'bg-red-100 text-red-700 border-red-200', 'urgency' => 4];
         }
 
-        if ($this->expired_date <= now()->addDays(90)) {
-            return (object) ['label' => 'NEAR EXPIRED', 'color' => 'bg-amber-50 text-amber-600 border-amber-100'];
+        if ($daysToExpiry <= 30) {
+            return (object) ['label' => 'CRITICAL (<30d)', 'color' => 'bg-rose-50 text-rose-600 border-rose-100 animate-pulse', 'urgency' => 3];
         }
 
-        return (object) ['label' => 'ACTIVE', 'color' => 'bg-emerald-50 text-emerald-600 border-emerald-100'];
+        if ($daysToExpiry <= 90) {
+            return (object) ['label' => 'NEAR EXPIRED', 'color' => 'bg-amber-50 text-amber-600 border-amber-100', 'urgency' => 2];
+        }
+
+        if ($daysToExpiry <= 180) {
+            return (object) ['label' => 'MONITORING', 'color' => 'bg-blue-50 text-blue-600 border-blue-100', 'urgency' => 1];
+        }
+
+        return (object) ['label' => 'ACTIVE', 'color' => 'bg-emerald-50 text-emerald-600 border-emerald-100', 'urgency' => 0];
     }
 }
