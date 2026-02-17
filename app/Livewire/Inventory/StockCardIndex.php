@@ -39,7 +39,7 @@ class StockCardIndex extends Component
 
     public function render()
     {
-        $query = StockCard::with(['item', 'warehouse', 'batch'])
+        $query = StockCard::with(['item', 'warehouse', 'batch', 'reference'])
             ->when($this->search, function ($q) {
                 $q->whereHas('item', function ($iq) {
                     $iq->where('name', 'like', '%' . $this->search . '%')

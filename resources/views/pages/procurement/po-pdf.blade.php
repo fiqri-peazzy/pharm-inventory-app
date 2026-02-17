@@ -1,167 +1,241 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
-    <title>Purchase Order - {{ $order->po_number }}</title>
+    <title>Surat Pesanan - {{ $order->po_number }}</title>
     <style>
-        body { font-family: 'Helvetica', 'Arial', sans-serif; font-size: 11px; line-height: 1.3; color: #333; }
-        .header { margin-bottom: 20px; border-bottom: 1px solid #444; padding-bottom: 5px; }
-        .header table { width: 100%; }
-        .brand { font-size: 20px; font-weight: bold; color: #4f46e5; text-transform: uppercase; }
-        .doc-title { font-size: 16px; font-weight: bold; text-align: right; text-transform: uppercase; }
-        
-        .info-section { width: 100%; margin-bottom: 20px; }
-        .info-box { width: 48%; vertical-align: top; }
-        .label { font-size: 9px; font-weight: bold; color: #666; text-transform: uppercase; margin-bottom: 2px; }
-        .value { font-size: 11px; font-weight: bold; margin-bottom: 8px; }
-        
-        .items-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
-        .items-table th { background-color: #f3f4f6; color: #374151; font-weight: bold; text-transform: uppercase; font-size: 9px; padding: 6px 4px; border: 1px solid #d1d5db; text-align: left; }
-        .items-table td { padding: 6px 4px; border: 1px solid #e5e7eb; vertical-align: top; font-size: 10px; word-wrap: break-word; }
-        .items-table .text-right { text-align: right; }
-        .items-table .text-center { text-align: center; }
-        
-        .totals-section { width: 100%; margin-top: 10px; }
-        .totals-table { width: 250px; margin-left: auto; border-collapse: collapse; }
-        .totals-table td { padding: 4px 8px; border-bottom: 1px solid #eee; font-size: 10px; }
-        .totals-table .grand-total { background-color: #f3f4f6; font-weight: bold; font-size: 12px; border-top: 2px solid #4f46e5; }
-        
-        .notes-section { margin-top: 20px; font-style: italic; color: #666; font-size: 10px; }
-        .signature-section { margin-top: 40px; width: 100%; }
-        .signature-box { width: 180px; text-align: center; vertical-align: top; }
-        .signature-line { margin-top: 50px; border-top: 1px solid #333; padding-top: 5px; font-weight: bold; font-size: 11px; }
-        
-        @page { margin: 1.2cm 1cm; }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 11px;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            margin: 2px 0;
+            font-size: 10px;
+        }
+
+        .title {
+            text-align: center;
+            text-decoration: underline;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .info-table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        .info-table td {
+            padding: 3px 0;
+            vertical-align: top;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .items-table th {
+            background: #f5f5f5;
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+
+        .items-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            vertical-align: top;
+        }
+
+        .totals-table {
+            width: 40%;
+            margin-left: auto;
+            border-collapse: collapse;
+        }
+
+        .totals-table td {
+            padding: 5px;
+            text-align: right;
+        }
+
+        .footer {
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        .footer-table {
+            width: 100%;
+        }
+
+        .footer-table td {
+            text-align: center;
+            width: 33%;
+        }
+
+        .sig-space {
+            height: 80px;
+        }
+
+        .type-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 5px 10px;
+            border: 1px solid #000;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
     </style>
 </head>
+
 <body>
     <div class="header">
-        <table>
-            <tr>
-                <td class="brand">POS PHARMACY</td>
-                <td class="doc-title">PURCHASE ORDER</td>
-            </tr>
-            <tr>
-                <td style="font-size: 10px; color: #666;">
-                    Jl. Kesehatan No. 123, Jakarta Selatan<br>
-                    Telp: (021) 1234567 | Email: info@pospharm.com
-                </td>
-                <td style="text-align: right; font-weight: bold;">
-                    #{{ $order->po_number }}
-                </td>
-            </tr>
-        </table>
+        <h1>RSUD JAILOLO</h1>
+        <p>Jl. Inpres Jailolo, Halmahera Barat, Maluku Utara</p>
+        <p>Telp: (0922) 2221062 | Email: rsud.jailolo@gmail.com</p>
     </div>
 
-    <table class="info-section">
+    <div class="type-badge">
+        SP {{ $order->sp_type }}
+    </div>
+
+    <div class="title">
+        SURAT PESANAN (SP) {{ $order->sp_type }}
+    </div>
+
+    <table class="info-table">
         <tr>
-            <td class="info-box">
-                <div class="label">DIBELI DARI (SUPPLIER):</div>
-                <div class="value">
-                    {{ $order->supplier->name ?? 'Internal Store' }}<br>
-                    <span style="font-weight: normal; font-size: 10px; color: #666;">
-                        {{ $order->supplier->address ?? '-' }}<br>
-                        PIC: {{ $order->supplier->pic_name ?? '-' }} ({{ $order->supplier->pic_phone ?? '-' }})
-                    </span>
-                </div>
-            </td>
-            <td class="info-box" style="padding-left: 4%;">
-                <div class="label">KIRIM KE (DESTINATION):</div>
-                <div class="value">
-                    {{ $order->warehouse->name }}<br>
-                    <span style="font-weight: normal; font-size: 10px; color: #666;">
-                        {{ $order->warehouse->address ?? 'Alamat Gudang Utama' }}<br>
-                        Internal PR: {{ $order->purchaseRequest->request_number ?? '-' }}
-                    </span>
-                </div>
-            </td>
+            <td style="width: 15%;">Nomor SP</td>
+            <td style="width: 2%;">:</td>
+            <td style="width: 33%;"><strong>{{ $order->po_number }}</strong></td>
+            <td style="width: 15%;">Kepada Yth.</td>
+            <td style="width: 2%;">:</td>
+            <td style="width: 33%;"><strong>{{ $order->supplier->name }}</strong></td>
         </tr>
         <tr>
-            <td class="info-box">
-                <div class="label">TANGGAL PESANAN:</div>
-                <div class="value">{{ \Carbon\Carbon::parse($order->po_date)->format('d F Y') }}</div>
-            </td>
-            <td class="info-box" style="padding-left: 4%;">
-                <div class="label">TERM PEMBAYARAN:</div>
-                <div class="value">{{ $order->payment_term }} Hari (Net)</div>
-            </td>
+            <td>Tanggal SP</td>
+            <td>:</td>
+            <td>{{ $order->po_date->format('d F Y') }}</td>
+            <td>Alamat</td>
+            <td>:</td>
+            <td>{{ $order->supplier->address ?? '-' }}</td>
+        </tr>
+        <tr>
+            <td>Gudang Tujuan</td>
+            <td>:</td>
+            <td>{{ $order->warehouse->name }}</td>
+            <td>Kontak</td>
+            <td>:</td>
+            <td>{{ $order->supplier->phone ?? '-' }}</td>
         </tr>
     </table>
 
     <table class="items-table">
         <thead>
             <tr>
-                <th width="5%">NO</th>
-                <th width="40%">NAMA ITEM / BARANG</th>
-                <th width="8%" class="text-center">QTY</th>
-                <th width="15%" class="text-right">HARGA</th>
-                <th width="8%" class="text-right">DISC%</th>
-                <th width="8%" class="text-right">PPN%</th>
-                <th width="16%" class="text-right">SUBTOTAL</th>
+                <th width="5%">No</th>
+                <th width="40%">Nama Barang / Obat</th>
+                <th width="10%">Satuan</th>
+                <th width="10%">Jumlah</th>
+                <th width="15%">Harga Satuan</th>
+                <th width="20%">Subtotal</th>
             </tr>
         </thead>
         <tbody>
             @foreach($order->details as $index => $detail)
                 <tr>
-                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td style="text-align: center;">{{ $index + 1 }}</td>
                     <td>
                         <strong>{{ $detail->item->name }}</strong><br>
-                        <span style="font-size: 8px; color: #666;">{{ $detail->item->code }} @if($detail->notes) | {{ $detail->notes }} @endif</span>
+                        <small>{{ $detail->item->generic_name }}</small>
                     </td>
-                    <td class="text-center">{{ number_format($detail->qty_ordered) }}</td>
-                    <td class="text-right">{{ number_format($detail->purchase_price) }}</td>
-                    <td class="text-right">{{ (float)$detail->discount_percentage }}%</td>
-                    <td class="text-right">{{ (float)$detail->ppn_percentage }}%</td>
-                    <td class="text-right">{{ number_format($detail->subtotal) }}</td>
+                    <td style="text-align: center;">{{ $detail->item->unit->name }}</td>
+                    <td style="text-align: center;">{{ number_format($detail->qty_ordered) }}</td>
+                    <td style="text-align: right;">{{ number_format($detail->purchase_price) }}</td>
+                    <td style="text-align: right;">{{ number_format($detail->subtotal) }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 
-    <table class="totals-section">
+    <table class="totals-table">
         <tr>
-            <td style="vertical-align: top;">
-                <div class="notes-section">
-                    <strong>Catatan:</strong><br>
-                    {{ $order->notes ?: 'Hanya melayani pengiriman barang sesuai spesifikasi di atas. Mohon lampirkan salinan PO ini saat pengiriman barang.' }}
-                </div>
-            </td>
-            <td width="250">
-                <table class="totals-table">
-                    <tr>
-                        <td style="color: #666;">Subtotal (Gross)</td>
-                        <td class="text-right">{{ number_format($order->total_amount) }}</td>
-                    </tr>
-                    <tr>
-                        <td style="color: #666;">Total Diskon (-)</td>
-                        <td class="text-right" style="color: #ef4444;">{{ number_format($order->discount_amount) }}</td>
-                    </tr>
-                    <tr>
-                        <td style="color: #666;">Total PPN (+)</td>
-                        <td class="text-right">{{ number_format($order->ppn_amount) }}</td>
-                    </tr>
-                    <tr class="grand-total">
-                        <td>GRAND TOTAL (RP)</td>
-                        <td class="text-right" style="font-size: 13px;">{{ number_format($order->grand_total) }}</td>
-                    </tr>
-                </table>
-            </td>
+            <td>Subtotal (Gross)</td>
+            <td width="5%">:</td>
+            <td width="35%">Rp{{ number_format($order->total_amount) }}</td>
+        </tr>
+        @if($order->total_discount > 0)
+            <tr>
+                <td>Total Diskon</td>
+                <td>:</td>
+                <td>(Rp{{ number_format($order->total_discount) }})</td>
+            </tr>
+        @endif
+        <tr>
+            <td>PPN (11%)</td>
+            <td>:</td>
+            <td>Rp{{ number_format($order->ppn_amount) }}</td>
+        </tr>
+        <tr style="font-weight: bold; border-top: 1px solid #000;">
+            <td>GRAND TOTAL</td>
+            <td>:</td>
+            <td>Rp{{ number_format($order->grand_total) }}</td>
         </tr>
     </table>
 
-    <table class="signature-section">
-        <tr>
-            <td class="signature-box">
-                <div class="label">DISETUJUI OLEH,</div>
-                <div class="signature-line">MANAGEMENT / KAI</div>
-            </td>
-            <td style="width: 50%;"></td>
-            <td class="signature-box">
-                <div class="label">DICETAK OLEH,</div>
-                <div class="signature-line">{{ Auth::user()->name }}</div>
-                <div style="font-size: 8px; color: #999; margin-top: 3px;">Printed at: {{ now()->format('d/m/Y H:i') }}</div>
-            </td>
-        </tr>
-    </table>
+    <div style="margin-top: 20px;">
+        <strong>Catatan:</strong><br>
+        {{ $order->notes ?: 'Mohon barang dikirim tepat waktu sesuai dengan pesanan.' }}
+    </div>
+
+    <div class="footer">
+        <table class="footer-table">
+            <tr>
+                <td>
+                    Mengetahui,<br>
+                    Direktur RSUD Jailolo
+                    <div class="sig-space"></div>
+                    <strong>( .................................... )</strong>
+                </td>
+                <td></td>
+                <td>
+                    Jailolo, {{ date('d F Y') }}<br>
+                    Pejabat Pengadaan / Apoteker
+                    <div class="sig-space"></div>
+                    <strong>( .................................... )</strong><br>
+                    SIPA No: ..........................
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="margin-top: 30px; font-size: 8px; color: #999; text-align: center;">
+        Dokumen ini dihasilkan secara otomatis oleh Sistem Inventori Farmasi RSUD Jailolo.
+    </div>
 </body>
+
 </html>

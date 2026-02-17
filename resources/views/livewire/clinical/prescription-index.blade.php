@@ -23,13 +23,36 @@
                 </div>
             </div>
         </div>
-        <div class="w-48">
+        <div class="w-40">
             <select wire:model.live="status" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                 <option value="">Semua Status</option>
                 <option value="submitted">Submitted (Antri)</option>
                 <option value="processing">Sedang Diracik</option>
                 <option value="completed">Selesai / Diambil</option>
                 <option value="cancelled">Dibatalkan</option>
+            </select>
+        </div>
+        <div class="w-40">
+            <select wire:model.live="payer_type" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                <option value="">Semua Penjamin</option>
+                <option value="umum">Umum</option>
+                <option value="bpjs">BPJS</option>
+                <option value="asuransi_lain">Asuransi Lain</option>
+            </select>
+        </div>
+        <div class="w-32">
+            <select wire:model.live="patient_type" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                <option value="">RJ & RI</option>
+                <option value="rj">RJ Only</option>
+                <option value="ri">RI Only</option>
+            </select>
+        </div>
+        <div class="w-40">
+            <select wire:model.live="payment_status" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                <option value="">Semua Pembayaran</option>
+                <option value="unpaid">Belum Bayar</option>
+                <option value="partial">Bayar Sebagian</option>
+                <option value="paid">Lunas</option>
             </select>
         </div>
         <div class="w-48">
@@ -58,6 +81,7 @@
                     <tr class="bg-slate-50 text-[10px] font-bold text-slate-500 border-b border-slate-100 uppercase tracking-wider">
                         <th class="px-6 py-4">Informasi Resep</th>
                         <th class="px-6 py-4">Pasien & Dr. Pengirim</th>
+                        <th class="px-6 py-4">Tipe & Penjamin</th>
                         <th class="px-6 py-4">Apotek Tujuan</th>
                         <th class="px-6 py-4">Waktu Input</th>
                         <th class="px-6 py-4">Status</th>
@@ -74,6 +98,62 @@
                             <td class="px-6 py-4 font-medium">
                                 <div class="text-slate-700">{{ $rx->patient_name }}</div>
                                 <div class="text-[11px] text-slate-400 italic">Oleh: {{ $rx->doctor_name }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex flex-col gap-1.5">
+                                    @php
+                                        $patientTypeColor = $rx->patient_type === 'ri' ? 'bg-purple-100 text-purple-700 border-purple-200' : 'bg-green-100 text-green-700 border-green-200';
+                                        $patientTypeIcon = $rx->patient_type === 'ri' ? 'ph-bed' : 'ph-user-check';
+                                        $patientTypeLabel = $rx->patient_type === 'ri' ? 'RI' : 'RJ';
+                                        
+                                        $payerTypeColor = match($rx->payer_type) {
+                                            'bpjs' => 'bg-blue-100 text-blue-700 border-blue-200',
+                                            'asuransi_lain' => 'bg-cyan-100 text-cyan-700 border-cyan-200',
+                                            default => 'bg-slate-100 text-slate-700 border-slate-200'
+                                        };
+                                        $payerTypeLabel = match($rx->payer_type) {
+                                            'bpjs' => 'BPJS',
+                                            'asuransi_lain' => 'Asuransi',
+                                            default => 'Umum'
+                                        };
+                                        
+                                        $paymentColor = match($rx->payment_status) {
+                                            'paid' => 'bg-emerald-100 text-emerald-700 border-emerald-200',
+                                            'partial' => 'bg-amber-100 text-amber-700 border-amber-200',
+                                            default => 'bg-red-100 text-red-700 border-red-200'
+                                        };
+                                        $paymentIcon = match($rx->payment_status) {
+                                            'paid' => 'ph-check-circle',
+                                            'partial' => 'ph-warning',
+                                            default => 'ph-x-circle'
+                                        };
+                                    @endphp
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="px-2 py-0.5 text-[10px] font-bold border rounded {{ $patientTypeColor }} flex items-center gap-1">
+                                            <i class="{{ $patientTypeIcon }}"></i> {{ $patientTypeLabel }}
+                                        </span>
+                                        @if($rx->patient_type === 'ri' && $rx->room_bed_number)
+                                            <span class="text-[9px] text-purple-600 font-medium">{{ $rx->room_bed_number }}</span>
+                                        @endif
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="px-2 py-0.5 text-[10px] font-bold border rounded {{ $payerTypeColor }}">
+                                            {{ $payerTypeLabel }}
+                                        </span>
+                                        @if($rx->payer_type === 'umum')
+                                            @php
+                                                $paymentLabel = match($rx->payment_status) {
+                                                    'paid' => 'Lunas',
+                                                    'partial' => 'Sebagian',
+                                                    default => 'Belum'
+                                                };
+                                            @endphp
+                                            <span class="px-1.5 py-0.5 text-[9px] font-bold border rounded {{ $paymentColor }} flex items-center gap-0.5">
+                                                <i class="{{ $paymentIcon }}"></i> {{ $paymentLabel }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 uppercase">
@@ -106,10 +186,13 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex justify-end gap-2">
-                                    @if($rx->status === 'submitted')
-                                        <a href="{{ route('clinical.prescriptions.dispense', $rx->id) }}" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all group" title="Proses Dispensing / Racik">
+                                    @if($rx->status === 'submitted' || $rx->status === 'processing')
+                                        <a href="{{ route('clinical.prescriptions.dispense', $rx->id) }}" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all group" title="{{ $rx->status === 'processing' ? 'Lanjutkan Dispensing' : 'Proses Dispensing / Racik' }}">
                                             <i class="ph ph-pill text-lg group-hover:scale-110 transition-transform"></i>
                                         </a>
+                                    @endif
+                                    
+                                    @if($rx->status === 'submitted')
                                         <a href="{{ route('clinical.prescriptions.edit', $rx->id) }}" class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-all group" title="Edit Resep">
                                             <i class="ph ph-note-pencil text-lg group-hover:scale-110 transition-transform"></i>
                                         </a>
@@ -132,7 +215,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-400 italic">
+                            <td colspan="7" class="px-6 py-12 text-center text-slate-400 italic">
                                 Tidak ada resep ditemukan dengan kriteria tersebut.
                             </td>
                         </tr>
@@ -223,18 +306,42 @@
                 <div class="p-8 bg-slate-50 flex flex-col items-center gap-6">
                     <!-- Virtual Labels -->
                     @foreach($selectedPrescription->details as $detail)
-                        <div class="bg-white border-2 border-slate-200 w-full p-4 rounded-lg shadow-sm border-dashed relative overflow-hidden group hover:border-emerald-500 transition-colors cursor-pointer">
+                        @php
+                            $isRI = $selectedPrescription->patient_type === 'ri';
+                            $borderColor = $isRI ? 'border-purple-200 hover:border-purple-500' : 'border-emerald-200 hover:border-emerald-500';
+                            $bgColor = $isRI ? 'bg-purple-50' : 'bg-emerald-50';
+                            $textColor = $isRI ? 'text-purple-800' : 'text-emerald-800';
+                            $textColorLight = $isRI ? 'text-purple-600' : 'text-emerald-600';
+                            $borderColorInner = $isRI ? 'border-purple-100' : 'border-emerald-100';
+                        @endphp
+                        <div class="bg-white border-2 {{ $borderColor }} w-full p-4 rounded-lg shadow-sm border-dashed relative overflow-hidden group transition-colors cursor-pointer">
                             <div class="text-[10px] font-black border-b border-slate-100 pb-1 mb-2 text-slate-400">RSUD SMART - SIMRS NF</div>
                             <div class="flex justify-between items-start mb-2">
                                 <div>
                                     <div class="text-xs font-bold text-slate-800">{{ $selectedPrescription->patient_name }}</div>
                                     <div class="text-[9px] text-slate-400">Tgl: {{ date('d/m/Y') }}</div>
+                                    @if($isRI && $selectedPrescription->room_bed_number)
+                                        <div class="text-[9px] font-bold text-purple-600 mt-0.5 flex items-center gap-1">
+                                            <i class="ph ph-bed"></i> Kamar: {{ $selectedPrescription->room_bed_number }}
+                                        </div>
+                                    @endif
                                 </div>
-                                <div class="text-[10px] font-black bg-slate-100 px-1.5 py-0.5 rounded">{{ $selectedPrescription->prescription_number }}</div>
+                                <div class="flex flex-col items-end gap-1">
+                                    <div class="text-[10px] font-black bg-slate-100 px-1.5 py-0.5 rounded">{{ $selectedPrescription->prescription_number }}</div>
+                                    @if($isRI)
+                                        <div class="text-[8px] font-bold bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded border border-purple-200 flex items-center gap-0.5">
+                                            <i class="ph ph-bed"></i> RAWAT INAP
+                                        </div>
+                                    @else
+                                        <div class="text-[8px] font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded border border-green-200 flex items-center gap-0.5">
+                                            <i class="ph ph-user-check"></i> RAWAT JALAN
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
-                            <div class="bg-emerald-50 p-2 rounded border border-emerald-100 mb-2">
-                                <div class="text-[11px] font-bold text-emerald-800 uppercase">{{ $detail->item->name }}</div>
-                                <div class="text-[10px] font-medium text-emerald-600 italic">SIG: {{ $detail->instruction }}</div>
+                            <div class="{{ $bgColor }} p-2 rounded border {{ $borderColorInner }} mb-2">
+                                <div class="text-[11px] font-bold {{ $textColor }} uppercase">{{ $detail->item->name }}</div>
+                                <div class="text-[10px] font-medium {{ $textColorLight }} italic">SIG: {{ $detail->instruction }}</div>
                             </div>
                             <div class="text-[8px] text-right text-slate-300 italic">Antigravity V.1</div>
                         </div>

@@ -63,7 +63,12 @@ class DistributionService
                 ]);
 
                 // Allocate batches for this item
-                $this->allocateBatches($distribution, $itemDetail, $detail['qty_sent']);
+                $qtySent = $detail['qty_sent'];
+                if ($qtySent <= 0) {
+                    throw new \Exception("Jumlah yang dikirim untuk {$itemDetail->item->name} harus lebih dari 0.");
+                }
+
+                $this->allocateBatches($distribution, $itemDetail, $qtySent);
             }
 
             $distribution->update([

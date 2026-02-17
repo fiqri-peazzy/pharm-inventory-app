@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             MasterDataSeeder::class,
             ItemPriceSeeder::class,
             ServiceUnitSeeder::class,
+            DosageInstructionSeeder::class, // Seeder untuk aturan pakai standar
         ]);
     }
 }

@@ -62,9 +62,16 @@ class UserIndex extends Component
 
     public function edit($id)
     {
+        $user = User::findOrFail($id);
+        
+        // PROTECTION: Only super-admin can edit super-admin
+        if ($user->hasRole('super-admin') && !auth()->user()->hasRole('super-admin')) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Anda tidak memiliki hak untuk mengubah Super Admin.']);
+            return;
+        }
+
         $this->resetForm();
         $this->userId = $id;
-        $user = User::findOrFail($id);
         
         $this->name = $user->name;
         $this->username = $user->username;
@@ -99,10 +106,19 @@ class UserIndex extends Component
 
         if ($this->isEdit) {
             $user = User::find($this->userId);
+            
+            // Re-check protection on save
+            if ($user->hasRole('super-admin') && !auth()->user()->hasRole('super-admin')) {
+                $this->dispatch('notify', ['type' => 'error', 'message' => 'Unauthorized.']);
+                return;
+            }
+
+            $data['updated_by'] = auth()->id();
             $user->update($data);
             $user->syncRoles($this->selectedRoles);
             $msg = 'User berhasil diperbarui.';
         } else {
+            $data['created_by'] = auth()->id();
             $user = User::create($data);
             $user->assignRole($this->selectedRoles);
             $msg = 'User baru berhasil ditambahkan.';
@@ -110,6 +126,25 @@ class UserIndex extends Component
 
         $this->showModal = false;
         $this->dispatch('notify', ['type' => 'success', 'message' => $msg]);
+    }
+
+    public function delete($id)
+    {
+        if ($id == auth()->id()) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Anda tidak bisa menghapus akun sendiri.']);
+            return;
+        }
+
+        $user = User::findOrFail($id);
+        
+        // PROTECTION: Only super-admin can delete super-admin
+        if ($user->hasRole('super-admin') && !auth()->user()->hasRole('super-admin')) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Anda tidak memiliki hak untuk menghapus Super Admin.']);
+            return;
+        }
+
+        $user->delete();
+        $this->dispatch('notify', ['type' => 'success', 'message' => 'User berhasil dihapus (soft-deleted).']);
     }
 
     public function toggleStatus($id)
@@ -120,6 +155,13 @@ class UserIndex extends Component
         }
 
         $user = User::findOrFail($id);
+
+        // PROTECTION: Only super-admin can toggle super-admin
+        if ($user->hasRole('super-admin') && !auth()->user()->hasRole('super-admin')) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Anda tidak memiliki hak untuk mengubah status Super Admin.']);
+            return;
+        }
+
         $user->is_active = !$user->is_active;
         $user->save();
         $this->dispatch('notify', ['type' => 'success', 'message' => 'Status user diperbarui.']);

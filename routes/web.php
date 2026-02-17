@@ -32,6 +32,7 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
 
     // Procurement Routes
     Route::prefix('procurement')->name('procurement.')->group(function () {
+        Route::get('/rko', [App\Http\Controllers\Procurement\PurchaseController::class, 'rko'])->name('rko.index');
         Route::get('/prices', [App\Http\Controllers\Procurement\PurchaseController::class, 'prices'])->name('prices.index');
         Route::get('/requests', [App\Http\Controllers\Procurement\PurchaseController::class, 'requests'])->name('requests.index');
         Route::get('/requests/create', [App\Http\Controllers\Procurement\PurchaseController::class, 'createRequest'])->name('requests.create');
@@ -41,6 +42,7 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/orders/create', [App\Http\Controllers\Procurement\PurchaseController::class, 'createOrder'])->name('orders.create');
         Route::get('/orders/{id}/edit', [App\Http\Controllers\Procurement\PurchaseController::class, 'editOrder'])->name('orders.edit');
         Route::get('/orders/{id}/print', [App\Http\Controllers\Procurement\PurchaseController::class, 'print'])->name('orders.print');
+        Route::get('/rko/print', [App\Http\Controllers\Procurement\PurchaseController::class, 'printRko'])->name('rko.print');
 
         // Receivings
         Route::get('/receivings', [App\Http\Controllers\Procurement\ReceivingController::class, 'index'])->name('receivings.index');
@@ -52,6 +54,7 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
     // Inventory Routes
     Route::prefix('inventory')->name('inventory.')->group(function () {
         Route::get('/dashboard/{warehouse?}', [App\Http\Controllers\Inventory\InventoryController::class, 'dashboard'])->name('dashboard');
+        Route::get('/quarantine', [App\Http\Controllers\Inventory\InventoryController::class, 'quarantine'])->name('quarantine.index');
         Route::get('/thresholds', [App\Http\Controllers\Inventory\InventoryController::class, 'thresholds'])->name('thresholds');
         Route::get('/disposals', [App\Http\Controllers\Inventory\InventoryController::class, 'disposals'])->name('disposals.index');
         Route::get('/disposals/create', [App\Http\Controllers\Inventory\InventoryController::class, 'createDisposal'])->name('disposals.create');
@@ -93,6 +96,21 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/ward-requests', [App\Http\Controllers\Clinical\ClinicalController::class, 'wardRequests'])->name('ward-requests.index');
         Route::get('/ward-requests/create', [App\Http\Controllers\Clinical\ClinicalController::class, 'createWardRequest'])->name('ward-requests.create');
         Route::get('/ward-requests/{id}/edit', [App\Http\Controllers\Clinical\ClinicalController::class, 'editWardRequest'])->name('ward-requests.edit');
+    });
+
+    // Reports Routes
+    Route::prefix('reports')->name('reports.')->group(function () {
+        // Stock Reports
+        Route::get('/stock', [App\Http\Controllers\Reports\StockReportController::class, 'index'])
+            ->name('stock.index');
+        Route::get('/stock/pdf', [App\Http\Controllers\Reports\StockReportController::class, 'exportPdf'])
+            ->name('stock.pdf');
+        
+        // Distribution Reports
+        Route::get('/distribution', [App\Http\Controllers\Reports\DistributionReportController::class, 'index'])
+            ->name('distribution.index');
+        Route::get('/distribution/pdf', [App\Http\Controllers\Reports\DistributionReportController::class, 'exportPdf'])
+            ->name('distribution.pdf');
     });
 
     // Accounting Routes

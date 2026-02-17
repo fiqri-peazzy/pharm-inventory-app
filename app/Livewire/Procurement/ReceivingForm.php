@@ -22,6 +22,7 @@ class ReceivingForm extends Component
     public $receivingId;
     public $receiving_number;
     public $purchase_order_id;
+    public $is_triangulated = false; // "Fisik Sesuai Faktur & SP" checkbox
     public $supplier_id;
     public $warehouse_id;
     public $receiving_date;
@@ -42,19 +43,24 @@ class ReceivingForm extends Component
     public $itemSearch = '';
     public $searchResults = [];
 
-    protected $rules = [
-        'receiving_date' => 'required|date',
-        'supplier_id' => 'required|exists:suppliers,id',
-        'warehouse_id' => 'required|exists:warehouses,id',
-        'invoice_number' => 'required|string',
-        'invoice_date' => 'required|date',
-        'invoice_file' => 'nullable|image|max:2048', // Max 2MB
-        'rows.*.item_id' => 'required|exists:items,id',
-        'rows.*.qty_received' => 'required|numeric|min:1',
-        'rows.*.batch_number' => 'required|string',
-        'rows.*.expired_date' => 'required|date|after:today',
-        'rows.*.purchase_price' => 'required|numeric|min:0',
-    ];
+    protected function rules()
+    {
+        return [
+            'receiving_date' => 'required|date',
+            'supplier_id' => 'required|exists:suppliers,id',
+            'warehouse_id' => 'required|exists:warehouses,id',
+            'invoice_number' => 'required|string',
+            'invoice_date' => 'required|date',
+            'invoice_file' => 'nullable|image|max:2048', // Max 2MB
+            'purchase_order_id' => 'required',
+            'is_triangulated' => 'accepted', // Must be checked to proceed
+            'rows.*.item_id' => 'required|exists:items,id',
+            'rows.*.qty_received' => 'required|numeric|min:0.01',
+            'rows.*.batch_number' => 'required|string',
+            'rows.*.expired_date' => 'required|date|after:today', // Must be a future date
+            'rows.*.purchase_price' => 'required|numeric|min:0.01',
+        ];
+    }
 
     public function mount($receivingId = null)
     {
@@ -109,10 +115,13 @@ class ReceivingForm extends Component
                 'item_name' => $detail->item->name,
                 'item_code' => $detail->item->code,
                 'qty_ordered' => 0, // Will be updated if PO selected
+                'qty_remaining' => 0, // Will be updated if PO selected
                 'qty_received' => $detail->qty_received,
                 'batch_number' => $detail->batch_number,
                 'expired_date' => $detail->expired_date->format('Y-m-d'),
                 'purchase_price' => (float)$detail->purchase_price,
+                'discount_percentage' => (float)($detail->discount_percentage ?? 0),
+                'discount_amount' => (float)($detail->discount_amount ?? 0),
                 'ppn_percentage' => (float)$detail->ppn_percentage,
                 'ppn_amount' => (float)$detail->ppn_amount,
                 'subtotal' => (float)$detail->subtotal,
@@ -129,20 +138,34 @@ class ReceivingForm extends Component
                 $this->supplier_id = $po->supplier_id;
                 $this->warehouse_id = $po->warehouse_id;
                 $this->rows = [];
+                
                 foreach ($po->details as $detail) {
-                    $this->rows[] = [
-                        'item_id' => $detail->item_id,
-                        'item_name' => $detail->item->name,
-                        'item_code' => $detail->item->code,
-                        'qty_ordered' => $detail->qty_ordered - ($detail->qty_received ?? 0),
-                        'qty_received' => $detail->qty_ordered - ($detail->qty_received ?? 0),
-                        'batch_number' => '',
-                        'expired_date' => '',
-                        'purchase_price' => (float)$detail->purchase_price,
-                        'ppn_percentage' => (float)$detail->ppn_percentage,
-                        'ppn_amount' => 0,
-                        'subtotal' => 0,
-                    ];
+                    // Calculate remaining to receive
+                    $alreadyReceived = ReceivingDetail::where('item_id', $detail->item_id)
+                        ->whereHas('receiving', function($q) use ($po) {
+                            $q->where('purchase_order_id', $po->id)->where('status', 'posted');
+                        })->sum('qty_received');
+
+                    $remaining = $detail->qty_ordered - $alreadyReceived;
+
+                    if ($remaining > 0) {
+                        $this->rows[] = [
+                            'item_id' => $detail->item_id,
+                            'item_name' => $detail->item->name,
+                            'item_code' => $detail->item->code,
+                            'qty_ordered' => $detail->qty_ordered,
+                            'qty_remaining' => $remaining,
+                            'qty_received' => $remaining,
+                            'batch_number' => '',
+                            'expired_date' => '',
+                            'purchase_price' => $detail->purchase_price,
+                            'discount_percentage' => $detail->discount_percentage ?? 0,
+                            'discount_amount' => 0,
+                            'ppn_percentage' => $detail->ppn_percentage ?? 11,
+                            'ppn_amount' => 0,
+                            'subtotal' => 0,
+                        ];
+                    }
                 }
                 $this->calculateTotals();
             }
@@ -156,10 +179,13 @@ class ReceivingForm extends Component
             'item_name' => '',
             'item_code' => '',
             'qty_ordered' => 0,
+            'qty_remaining' => 0,
             'qty_received' => 1,
             'batch_number' => '',
             'expired_date' => '',
             'purchase_price' => 0,
+            'discount_percentage' => 0,
+            'discount_amount' => 0,
             'ppn_percentage' => 11,
             'ppn_amount' => 0,
             'subtotal' => 0,
@@ -179,13 +205,24 @@ class ReceivingForm extends Component
         $this->ppn_amount = 0;
 
         foreach ($this->rows as $index => $row) {
-            $sub = floatval($row['qty_received']) * floatval($row['purchase_price']);
-            $ppn = $sub * (floatval($row['ppn_percentage'] ?? 0) / 100);
+            $qty = floatval($row['qty_received']);
+            $price = floatval($row['purchase_price']);
+            $discountPercentage = floatval($row['discount_percentage'] ?? 0);
             
+            // Calculate discount amount
+            $grossAmount = $qty * $price;
+            $discountAmount = $grossAmount * ($discountPercentage / 100);
+            $netAmount = $grossAmount - $discountAmount;
+            
+            // Calculate PPN on net amount (after discount)
+            $ppn = $netAmount * (floatval($row['ppn_percentage'] ?? 0) / 100);
+            
+            // Update row calculations
+            $this->rows[$index]['discount_amount'] = $discountAmount;
             $this->rows[$index]['ppn_amount'] = $ppn;
-            $this->rows[$index]['subtotal'] = $sub + $ppn;
+            $this->rows[$index]['subtotal'] = $netAmount + $ppn;
 
-            $this->total_amount += $sub;
+            $this->total_amount += $netAmount;
             $this->ppn_amount += $ppn;
         }
 
@@ -200,6 +237,13 @@ class ReceivingForm extends Component
     public function save($status = 'draft')
     {
         $this->validate();
+
+        // Enforcement: Receiving from PBF must be to Main Warehouse
+        $warehouse = Warehouse::find($this->warehouse_id);
+        if (!$warehouse || !$warehouse->is_main) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Penerimaan barang dari PBF hanya diperbolehkan ke Gudang Utama.']);
+            return;
+        }
 
         if ($this->grand_total <= 0) {
             $this->dispatch('notify', ['type' => 'error', 'message' => 'Total penerimaan tidak boleh nol.']);
@@ -288,10 +332,13 @@ class ReceivingForm extends Component
                     'item_name' => $item->name,
                     'item_code' => $item->code,
                     'qty_ordered' => 0,
+                    'qty_remaining' => 0,
                     'qty_received' => 1,
                     'batch_number' => '',
                     'expired_date' => '',
                     'purchase_price' => 0,
+                    'discount_percentage' => 0,
+                    'discount_amount' => 0,
                     'ppn_percentage' => 11,
                     'ppn_amount' => 0,
                     'subtotal' => 0,
@@ -308,7 +355,7 @@ class ReceivingForm extends Component
     {
         return view('livewire.procurement.receiving-form', [
             'suppliers' => Supplier::orderBy('name')->get(),
-            'warehouses' => Warehouse::orderBy('name')->get(),
+            'warehouses' => Warehouse::where('is_main', true)->orderBy('name')->get(),
             'purchaseOrders' => PurchaseOrder::whereIn('status', ['approved', 'sent', 'partial_received'])->latest()->get(),
         ]);
     }

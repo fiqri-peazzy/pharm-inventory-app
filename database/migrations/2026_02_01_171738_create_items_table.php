@@ -23,6 +23,7 @@ return new class extends Migration
             $table->boolean('is_prescription')->default(false);
             $table->boolean('is_consignment')->default(false);
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_fornas')->default(false); // FORNAS marking for BPJS validation
             $table->enum('storage_condition', ['suhu_ruang', 'kulkas', 'freezer'])->default('suhu_ruang');
             $table->string('fornas_status')->nullable();
             $table->string('fornas_code')->nullable();

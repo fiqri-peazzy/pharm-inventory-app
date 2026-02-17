@@ -147,6 +147,7 @@ class StockDashboard extends Component
                 $item = $setting->item;
                 $item->alert_warehouse = $setting->warehouse->name;
                 $item->alert_min_stock = $setting->min_stock;
+                $item->alert_reorder_point = $setting->reorder_point;
                 $item->current_stock = ItemBatch::where('item_id', $item->id)
                     ->where('warehouse_id', $setting->warehouse_id)
                     ->where('is_active', true)
@@ -193,6 +194,11 @@ class StockDashboard extends Component
             
         // Trend Chart (Example for last 7 days)
         // Implementation for line chart data...
+    }
+
+    public function getTotalValueFormattedProperty()
+    {
+        return 'Rp ' . number_format($this->summary['total_value'] ?? 0, 0, ',', '.');
     }
 
     public function render()

@@ -57,9 +57,43 @@ class ServiceUnit extends Model
         };
     }
 
+    /**
+     * Check if this service unit is for inpatient (Rawat Inap)
+     */
+    public function isInpatient(): bool
+    {
+        return $this->type === 'ruangan';
+    }
+
+    /**
+     * Check if this service unit is for outpatient (Rawat Jalan)
+     */
+    public function isOutpatient(): bool
+    {
+        return in_array($this->type, ['poli', 'instalasi']);
+    }
+
+    /**
+     * Get patient type code (rj/ri) for prescriptions
+     */
+    public function getPatientTypeCode(): string
+    {
+        return $this->isInpatient() ? 'ri' : 'rj';
+    }
+
     // Scopes
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function scopeInpatient($query)
+    {
+        return $query->where('type', 'ruangan');
+    }
+
+    public function scopeOutpatient($query)
+    {
+        return $query->whereIn('type', ['poli', 'instalasi']);
     }
 }

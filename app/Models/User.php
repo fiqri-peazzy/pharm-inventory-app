@@ -17,6 +17,7 @@ class User extends Authenticatable
         'username',
         'email',
         'employee_id',
+        'sipa_number',
         'phone',
         'warehouse_id',
         'is_active',

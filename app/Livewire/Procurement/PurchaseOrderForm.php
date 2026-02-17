@@ -19,6 +19,7 @@ class PurchaseOrderForm extends Component
 
     // Header fields
     public $po_number;
+    public $sp_type = 'reguler';
     public $purchase_request_id;
     public $supplier_id;
     public $warehouse_id;
@@ -50,6 +51,7 @@ class PurchaseOrderForm extends Component
         return [
             'supplier_id' => 'required',
             'warehouse_id' => 'required',
+            'sp_type' => 'required|in:reguler,narkotika,psikotropika',
             'po_date' => 'required|date',
             'expected_delivery_date' => 'nullable|date|after_or_equal:po_date',
             'payment_term' => 'required|integer|min:0',
@@ -81,6 +83,25 @@ class PurchaseOrderForm extends Component
                 $prIds = explode(',', request('from_prs'));
                 $this->from_prs = $prIds;
                 $this->loadFromMultiplePRs($prIds);
+            }
+
+            if (request()->has('sp_type')) {
+                $this->sp_type = request('sp_type');
+            }
+
+            // Handle Batch/Individual SP from RKO
+            if (request()->has('items')) {
+                $items = json_decode(request('items'), true);
+                if (is_array($items)) {
+                    foreach ($items as $itemData) {
+                        $this->addItem($itemData['item_id'], $itemData['qty'] ?? 1);
+                    }
+                }
+            }
+
+            // Fallback for old single item logic if needed
+            if (request()->has('item_id')) {
+                $this->addItem(request('item_id'), request('qty', 1));
             }
         }
     }
@@ -165,6 +186,7 @@ class PurchaseOrderForm extends Component
         $this->rows = [];
 
         $this->po_number = $order->po_number;
+        $this->sp_type = $order->sp_type ?? 'reguler';
         $this->purchase_request_id = $order->purchase_request_id;
         $this->supplier_id = $order->supplier_id;
         $this->warehouse_id = $order->warehouse_id;
@@ -211,10 +233,25 @@ class PurchaseOrderForm extends Component
             if ($row['item_id'] == $itemId) return;
         }
 
-        $item = Item::with(['prices' => function ($q) {
+        $item = Item::with(['category', 'prices' => function ($q) {
             if ($this->supplier_id) $q->where('supplier_id', $this->supplier_id);
             $q->latest('effective_date');
         }])->findOrFail($itemId);
+
+        // REGULATORY VALIDATION: Narcotic/Psychotropic check
+        $catCode = $item->category->code ?? '';
+        if ($this->sp_type === 'narkotika' && $catCode !== 'NAR') {
+            $this->dispatch('notify', ['type' => 'error', 'message' => "SP Narkotika hanya boleh untuk item kategori NAR. Item ini: $catCode"]);
+            return;
+        }
+        if ($this->sp_type === 'psikotropika' && $catCode !== 'PSI') {
+            $this->dispatch('notify', ['type' => 'error', 'message' => "SP Psikotropika hanya boleh untuk item kategori PSI. Item ini: $catCode"]);
+            return;
+        }
+        if ($this->sp_type === 'reguler' && in_array($catCode, ['NAR', 'PSI'])) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => "Item NAR/PSI harus menggunakan SP khusus, bukan SP Reguler."]);
+            return;
+        }
 
         $price = $item->prices->first()->price ?? 0;
 
@@ -298,6 +335,7 @@ class PurchaseOrderForm extends Component
             DB::transaction(function () use ($status) {
                 $data = [
                     'po_number' => $this->po_number,
+                    'sp_type' => $this->sp_type,
                     'purchase_request_id' => $this->purchase_request_id ?: null,
                     'supplier_id' => $this->supplier_id,
                     'warehouse_id' => $this->warehouse_id,
