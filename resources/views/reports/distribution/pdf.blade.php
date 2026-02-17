@@ -106,13 +106,14 @@
     <div class="header">
         <h2>LAPORAN DISTRIBUSI</h2>
         <p>Periode: {{ \Carbon\Carbon::parse($filters['date_from'])->format('d/m/Y') }} -
-            {{ \Carbon\Carbon::parse($filters['date_to'])->format('d/m/Y') }}</p>
+            {{ \Carbon\Carbon::parse($filters['date_to'])->format('d/m/Y') }}
+        </p>
         <p>Dicetak: {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</p>
     </div>
 
     <!-- Summary -->
     <div class="summary-box">
-        <h3 style="margin: 0 0 10px 0;">📊 Ringkasan</h3>
+        <h3 style="margin: 0 0 10px 0;">Ringkasan</h3>
         <div class="summary-grid">
             <div class="summary-item">
                 <strong>Total Distribusi</strong>
@@ -136,7 +137,7 @@
 
     <!-- Metrics -->
     <div class="metrics">
-        <h3 style="margin: 10px 0;">📈 Efficiency Metrics</h3>
+        <h3 style="margin: 10px 0;">Efficiency Metrics</h3>
         <div class="metric-item">
             <strong>Avg Lead Time</strong>
             <div style="font-size: 18px; font-weight: bold; color: #3b82f6;">
@@ -160,7 +161,7 @@
     <!-- Insights -->
     @if(count($data['analysis']['recommendations']) > 0)
         <div class="insights">
-            <h3 style="margin: 0 0 10px 0;">💡 Insights:</h3>
+            <h3 style="margin: 0 0 10px 0;">Insights:</h3>
             @foreach($data['analysis']['recommendations'] as $insight)
                 <p style="margin: 5px 0;">• {{ $insight['message'] }}</p>
             @endforeach

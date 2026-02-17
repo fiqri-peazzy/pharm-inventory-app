@@ -5,7 +5,16 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-3xl font-black text-gray-900">📦 Laporan Distribusi</h1>
+                <h1 class="text-3xl font-black text-gray-900 flex items-center gap-3">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="text-brand-600" stroke="currentColor"
+                        stroke-width="2.5">
+                        <rect x="1" y="3" width="15" height="13"></rect>
+                        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                        <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                        <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                    </svg>
+                    Laporan Distribusi
+                </h1>
                 <p class="text-gray-600 mt-2">Analisis efisiensi & pola distribusi antar gudang</p>
             </div>
 
@@ -88,19 +97,22 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <h3 class="text-sm font-bold text-gray-500 uppercase mb-2">Total Distribusi</h3>
                     <p class="text-3xl font-black text-gray-900">
-                        {{ number_format($analysis['summary']['total_distributions']) }}</p>
+                        {{ number_format($analysis['summary']['total_distributions']) }}
+                    </p>
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <h3 class="text-sm font-bold text-gray-500 uppercase mb-2">Total Item</h3>
                     <p class="text-3xl font-black text-gray-900">
-                        {{ number_format($analysis['summary']['total_items_moved']) }}</p>
+                        {{ number_format($analysis['summary']['total_items_moved']) }}
+                    </p>
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                     <h3 class="text-sm font-bold text-gray-500 uppercase mb-2">Total Nilai</h3>
                     <p class="text-2xl font-black text-gray-900">Rp
-                        {{ number_format($analysis['summary']['total_value'], 0, ',', '.') }}</p>
+                        {{ number_format($analysis['summary']['total_value'], 0, ',', '.') }}
+                    </p>
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -148,7 +160,16 @@
             <!-- Insights -->
             @if(count($analysis['recommendations']) > 0)
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-                    <h3 class="text-lg font-black text-gray-900 mb-4">💡 Smart Insights</h3>
+                    <h3 class="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-brand-500" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z">
+                            </path>
+                            <line x1="9" y1="22" x2="15" y2="22"></line>
+                        </svg>
+                        Smart Insights
+                    </h3>
                     <div class="space-y-3">
                         @foreach($analysis['recommendations'] as $insight)
                             <div
@@ -172,7 +193,14 @@
             <!-- Route Analysis -->
             @if(count($analysis['route_analysis']) > 0)
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-                    <h3 class="text-lg font-black text-gray-900 mb-4">🔝 Top Routes</h3>
+                    <h3 class="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-brand-500" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        Top Routes
+                    </h3>
                     <div class="space-y-3">
                         @foreach(array_slice($analysis['route_analysis'], 0, 5) as $route)
                             <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
@@ -193,7 +221,18 @@
             <!-- Distribution Table -->
             <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="p-6 border-b border-gray-100">
-                    <h3 class="text-lg font-black text-gray-900">📋 Distribution History</h3>
+                    <h3 class="text-lg font-black text-gray-900 flex items-center gap-2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-gray-400"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            <path d="M11 12h1"></path>
+                            <path d="M16 12h1"></path>
+                            <path d="M11 16h1"></path>
+                            <path d="M16 16h1"></path>
+                        </svg>
+                        Distribution History
+                    </h3>
                 </div>
 
                 <div class="overflow-x-auto">

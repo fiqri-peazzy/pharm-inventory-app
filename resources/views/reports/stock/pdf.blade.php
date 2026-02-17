@@ -130,13 +130,14 @@
         <p><strong>{{ $data['item']->name }}</strong> ({{ $data['item']->code }})</p>
         <p>Gudang: {{ $data['warehouse']->name }}</p>
         <p>Periode: {{ \Carbon\Carbon::parse($filters['date_from'])->format('d/m/Y') }} -
-            {{ \Carbon\Carbon::parse($filters['date_to'])->format('d/m/Y') }}</p>
+            {{ \Carbon\Carbon::parse($filters['date_to'])->format('d/m/Y') }}
+        </p>
         <p>Dicetak: {{ \Carbon\Carbon::now()->format('d/m/Y H:i') }}</p>
     </div>
 
     <!-- Analysis Summary -->
     <div class="analysis-box">
-        <h3>📊 Analisis Stok</h3>
+        <h3>Analisis Stok</h3>
         <div class="analysis-grid">
             <div class="analysis-item">
                 <strong>ABC Class</strong>
@@ -164,7 +165,7 @@
     <!-- Recommendations -->
     @if(count($data['recommendations']) > 0)
         <div class="recommendations">
-            <h3 style="margin: 10px 0; font-size: 13px;">🧠 Rekomendasi:</h3>
+            <h3 style="margin: 10px 0; font-size: 13px;">Rekomendasi:</h3>
             @foreach($data['recommendations'] as $rec)
                 <div class="recommendation-item">
                     <strong>{{ $rec['message'] }}</strong><br>

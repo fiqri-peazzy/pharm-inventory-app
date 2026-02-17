@@ -5,7 +5,13 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="mb-8">
-                <h1 class="text-3xl font-black text-gray-900">📊 Laporan Stok (Buku Stok)</h1>
+                <h1 class="text-3xl font-black text-gray-900 flex items-center gap-3">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="text-brand-600" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                    </svg>
+                    Laporan Stok (Buku Stok)
+                </h1>
                 <p class="text-gray-600 mt-2">Analisis pintar dengan rekomendasi otomatis</p>
             </div>
 
@@ -123,7 +129,20 @@
                 <!-- Recommendations -->
                 @if(count($data['recommendations']) > 0)
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-                        <h3 class="text-lg font-black text-gray-900 mb-4">🧠 Rekomendasi Pintar</h3>
+                        <h3 class="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-brand-500" stroke="currentColor" stroke-width="2">
+                                <path d="M2 12h1"></path>
+                                <path d="M21 12h1"></path>
+                                <path d="M12 2v1"></path>
+                                <path d="M12 21v1"></path>
+                                <path d="M4.93 4.93l.707.707"></path>
+                                <path d="M18.36 18.36l.707.707"></path>
+                                <path d="M4.93 19.07l.707-.707"></path>
+                                <path d="M18.36 5.64l.707-.707"></path>
+                                <path d="m12 17 2-4h-4l2-4"></path>
+                            </svg>
+                            Rekomendasi Pintar
+                        </h3>
                         <div class="space-y-3">
                             @foreach($data['recommendations'] as $rec)
                                 <div
@@ -158,7 +177,13 @@
                 <!-- Stock Card Table (Buku Stok) -->
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="p-6 border-b border-gray-100">
-                        <h3 class="text-lg font-black text-gray-900">📖 Buku Stok - {{ $data['item']->name }}</h3>
+                        <h3 class="text-lg font-black text-gray-900 flex items-center gap-2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="text-gray-400" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            Buku Stok - {{ $data['item']->name }}
+                        </h3>
                         <p class="text-sm text-gray-600 mt-1">Periode:
                             {{ \Carbon\Carbon::parse($filters['date_from'])->format('d M Y') }} -
                             {{ \Carbon\Carbon::parse($filters['date_to'])->format('d M Y') }}</p>
