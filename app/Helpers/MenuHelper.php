@@ -11,6 +11,12 @@ class MenuHelper
                 'title' => 'OVERVIEW',
                 'items' => [
                     [
+                        'name' => 'Dashboard Utama',
+                        'path' => '/dashboard',
+                        'icon' => 'dashboard',
+                        'permission' => 'dashboard.view',
+                    ],
+                    [
                         'name' => 'Dashboard Stok',
                         'path' => '/inventory/dashboard',
                         'icon' => 'bar-chart',
@@ -37,6 +43,12 @@ class MenuHelper
                         'name' => 'Optimasi Stok',
                         'path' => '/inventory/thresholds',
                         'icon' => 'activity',
+                        'permission' => 'stocks.view',
+                    ],
+                    [
+                        'name' => 'Karantina & QC',
+                        'path' => '/inventory/quarantine',
+                        'icon' => 'check-square',
                         'permission' => 'stocks.view',
                     ],
                 ]
@@ -138,6 +150,12 @@ class MenuHelper
                         'path' => '/procurement/prices',
                         'icon' => 'tag',
                         'permission' => 'master-items.view',
+                    ],
+                    [
+                        'name' => 'Perencanaan RKO',
+                        'path' => '/procurement/rko',
+                        'icon' => 'activity',
+                        'permission' => 'purchase-requests.view',
                     ],
                     [
                         'name' => 'Permintaan',

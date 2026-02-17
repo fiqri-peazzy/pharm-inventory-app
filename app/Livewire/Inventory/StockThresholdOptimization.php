@@ -16,6 +16,10 @@ class StockThresholdOptimization extends Component
     public $search = '';
     public $warehouseId = '';
     public $lookbackDays = 30;
+    public $editingItemId = null;
+    public $editMin = '';
+    public $editMax = '';
+    public $editRP = '';
 
     protected $listeners = ['refreshSuggestions' => '$refresh'];
 
@@ -30,12 +34,13 @@ class StockThresholdOptimization extends Component
         }
     }
 
-    public function applyThreshold($itemId, $suggestedMin, $suggestedMax, $adu)
+    public function applyThreshold($itemId, $suggestedMin, $suggestedMax, $suggestedRP, $adu)
     {
         $service = new StockSuggestionService();
         $service->applySuggestion($itemId, $this->warehouseId, [
             'suggested_min' => $suggestedMin,
             'suggested_max' => $suggestedMax,
+            'suggested_reorder_point' => $suggestedRP,
             'adu' => $adu,
         ]);
 
@@ -53,6 +58,43 @@ class StockThresholdOptimization extends Component
         }
 
         session()->flash('success', 'Semua saran stok telah diterapkan.');
+    }
+
+    public function startEdit($itemId, $currentMin, $currentMax, $currentRP)
+    {
+        $this->editingItemId = $itemId;
+        $this->editMin = $currentMin === '-' ? 0 : $currentMin;
+        $this->editMax = $currentMax === '-' ? 0 : $currentMax;
+        $this->editRP = $currentRP === '-' ? 0 : $currentRP;
+    }
+
+    public function cancelEdit()
+    {
+        $this->editingItemId = null;
+        $this->editMin = '';
+        $this->editMax = '';
+        $this->editRP = '';
+    }
+
+    public function updateThreshold($itemId)
+    {
+        $this->validate([
+            'editMin' => 'required|integer|min:0',
+            'editMax' => 'required|integer|min:0',
+            'editRP' => 'required|integer|min:0',
+        ]);
+
+        ItemWarehouseSetting::updateOrCreate(
+            ['item_id' => $itemId, 'warehouse_id' => $this->warehouseId],
+            [
+                'min_stock' => $this->editMin,
+                'max_stock' => $this->editMax,
+                'reorder_point' => $this->editRP,
+            ]
+        );
+
+        $this->cancelEdit();
+        session()->flash('success', 'Batas stok berhasil diperbarui.');
     }
 
     public function render()
@@ -80,8 +122,10 @@ class StockThresholdOptimization extends Component
                 'current_stock' => $currentStock,
                 'current_min' => $currentSetting?->min_stock ?? '-',
                 'current_max' => $currentSetting?->max_stock ?? '-',
+                'current_rp' => $currentSetting?->reorder_point ?? '-',
                 'suggested_min' => $suggestions['suggested_min'],
                 'suggested_max' => $suggestions['suggested_max'],
+                'suggested_rp' => $suggestions['suggested_reorder_point'],
                 'suggested_min_20percent' => $suggestions['suggested_min_20percent'],
                 'adu' => $suggestions['adu'],
             ];

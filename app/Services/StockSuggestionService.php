@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Item;
+use App\Models\Warehouse;
 use App\Models\StockCard;
 use App\Models\ItemWarehouseSetting;
 use Carbon\Carbon;
@@ -32,17 +33,26 @@ class StockSuggestionService
         $adu = $totalUsage / $days;
 
         // Default parameters (can be moved to config or settings table later)
-        $leadTime = 7; // days
-        $safetyFactor = 1.5; // multiplier for safety stock (50% buffer)
+        $leadTime = 7; // days (supplier delivery time)
+        $safetyDays = 3; // days (buffer for uncertainty)
+        $reviewPeriod = 30; // days (reorder review cycle)
 
-        // Min Stock = (ADU * Lead Time) * Safety Factor
-        $suggestedMin = ceil(($adu * $leadTime) * $safetyFactor);
+        // Calculate Safety Stock = ADU × Safety Days
+        $safetyStock = ceil($adu * $safetyDays);
         
-        // Max Stock = Min Stock * 3 (Example multiplier)
-        $suggestedMax = $suggestedMin > 0 ? $suggestedMin * 3 : 100;
-
-        // Alternative: 20% of Max Stock (Safety Buffer)
-        $min20Percent = ceil($suggestedMax * 0.2);
+        // Calculate Reorder Point = (ADU × Lead Time) + Safety Stock
+        $reorderPoint = ceil(($adu * $leadTime) + $safetyStock);
+        
+        // Min Stock = Safety Stock (minimum buffer to maintain)
+        $suggestedMin = $safetyStock;
+        
+        // Max Stock = Reorder Point + (ADU × Review Period)
+        $suggestedMax = $reorderPoint + ceil($adu * $reviewPeriod);
+        
+        // Ensure minimum values for items with usage
+        if ($adu > 0 && $suggestedMax < 100) {
+            $suggestedMax = 100;
+        }
 
         return [
             'item_id' => $itemId,
@@ -50,7 +60,11 @@ class StockSuggestionService
             'adu' => round($adu, 2),
             'suggested_min' => (int) $suggestedMin,
             'suggested_max' => (int) $suggestedMax,
-            'suggested_min_20percent' => (int) $min20Percent,
+            'suggested_reorder_point' => (int) $reorderPoint,
+            'suggested_min_20percent' => (int) ceil($suggestedMax * 0.2), // Alternative: 20% of max
+            'safety_stock' => (int) $safetyStock,
+            'lead_time_days' => $leadTime,
+            'safety_days' => $safetyDays,
             'calculation_period_days' => $days,
             'last_usage_sum' => $totalUsage
         ];
@@ -66,10 +80,48 @@ class StockSuggestionService
             [
                 'min_stock' => $thresholds['suggested_min'],
                 'max_stock' => $thresholds['suggested_max'],
+                'reorder_point' => $thresholds['suggested_reorder_point'] ?? 0,
                 'average_daily_usage' => $thresholds['adu'],
                 'usage_rate_per_day' => $thresholds['adu'],
                 'last_suggested_at' => now(),
             ]
         );
+    }
+
+    /**
+     * Calculate and apply thresholds for all items in a warehouse or all warehouses
+     * 
+     * @param int|null $warehouseId Specific warehouse or null for all
+     * @param int $days Lookback period for usage history
+     * @return int Number of updated settings
+     */
+    public function calculateAllThresholds($warehouseId = null, $days = 90)
+    {
+        // Get all items that have stock movement in the period
+        $items = Item::whereHas('stockCards', function($q) use ($days) {
+            $q->where('transaction_date', '>=', Carbon::now()->subDays($days));
+        })->get();
+        
+        $warehouses = $warehouseId 
+            ? [Warehouse::find($warehouseId)]
+            : Warehouse::all();
+        
+        $updated = 0;
+        
+        foreach ($warehouses as $warehouse) {
+            if (!$warehouse) continue;
+            
+            foreach ($items as $item) {
+                $suggestions = $this->getSuggestions($item->id, $warehouse->id, $days);
+                
+                // Only apply if there's actual usage
+                if ($suggestions['adu'] > 0) {
+                    $this->applySuggestion($item->id, $warehouse->id, $suggestions);
+                    $updated++;
+                }
+            }
+        }
+        
+        return $updated;
     }
 }

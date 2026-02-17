@@ -17,6 +17,7 @@ class ItemBatch extends Model
         'initial_qty',
         'current_qty',
         'purchase_price',
+        'status',
         'is_active',
     ];
 
@@ -44,6 +45,16 @@ class ItemBatch extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true)->where('current_qty', '>', 0);
+    }
+
+    public function scopeQuarantined($query)
+    {
+        return $query->where('status', 'quarantine');
+    }
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('status', 'available');
     }
 
     public function scopeExpired($query)

@@ -14,6 +14,11 @@ class InventoryController extends Controller
         ]);
     }
 
+    public function quarantine()
+    {
+        return view('pages.inventory.quarantine');
+    }
+
     public function stockReport()
     {
         return view('pages.inventory.stock-report');

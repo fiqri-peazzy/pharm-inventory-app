@@ -153,5 +153,44 @@ class MasterDataSeeder extends Seeder
                 ]
             );
         }
+
+        // 5. Update FORNAS marking berdasarkan nama obat
+        // Daftar obat yang termasuk FORNAS (berdasarkan nama generik umum)
+        $fornasKeywords = [
+            'AMOXICILLIN',
+            'PARACETAMOL',
+            'IBUPROFEN',
+            'METFORMIN',
+            'GLIBENCLAMIDE',
+            'CAPTOPRIL',
+            'AMLODIPINE',
+            'ATORVASTATIN',
+            'SIMVASTATIN',
+            'BISOPROLOL',
+            'CEFTRIAXON',
+            'CEFOTAXIME',
+            'CIPROFLOXACIN',
+            'LEVOFLOXACIN',
+            'OMEPRAZOLE',
+            'RANITIDINE',
+            'ANTASIDA',
+            'ASERING',
+            'RINGER',
+            'DEXTROSE',
+            'NACL',
+            'INSULIN',
+            'ALLOPURINOL',
+            'AMINOPHYLLINE',
+            'AMBROXOL',
+        ];
+
+        // Update items yang mengandung keyword FORNAS
+        foreach ($fornasKeywords as $keyword) {
+            Item::where('name', 'LIKE', '%' . $keyword . '%')
+                ->update([
+                    'is_fornas' => true,
+                    'updated_at' => now()
+                ]);
+        }
     }
 }

@@ -15,6 +15,9 @@ class PrescriptionIndex extends Component
     public $status = '';
     public $warehouse_id = '';
     public $service_unit_id = '';
+    public $payer_type = '';
+    public $patient_type = '';
+    public $payment_status = '';
 
     // Modal states
     public $showDetailModal = false;
@@ -55,7 +58,7 @@ class PrescriptionIndex extends Component
 
     public function render()
     {
-        $query = Prescription::with(['doctor', 'warehouse'])
+        $query = Prescription::with(['doctor', 'warehouse', 'serviceUnit'])
             ->when($this->search, function ($q) {
                 $q->where('prescription_number', 'like', '%' . $this->search . '%')
                   ->orWhere('patient_name', 'like', '%' . $this->search . '%')
@@ -64,6 +67,9 @@ class PrescriptionIndex extends Component
             ->when($this->status, fn($q) => $q->where('status', $this->status))
             ->when($this->warehouse_id, fn($q) => $q->where('warehouse_id', $this->warehouse_id))
             ->when($this->service_unit_id, fn($q) => $q->where('service_unit_id', $this->service_unit_id))
+            ->when($this->payer_type, fn($q) => $q->where('payer_type', $this->payer_type))
+            ->when($this->patient_type, fn($q) => $q->where('patient_type', $this->patient_type))
+            ->when($this->payment_status, fn($q) => $q->where('payment_status', $this->payment_status))
             ->latest();
 
         return view('livewire.clinical.prescription-index', [

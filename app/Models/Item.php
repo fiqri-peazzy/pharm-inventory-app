@@ -22,6 +22,7 @@ class Item extends Model
         'is_prescription',
         'is_consignment',
         'is_active',
+        'is_fornas',
         'storage_condition',
         'fornas_status',
         'fornas_code',
@@ -38,6 +39,7 @@ class Item extends Model
             'is_prescription' => 'boolean',
             'is_consignment' => 'boolean',
             'is_active' => 'boolean',
+            'is_fornas' => 'boolean',
         ];
     }
 
@@ -126,6 +128,24 @@ class Item extends Model
               ->orWhere('code', 'like', "%{$search}%")
               ->orWhere('barcode', 'like', "%{$search}%");
         });
+    }
+
+    public function scopeFornas($query)
+    {
+        return $query->where('is_fornas', true);
+    }
+
+    public function scopeNonFornas($query)
+    {
+        return $query->where('is_fornas', false);
+    }
+
+    public function scopeByPayerType($query, $payerType)
+    {
+        if ($payerType === 'bpjs') {
+            return $query->where('is_fornas', true);
+        }
+        return $query; // Umum dan Asuransi bisa semua obat
     }
 
     // Helpers

@@ -14,6 +14,8 @@ use App\Models\Distribution;
 use App\Models\DistributionDetail;
 use App\Models\Prescription;
 use App\Models\PrescriptionDetail;
+use App\Models\ServiceUnit;
+use App\Services\StockSuggestionService;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -40,9 +42,10 @@ class InventorySampleSeeder extends Seeder
         $depos = Warehouse::where('is_main', false)->get();
         $suppliers = Supplier::all();
         $users = User::all();
+        $serviceUnits = ServiceUnit::active()->get();
 
-        if ($items->isEmpty() || !$gdUtama || $depos->isEmpty() || $suppliers->isEmpty()) {
-            $this->command->warn('Essential data is missing. Ensure MasterData, Warehouse, and Users are seeded first.');
+        if ($items->isEmpty() || !$gdUtama || $depos->isEmpty() || $suppliers->isEmpty() || $serviceUnits->isEmpty()) {
+            $this->command->warn('Essential data is missing. Ensure MasterData, Warehouse, ServiceUnits, and Users are seeded first.');
             return;
         }
 
@@ -187,6 +190,37 @@ class InventorySampleSeeder extends Seeder
                     for ($i = 0; $i < rand(3, 8); $i++) {
                         $useQty = rand(1, 10);
                         if ($batchDepo->current_qty >= $useQty) {
+                            // Randomize prescription scenarios
+                            $payerTypes = ['umum', 'bpjs', 'asuransi_lain'];
+                            $payerType = $payerTypes[array_rand($payerTypes)];
+                            
+                            // Get random service unit and auto-detect patient type
+                            $serviceUnit = $serviceUnits->random();
+                            $patientType = $serviceUnit->getPatientTypeCode();
+                            
+                            // Generate room/bed number for RI patients
+                            $roomBedNumber = null;
+                            if ($patientType === 'ri') {
+                                $roomBedNumber = rand(101, 399) . '-' . chr(rand(65, 68)); // e.g., 201-A
+                            }
+                            
+                            // Determine payment status based on payer type
+                            $paymentStatus = 'paid';
+                            if ($payerType === 'umum') {
+                                $paymentStatuses = ['unpaid', 'partial', 'paid'];
+                                $paymentStatus = $paymentStatuses[array_rand($paymentStatuses)];
+                            }
+                            
+                            // Determine prescription status
+                            $statuses = ['submitted', 'processing', 'completed'];
+                            $status = $statuses[array_rand($statuses)];
+                            $processedAt = null;
+                            if ($status === 'completed') {
+                                $processedAt = Carbon::now()->subDays(rand(0, 6));
+                            } elseif ($status === 'processing') {
+                                $processedAt = Carbon::now()->subHours(rand(1, 12));
+                            }
+                            
                             $rxNumber = 'RX-' . date('ymd') . '-' . str_pad($rxCounter++, 6, '0', STR_PAD_LEFT);
                             $prescription = Prescription::create([
                                 'prescription_number' => $rxNumber,
@@ -194,10 +228,17 @@ class InventorySampleSeeder extends Seeder
                                 'medical_record_number' => 'MR-' . rand(10000, 99999),
                                 'doctor_id' => $users->where('role', 'doctor')->first()->id ?? 1,
                                 'doctor_name' => 'dr. Sample',
+                                'service_unit_id' => $serviceUnit->id,
                                 'warehouse_id' => $depo->id,
                                 'prescription_date' => Carbon::now()->subDays(rand(1, 7)),
-                                'status' => 'completed',
-                                'processed_at' => Carbon::now()->subDays(rand(0, 6)),
+                                'status' => $status,
+                                'processed_at' => $processedAt,
+                                // New fields
+                                'payer_type' => $payerType,
+                                'patient_type' => $patientType,
+                                'room_bed_number' => $roomBedNumber,
+                                'payment_status' => $paymentStatus,
+                                'is_returnable' => $patientType === 'ri',
                             ]);
 
                             $rxDetail = $prescription->details()->create([
@@ -209,26 +250,35 @@ class InventorySampleSeeder extends Seeder
                                 'instruction' => '3 x 1 Hari',
                             ]);
 
-                            $batchDepo->decrement('current_qty', $useQty);
-                            StockCard::create([
-                                'item_id' => $item->id,
-                                'warehouse_id' => $depo->id,
-                                'item_batch_id' => $batchDepo->id,
-                                'transaction_date' => $prescription->processed_at,
-                                'transaction_type' => 'prescription',
-                                'reference_type' => Prescription::class,
-                                'reference_id' => $prescription->id,
-                                'qty_in' => 0,
-                                'qty_out' => $useQty,
-                                'last_stock' => $batchDepo->current_qty,
-                                'notes' => 'Resep No: ' . $rxNumber . ' (Pasien: ' . $prescription->patient_name . ')',
-                            ]);
+                            // Only deduct stock and create stock card for completed prescriptions
+                            if ($status === 'completed') {
+                                $batchDepo->decrement('current_qty', $useQty);
+                                StockCard::create([
+                                    'item_id' => $item->id,
+                                    'warehouse_id' => $depo->id,
+                                    'item_batch_id' => $batchDepo->id,
+                                    'transaction_date' => $prescription->processed_at,
+                                    'transaction_type' => 'prescription',
+                                    'reference_type' => Prescription::class,
+                                    'reference_id' => $prescription->id,
+                                    'qty_in' => 0,
+                                    'qty_out' => $useQty,
+                                    'last_stock' => $batchDepo->current_qty,
+                                    'notes' => 'Resep No: ' . $rxNumber . ' (Pasien: ' . $prescription->patient_name . ')',
+                                ]);
+                            }
                         }
                     }
                 }
             }
         }
 
-        $this->command->info('Inventory Samples successfully seeded with full paper trail integrity.');
+        echo "\n📊 Calculating stock thresholds (Reorder Points & Min Stock)...\n";
+        
+        $service = new StockSuggestionService();
+        $updated = $service->calculateAllThresholds(null, 90);
+        
+        echo "✅ Updated thresholds for {$updated} item-warehouse combinations\n";
+        echo "\n✅ Inventory Samples successfully seeded with full paper trail integrity.\n";
     }
 }

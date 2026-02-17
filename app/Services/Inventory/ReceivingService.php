@@ -23,7 +23,7 @@ class ReceivingService
 
         return DB::transaction(function () use ($rcv) {
             foreach ($rcv->details as $detail) {
-                // 1. Create Batch
+                // 1. Create Batch (Default to QUARANTINE as per RSUD SOP)
                 $batch = ItemBatch::create([
                     'item_id' => $detail->item_id,
                     'warehouse_id' => $rcv->warehouse_id,
@@ -32,6 +32,7 @@ class ReceivingService
                     'initial_qty' => $detail->qty_received,
                     'current_qty' => $detail->qty_received,
                     'purchase_price' => $detail->purchase_price,
+                    'status' => 'quarantine', // Restricted until released
                     'is_active' => true,
                 ]);
 
@@ -42,7 +43,7 @@ class ReceivingService
                     'item_batch_id' => $batch->id,
                     'transaction_date' => $rcv->receiving_date,
                     'transaction_type' => 'receiving',
-                    'reference_type' => 'receiving',
+                    'reference_type' => Receiving::class,
                     'reference_id' => $rcv->id,
                     'qty_in' => $detail->qty_received,
                     'qty_out' => 0,

@@ -7,6 +7,7 @@ use App\Models\ItemBatch;
 use App\Models\Prescription;
 use App\Models\ServiceUnit;
 use App\Models\Warehouse;
+use App\Models\DosageInstruction;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use DB;
@@ -22,6 +23,11 @@ class PrescriptionForm extends Component
     public $service_unit_id;
     public $warehouse_id; // Destination Pharmacy
     public $prescription_date;
+    
+    // Prescription Enhancement Fields
+    public $payer_type = 'umum';
+    public $patient_type = 'rj'; // Auto-detected from service unit
+    public $room_bed_number; // For RI patients only
 
     // Items
     public $rows = []; // {item_id, item_name, qty, instruction, available_stock, stock_status}
@@ -36,6 +42,9 @@ class PrescriptionForm extends Component
         'service_unit_id' => 'required',
         'warehouse_id' => 'required',
         'prescription_date' => 'required|date',
+        'payer_type' => 'required|in:umum,bpjs,asuransi_lain',
+        'patient_type' => 'required|in:rj,ri',
+        'room_bed_number' => 'required_if:patient_type,ri',
         'rows.*.item_id' => 'required',
         'rows.*.qty' => 'required|numeric|min:0.1',
     ];
@@ -55,6 +64,11 @@ class PrescriptionForm extends Component
             $this->service_unit_id = $rx->service_unit_id;
             $this->warehouse_id = $rx->warehouse_id;
             $this->prescription_date = $rx->prescription_date->format('Y-m-d');
+            
+            // Load new fields
+            $this->payer_type = $rx->payer_type;
+            $this->patient_type = $rx->patient_type;
+            $this->room_bed_number = $rx->room_bed_number;
             
             foreach ($rx->details as $detail) {
                 // Check stock in selected pharmacy
@@ -86,7 +100,10 @@ class PrescriptionForm extends Component
 
             // Default Service Unit
             $unit = ServiceUnit::active()->first();
-            if ($unit) $this->service_unit_id = $unit->id;
+            if ($unit) {
+                $this->service_unit_id = $unit->id;
+                $this->autoDetectPatientType();
+            }
         }
     }
 
@@ -97,6 +114,29 @@ class PrescriptionForm extends Component
         $this->prescription_number = "RX-$date-" . str_pad($count, 4, '0', STR_PAD_LEFT);
     }
 
+    /**
+     * Auto-detect patient type when service unit changes
+     */
+    public function updatedServiceUnitId()
+    {
+        $this->autoDetectPatientType();
+    }
+
+    protected function autoDetectPatientType()
+    {
+        if (!$this->service_unit_id) return;
+        
+        $serviceUnit = ServiceUnit::find($this->service_unit_id);
+        if ($serviceUnit) {
+            $this->patient_type = $serviceUnit->getPatientTypeCode();
+            
+            // Clear room/bed if changed to RJ
+            if ($this->patient_type === 'rj') {
+                $this->room_bed_number = null;
+            }
+        }
+    }
+
     public function updatedItemSearch()
     {
         if (strlen($this->itemSearch) < 2) {
@@ -104,15 +144,31 @@ class PrescriptionForm extends Component
             return;
         }
 
-        $this->searchResults = Item::where('name', 'like', '%' . $this->itemSearch . '%')
-            ->orWhere('code', 'like', '%' . $this->itemSearch . '%')
-            ->limit(10)
-            ->get();
+        // Apply FORNAS filter for BPJS patients
+        $query = Item::where(function($q) {
+            $q->where('name', 'like', '%' . $this->itemSearch . '%')
+              ->orWhere('code', 'like', '%' . $this->itemSearch . '%');
+        });
+
+        if ($this->payer_type === 'bpjs') {
+            $query->where('is_fornas', true);
+        }
+
+        $this->searchResults = $query->limit(10)->get();
     }
 
     public function selectItem($itemId)
     {
         $item = Item::findOrFail($itemId);
+        
+        // FORNAS Validation for BPJS
+        if ($this->payer_type === 'bpjs' && !$item->is_fornas) {
+            $this->dispatch('notify', [
+                'type' => 'warning', 
+                'message' => 'Peringatan: Obat ' . $item->name . ' bukan FORNAS. Pasien BPJS hanya boleh mendapat obat FORNAS.'
+            ]);
+            return;
+        }
         
         // Zero-OOS: Check stock in selected pharmacy
         $stock = ItemBatch::where('item_id', $itemId)
@@ -131,7 +187,8 @@ class PrescriptionForm extends Component
             'qty' => 1,
             'instruction' => '3 x 1 tablet sesudah makan',
             'available_stock' => $stock,
-            'stock_status' => $status
+            'stock_status' => $status,
+            'is_fornas' => $item->is_fornas // Track FORNAS status
         ];
 
         $this->dispatch('close-item-modal');
@@ -154,6 +211,20 @@ class PrescriptionForm extends Component
             return;
         }
 
+        // Additional FORNAS validation for BPJS
+        if ($this->payer_type === 'bpjs') {
+            foreach ($this->rows as $row) {
+                $item = Item::find($row['item_id']);
+                if ($item && !$item->is_fornas) {
+                    $this->dispatch('notify', [
+                        'type' => 'error', 
+                        'message' => 'Tidak dapat menyimpan: ' . $item->name . ' bukan obat FORNAS. Pasien BPJS hanya boleh mendapat obat FORNAS.'
+                    ]);
+                    return;
+                }
+            }
+        }
+
         try {
             DB::transaction(function () {
                 $data = [
@@ -166,6 +237,12 @@ class PrescriptionForm extends Component
                     'warehouse_id' => $this->warehouse_id,
                     'prescription_date' => $this->prescription_date,
                     'status' => 'submitted',
+                    // New fields
+                    'payer_type' => $this->payer_type,
+                    'patient_type' => $this->patient_type,
+                    'room_bed_number' => $this->room_bed_number,
+                    'payment_status' => $this->payer_type === 'umum' ? 'unpaid' : 'paid',
+                    'is_returnable' => $this->patient_type === 'ri',
                 ];
 
                 if ($this->isEdit) {
@@ -197,7 +274,8 @@ class PrescriptionForm extends Component
     {
         return view('livewire.clinical.prescription-form', [
             'serviceUnits' => ServiceUnit::active()->get(),
-            'pharmacies' => Warehouse::whereIn('type', ['depo_farmasi', 'depo_igd', 'depo_ok'])->get()
+            'pharmacies' => Warehouse::whereIn('type', ['depo_farmasi', 'depo_igd', 'depo_ok'])->get(),
+            'dosageInstructions' => DosageInstruction::active()->orderBy('code')->get()
         ]);
     }
 }

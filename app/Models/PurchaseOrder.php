@@ -5,8 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 class PurchaseOrder extends Model
 {
+    protected $casts = [
+        'po_date' => 'date',
+        'expected_delivery_date' => 'date',
+        'approved_at' => 'datetime',
+        'total_amount' => 'decimal:2',
+        'ppn_amount' => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'grand_total' => 'decimal:2',
+    ];
+
     protected $fillable = [
         'po_number',
+        'sp_type',
         'purchase_request_id',
         'supplier_id',
         'warehouse_id',
