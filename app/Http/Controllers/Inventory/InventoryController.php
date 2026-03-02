@@ -130,4 +130,9 @@ class InventoryController extends Controller
             'returnId' => $id
         ]);
     }
+
+    public function initialImport()
+    {
+        return view('pages.inventory.initial-import');
+    }
 }

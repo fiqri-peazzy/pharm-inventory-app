@@ -24,7 +24,7 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/suppliers', [App\Http\Controllers\Master\SupplierController::class, 'index'])->name('suppliers.index');
         Route::get('/warehouses', [App\Http\Controllers\Master\WarehouseController::class, 'index'])->name('warehouses.index');
         Route::get('/service-units', [App\Http\Controllers\Master\ServiceUnitController::class, 'index'])->name('service-units.index');
-        
+
         // Settings/Users
         Route::get('/users', [App\Http\Controllers\MasterController::class, 'users'])->name('users.index');
         Route::get('/roles', [App\Http\Controllers\MasterController::class, 'roles'])->name('roles.index');
@@ -59,7 +59,7 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/disposals', [App\Http\Controllers\Inventory\InventoryController::class, 'disposals'])->name('disposals.index');
         Route::get('/disposals/create', [App\Http\Controllers\Inventory\InventoryController::class, 'createDisposal'])->name('disposals.create');
         Route::get('/disposals/{id}/edit', [App\Http\Controllers\Inventory\InventoryController::class, 'editDisposal'])->name('disposals.edit');
-        
+
         // Stock Opnames
         Route::get('/stock-opnames', [App\Http\Controllers\Inventory\InventoryController::class, 'stockOpnames'])->name('stock-opnames.index');
         Route::get('/stock-opnames/create', [App\Http\Controllers\Inventory\InventoryController::class, 'createStockOpname'])->name('stock-opnames.create');
@@ -69,7 +69,7 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/adjustments', [App\Http\Controllers\Inventory\InventoryController::class, 'adjustments'])->name('adjustments.index');
         Route::get('/adjustments/create', [App\Http\Controllers\Inventory\InventoryController::class, 'createAdjustment'])->name('adjustments.create');
         Route::get('/adjustments/{id}/edit', [App\Http\Controllers\Inventory\InventoryController::class, 'editAdjustment'])->name('adjustments.edit');
-        
+
         // Returns
         Route::get('/returns', [\App\Http\Controllers\Inventory\InventoryController::class, 'returns'])->name('returns.index');
         Route::get('/returns/create', [\App\Http\Controllers\Inventory\InventoryController::class, 'createReturn'])->name('returns.create');
@@ -84,6 +84,9 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         // Stock Cards & Batches
         Route::get('/stocks/cards', [App\Http\Controllers\Inventory\InventoryController::class, 'stockCards'])->name('stocks.cards');
         Route::get('/stocks/batches', [App\Http\Controllers\Inventory\InventoryController::class, 'batches'])->name('stocks.batches');
+
+        // Initial Import
+        Route::get('/initial-import', [App\Http\Controllers\Inventory\InventoryController::class, 'initialImport'])->name('initial-import');
     });
 
     // Clinical Routes
@@ -105,7 +108,7 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
             ->name('stock.index');
         Route::get('/stock/pdf', [App\Http\Controllers\Reports\StockReportController::class, 'exportPdf'])
             ->name('stock.pdf');
-        
+
         // Distribution Reports
         Route::get('/distribution', [App\Http\Controllers\Reports\DistributionReportController::class, 'index'])
             ->name('distribution.index');
@@ -119,15 +122,19 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
         Route::get('/journals/create', [App\Http\Controllers\Accounting\AccountingController::class, 'createJournal'])->name('journals.create');
         Route::get('/journals/{id}/edit', [App\Http\Controllers\Accounting\AccountingController::class, 'editJournal'])->name('journals.edit');
         Route::get('/journals/{id}', [App\Http\Controllers\Accounting\AccountingController::class, 'showJournal'])->name('journals.show');
-        
+
         Route::get('/coa', [App\Http\Controllers\Accounting\AccountingController::class, 'coa'])->name('coa.index');
-        
+
         // Reports
         Route::get('/reports/general-ledger', [App\Http\Controllers\Accounting\AccountingController::class, 'generalLedger'])->name('reports.general-ledger');
         Route::get('/reports/trial-balance', [App\Http\Controllers\Accounting\AccountingController::class, 'trialBalance'])->name('reports.trial-balance');
     });
 
     // Settings & Activity Log
-    Route::get('/settings', function() { return view('pages.settings.index'); })->name('settings');
-    Route::get('/activity-logs', function() { return view('pages.settings.activity-log'); })->name('activity-logs');
+    Route::get('/settings', function () {
+        return view('pages.settings.index');
+    })->name('settings');
+    Route::get('/activity-logs', function () {
+        return view('pages.settings.activity-log');
+    })->name('activity-logs');
 });

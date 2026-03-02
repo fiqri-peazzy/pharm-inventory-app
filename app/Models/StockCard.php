@@ -41,6 +41,6 @@ class StockCard extends Model
 
     public function reference()
     {
-        return $this->morphTo();
+        return $this->morphTo(__FUNCTION__, 'reference_type', 'reference_id');
     }
 }

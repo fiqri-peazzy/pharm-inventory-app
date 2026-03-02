@@ -68,7 +68,7 @@ class MenuHelper
                         'icon' => 'activity',
                         'permission' => 'stock-adjustments.view',
                     ],
-                    
+
                     [
                         'name' => 'Retur Barang',
                         'path' => '/inventory/returns',
@@ -80,6 +80,12 @@ class MenuHelper
                         'path' => '/inventory/disposals',
                         'icon' => 'trash',
                         'permission' => 'disposals.view',
+                    ],
+                    [
+                        'name' => 'Import Stok Awal',
+                        'path' => '/inventory/initial-import',
+                        'icon' => 'package',
+                        'permission' => 'stock-opnames.view',
                     ],
                 ]
             ],
