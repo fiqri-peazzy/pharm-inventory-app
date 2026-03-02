@@ -94,7 +94,7 @@
             }
         })();
     </script>
-    
+
     @livewireStyles
     <style>
         .swal2-container {
@@ -103,22 +103,20 @@
     </style>
 </head>
 
-<body
-    x-data="{ 'loaded': true}"
-    x-init="$store.sidebar.isExpanded = window.innerWidth >= 1280;
-    const checkMobile = () => {
-        if (window.innerWidth < 1280) {
-            $store.sidebar.setMobileOpen(false);
-            $store.sidebar.isExpanded = false;
-        } else {
-            $store.sidebar.isMobileOpen = false;
-            $store.sidebar.isExpanded = true;
-        }
-    };
-    window.addEventListener('resize', checkMobile);">
+<body x-data="{ 'loaded': true }" x-init="$store.sidebar.isExpanded = window.innerWidth >= 1280;
+const checkMobile = () => {
+    if (window.innerWidth < 1280) {
+        $store.sidebar.setMobileOpen(false);
+        $store.sidebar.isExpanded = false;
+    } else {
+        $store.sidebar.isMobileOpen = false;
+        $store.sidebar.isExpanded = true;
+    }
+};
+window.addEventListener('resize', checkMobile);">
 
     {{-- preloader --}}
-    <x-common.preloader/>
+    <x-common.preloader />
     {{-- preloader end --}}
 
     <div class="min-h-screen xl:flex">
@@ -144,56 +142,61 @@
 </body>
 
 @stack('scripts')
-    @livewireScripts
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('livewire:init', () => {
-            // Toast Notification Listener
-            Livewire.on('notify', (data) => {
-                const event = Array.isArray(data) ? data[0] : data;
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 4000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
-                    }
-                });
-
-                Toast.fire({
-                    icon: event.type || 'success',
-                    title: event.message
-                });
+{{-- Floating Manual Book Button --}}
+<x-manual-book-float />
+@livewireScripts
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('livewire:init', () => {
+        // Toast Notification Listener
+        Livewire.on('notify', (data) => {
+            const event = Array.isArray(data) ? data[0] : data;
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
             });
 
-            // Initial session notification check
-            @if(session()->has('notify'))
-                Livewire.dispatch('notify', @json(session('notify')));
-            @endif
-
-            // Confirmation Listener
-            Livewire.on('confirm-delete', (data) => {
-                const event = Array.isArray(data) ? data[0] : data;
-                Swal.fire({
-                    title: 'Hapus Data?',
-                    text: event.message || "Anda akan menghapus data ini secara permanen!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6e7881',
-                    confirmButtonText: 'Ya, Hapus!',
-                    cancelButtonText: 'Batal',
-                    reverseButtons: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        Livewire.dispatch(event.action, { id: event.id });
-                    }
-                });
+            Toast.fire({
+                icon: event.type || 'success',
+                title: event.message
             });
         });
-    </script>
+
+        // Initial session notification check
+        @if (session()->has('notify'))
+            Livewire.dispatch('notify', @json(session('notify')));
+        @endif
+
+        // Confirmation Listener
+        Livewire.on('confirm-delete', (data) => {
+            const event = Array.isArray(data) ? data[0] : data;
+            Swal.fire({
+                title: 'Hapus Data?',
+                text: event.message || "Anda akan menghapus data ini secara permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6e7881',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Livewire.dispatch(event.action, {
+                        id: event.id
+                    });
+                }
+            });
+        });
+    });
+</script>
 </body>
+
 </html>

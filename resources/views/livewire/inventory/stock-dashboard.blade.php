@@ -3,14 +3,16 @@
     <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
         <div class="flex items-center gap-4">
             <div
-                class="w-12 h-12 @if($isGlobal) bg-brand-500 @else bg-amber-500 @endif rounded-xl flex items-center justify-center text-white shadow-lg transition-all">
-                @if($isGlobal)
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                class="w-12 h-12 @if ($isGlobal) bg-brand-500 @else bg-amber-500 @endif rounded-xl flex items-center justify-center text-white shadow-lg transition-all">
+                @if ($isGlobal)
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
                 @else
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
                         <path
                             d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
                         </path>
@@ -29,10 +31,13 @@
         </div>
 
         <div class="flex items-center gap-3">
-            @if(!$isGlobal && auth()->user()->hasAnyRole(['super-admin', 'kepala-farmasi', 'direktur']))
+            @if (
+                !$isGlobal &&
+                    auth()->user()->hasAnyRole(['super-admin', 'kepala-farmasi', 'direktur']))
                 <a href="{{ route('inventory.dashboard') }}"
                     class="px-4 py-2 bg-gray-50 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:bg-brand-50 hover:text-brand-600 rounded-xl transition-all flex items-center gap-2 border border-gray-100">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="3">
                         <path d="M19 12H5"></path>
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
@@ -40,7 +45,8 @@
                 </a>
             @endif
             <button wire:click="loadData" class="p-2 text-gray-400 hover:text-brand-500 transition-colors">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2.5">
                     <path d="M23 4v6h-6"></path>
                     <path d="M1 20v-6h6"></path>
                     <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
@@ -54,12 +60,9 @@
         <!-- Asset -->
         <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm group">
             <div class="flex justify-between items-center mb-2">
-                <div class="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2.5">
-                        <line x1="12" y1="1" x2="12" y2="23"></line>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                    </svg>
+                <div
+                    class="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-black text-[11px]">
+                    Rp
                 </div>
                 <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total Aset</span>
             </div>
@@ -90,10 +93,10 @@
 
         <!-- Low Stock -->
         <div
-            class="bg-white p-4 rounded-2xl border @if($summary['low_stock_count'] > 0) border-red-100 bg-red-50/5 @else border-gray-100 @endif shadow-sm group">
+            class="bg-white p-4 rounded-2xl border @if ($summary['low_stock_count'] > 0) border-red-100 bg-red-50/5 @else border-gray-100 @endif shadow-sm group">
             <div class="flex justify-between items-center mb-2">
                 <div
-                    class="w-8 h-8 @if($summary['low_stock_count'] > 0) bg-red-100 text-red-600 @else bg-gray-50 text-gray-400 @endif rounded-lg flex items-center justify-center">
+                    class="w-8 h-8 @if ($summary['low_stock_count'] > 0) bg-red-100 text-red-600 @else bg-gray-50 text-gray-400 @endif rounded-lg flex items-center justify-center">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2.5">
                         <path
@@ -105,17 +108,17 @@
             </div>
             <div class="flex items-baseline gap-2">
                 <span
-                    class="text-xl font-black @if($summary['low_stock_count'] > 0) text-red-600 @else text-gray-900 @endif tracking-tight">{{ number_format($summary['low_stock_count']) }}</span>
+                    class="text-xl font-black @if ($summary['low_stock_count'] > 0) text-red-600 @else text-gray-900 @endif tracking-tight">{{ number_format($summary['low_stock_count']) }}</span>
                 <span class="text-[9px] font-bold text-gray-400 uppercase">Item</span>
             </div>
         </div>
 
         <!-- Expiry -->
         <div
-            class="bg-white p-4 rounded-2xl border @if($summary['near_expired_count'] > 0) border-amber-100 bg-amber-50/5 @else border-gray-100 @endif shadow-sm group">
+            class="bg-white p-4 rounded-2xl border @if ($summary['near_expired_count'] > 0) border-amber-100 bg-amber-50/5 @else border-gray-100 @endif shadow-sm group">
             <div class="flex justify-between items-center mb-2">
                 <div
-                    class="w-8 h-8 @if($summary['near_expired_count'] > 0) bg-amber-100 text-amber-600 @else bg-gray-50 text-gray-400 @endif rounded-lg flex items-center justify-center">
+                    class="w-8 h-8 @if ($summary['near_expired_count'] > 0) bg-amber-100 text-amber-600 @else bg-gray-50 text-gray-400 @endif rounded-lg flex items-center justify-center">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2.5">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -126,7 +129,7 @@
             </div>
             <div class="flex items-baseline gap-2">
                 <span
-                    class="text-xl font-black @if($summary['near_expired_count'] > 0) text-amber-600 @else text-gray-900 @endif tracking-tight">{{ number_format($summary['near_expired_count']) }}</span>
+                    class="text-xl font-black @if ($summary['near_expired_count'] > 0) text-amber-600 @else text-gray-900 @endif tracking-tight">{{ number_format($summary['near_expired_count']) }}</span>
                 <span class="text-[9px] font-bold text-gray-400 uppercase">Batch</span>
             </div>
         </div>
@@ -167,12 +170,13 @@
                                     </td>
                                     <td class="px-6 py-3 font-bold text-gray-900">
                                         {{ $act->item->name }}
-                                        <div class="text-[9px] text-gray-400 font-normal uppercase italic tracking-tighter">
+                                        <div
+                                            class="text-[9px] text-gray-400 font-normal uppercase italic tracking-tighter">
                                             Batch: {{ $act->batch->batch_number ?? '-' }}</div>
                                     </td>
                                     <td class="px-6 py-3 text-gray-500">{{ $act->warehouse->name }}</td>
                                     <td class="px-6 py-3 text-center">
-                                        @if($act->qty_in > 0)
+                                        @if ($act->qty_in > 0)
                                             <span
                                                 class="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-md font-black uppercase text-[8px] border border-emerald-100 italic">MASUK</span>
                                         @else
@@ -187,7 +191,8 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-10 text-center italic text-gray-300">Belum ada aktivitas
+                                    <td colspan="5" class="px-6 py-10 text-center italic text-gray-300">Belum ada
+                                        aktivitas
                                         stok tercatat.</td>
                                 </tr>
                             @endforelse
@@ -202,8 +207,8 @@
                     <div class="px-6 py-3 border-b border-gray-50 bg-red-50/20 flex items-center justify-between">
                         <h3
                             class="text-[10px] font-black uppercase tracking-widest text-red-600 flex items-center gap-2">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="3">
                                 <path
                                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
                                 </path>
@@ -226,9 +231,10 @@
                                         <td class="px-4 py-2">
                                             <span
                                                 class="font-bold text-gray-900 leading-tight block">{{ $item->name }}</span>
-                                            @if($isGlobal)
+                                            @if ($isGlobal)
                                                 <div class="text-[8px] text-brand-500 font-black uppercase italic">
-                                            {{ $item->alert_warehouse }}</div>@endif
+                                                    {{ $item->alert_warehouse }}</div>
+                                            @endif
                                         </td>
                                         <td class="px-4 py-2 text-center">
                                             <span
@@ -246,7 +252,8 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-4 py-6 text-center italic text-gray-300">Stok semua aman.
+                                        <td colspan="3" class="px-4 py-6 text-center italic text-gray-300">Stok
+                                            semua aman.
                                         </td>
                                     </tr>
                                 @endforelse
@@ -260,8 +267,8 @@
                     <div class="px-6 py-3 border-b border-gray-50 bg-amber-50/20 flex items-center justify-between">
                         <h3
                             class="text-[10px] font-black uppercase tracking-widest text-amber-600 flex items-center gap-2">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="3">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="3">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <polyline points="12 6 12 12 16 14"></polyline>
                             </svg>
@@ -299,7 +306,8 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-4 py-6 text-center italic text-gray-300">Aman untuk 6
+                                        <td colspan="3" class="px-4 py-6 text-center italic text-gray-300">Aman
+                                            untuk 6
                                             bulan ke depan.</td>
                                     </tr>
                                 @endforelse
@@ -321,20 +329,22 @@
             </div>
 
             <!-- Global Only: Daftar Gudang -->
-            @if($isGlobal)
+            @if ($isGlobal)
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden h-fit">
                     <div class="px-6 py-3 border-b border-gray-50 flex items-center justify-between">
-                        <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-600">Sebaran per Gudang/Depo
+                        <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-600">Sebaran per
+                            Gudang/Depo
                         </h3>
                     </div>
                     <div class="divide-y divide-gray-50 max-h-[400px] overflow-y-auto custom-scrollbar">
-                        @foreach($warehouseStock as $wh)
+                        @foreach ($warehouseStock as $wh)
                             <a href="{{ route('inventory.dashboard', ['warehouse' => $wh['id']]) }}"
                                 class="p-4 block hover:bg-gray-50 transition-colors group">
                                 <div class="flex items-center justify-between mb-2">
                                     <span
                                         class="text-xs font-black text-gray-900 group-hover:text-brand-600">{{ $wh['name'] }}</span>
-                                    <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter italic">
+                                    <span
+                                        class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter italic">
                                         Rp {{ number_format($wh['total_value'], 0, ',', '.') }}
                                     </span>
                                 </div>
@@ -347,7 +357,7 @@
                                     <span
                                         class="text-[9px] font-black text-brand-500 uppercase italic">{{ number_format($wh['total_qty']) }}
                                         Unit Stok</span>
-                                    @if($wh['low_stock_alerts'] > 0)
+                                    @if ($wh['low_stock_alerts'] > 0)
                                         <span
                                             class="px-2 py-0.5 bg-red-50 text-red-600 rounded font-black text-[8px] border border-red-100">{{ $wh['low_stock_alerts'] }}
                                             Stok Kritis</span>
@@ -382,8 +392,12 @@
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script>
-            document.addEventListener('livewire:navigated', () => { initDashboardCharts(); });
-            document.addEventListener('livewire:initialized', () => { initDashboardCharts(); });
+            document.addEventListener('livewire:navigated', () => {
+                initDashboardCharts();
+            });
+            document.addEventListener('livewire:initialized', () => {
+                initDashboardCharts();
+            });
 
             function initDashboardCharts() {
                 const chartData = @json($distributionChart);
@@ -401,21 +415,33 @@
                         fontFamily: 'Inter, sans-serif',
                     },
                     colors: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#3b82f6', '#ec4899'],
-                    legend: { position: 'bottom', fontSize: '9px', fontWeight: 900, fontFamily: 'Inter, sans-serif', textTransform: 'uppercase' },
+                    legend: {
+                        position: 'bottom',
+                        fontSize: '9px',
+                        fontWeight: 900,
+                        fontFamily: 'Inter, sans-serif',
+                        textTransform: 'uppercase'
+                    },
                     plotOptions: {
                         pie: {
                             donut: {
                                 size: '80%',
                                 labels: {
                                     show: true,
-                                    name: { show: true, fontSize: '9px', fontWeight: 900, color: '#94a3b8', offsetY: -5 },
+                                    name: {
+                                        show: true,
+                                        fontSize: '9px',
+                                        fontWeight: 900,
+                                        color: '#94a3b8',
+                                        offsetY: -5
+                                    },
                                     value: {
                                         show: true,
                                         fontSize: '14px',
                                         fontWeight: 900,
                                         color: '#1e293b',
                                         offsetY: 5,
-                                        formatter: function (val) {
+                                        formatter: function(val) {
                                             return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(val));
                                         }
                                     },
@@ -425,7 +451,7 @@
                                         fontSize: '9px',
                                         fontWeight: 900,
                                         color: '#94a3b8',
-                                        formatter: function (w) {
+                                        formatter: function(w) {
                                             const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
                                             return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(total));
                                         }
@@ -434,11 +460,15 @@
                             }
                         }
                     },
-                    stroke: { width: 0 },
-                    dataLabels: { enabled: false },
+                    stroke: {
+                        width: 0
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
                     tooltip: {
                         y: {
-                            formatter: function (val) {
+                            formatter: function(val) {
                                 return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(val));
                             }
                         }

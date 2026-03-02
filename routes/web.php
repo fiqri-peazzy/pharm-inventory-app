@@ -137,4 +137,8 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
     Route::get('/activity-logs', function () {
         return view('pages.settings.activity-log');
     })->name('activity-logs');
+
+    // Manual Book
+    Route::get('/manual-book',          [App\Http\Controllers\ManualBookController::class, 'view'])->name('manual-book.view');
+    Route::get('/manual-book/download', [App\Http\Controllers\ManualBookController::class, 'download'])->name('manual-book.download');
 });
