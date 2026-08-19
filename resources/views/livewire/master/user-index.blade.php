@@ -1,10 +1,10 @@
 <div class="space-y-6">
     <!-- Header Actions -->
     <div
-        class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+        class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 dark:bg-white/[0.03] dark:border-gray-800">
         <div class="flex flex-1 items-center gap-3">
             <div class="relative flex-1 max-w-sm">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 dark:text-gray-500">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -12,7 +12,7 @@
                 </span>
                 <input wire:model.live.debounce.300ms="search" type="text"
                     placeholder="Cari Nama, Username, atau Email..."
-                    class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                    class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all dark:bg-white/[0.03] dark:border-gray-800">
             </div>
         </div>
 
@@ -27,37 +27,37 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden dark:bg-white/[0.03] dark:border-gray-800">
         <table class="w-full text-left">
             <thead>
-                <tr class="bg-gray-50/50 border-b border-gray-100">
-                    <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-500">Nama / Username</th>
-                    <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-500">Email / Kontak</th>
-                    <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-500">Role / Akses</th>
-                    <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-500">Warehouse/Gudang
+                <tr class="bg-gray-50/50 border-b border-gray-100 dark:border-gray-800">
+                    <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-500 dark:text-gray-400">Nama / Username</th>
+                    <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-500 dark:text-gray-400">Email / Kontak</th>
+                    <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-500 dark:text-gray-400">Role / Akses</th>
+                    <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-500 dark:text-gray-400">Warehouse/Gudang
                     </th>
-                    <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-500 text-center">Status
+                    <th class="px-6 py-4 text-xs font-black uppercase tracking-wider text-gray-500 text-center dark:text-gray-400">Status
                     </th>
-                    <th class="px-6 py-4 text-right text-xs font-black uppercase tracking-wider text-gray-500">Aksi</th>
+                    <th class="px-6 py-4 text-right text-xs font-black uppercase tracking-wider text-gray-500 dark:text-gray-400">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-50">
+            <tbody class="divide-y divide-gray-50 dark:divide-gray-800">
                 @forelse($users as $item)
                     <tr
-                        class="hover:bg-gray-50/50 transition-colors {{ !$item->is_active ? 'opacity-60 grayscale-[0.5]' : '' }}">
+                        class="hover:bg-gray-50/50 transition-colors {{ !$item->is_active ? 'opacity-60 grayscale-[0.5]' : '' }} dark:hover:bg-white/[0.03]">
                         <td class="px-6 py-4">
-                            <span class="text-sm font-bold text-gray-900 block">{{ $item->name }}</span>
-                            <span class="text-[10px] text-gray-400 font-mono tracking-tighter">{{ $item->username }}</span>
+                            <span class="text-sm font-bold text-gray-900 block dark:text-white">{{ $item->name }}</span>
+                            <span class="text-[10px] text-gray-400 font-mono tracking-tighter dark:text-gray-500">{{ $item->username }}</span>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="text-sm text-gray-600 block">{{ $item->email }}</span>
-                            <span class="text-[10px] text-gray-400">{{ $item->phone ?: '-' }}</span>
+                            <span class="text-sm text-gray-600 block dark:text-gray-300">{{ $item->email }}</span>
+                            <span class="text-[10px] text-gray-400 dark:text-gray-500">{{ $item->phone ?: '-' }}</span>
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex flex-wrap gap-1">
                                 @foreach($item->roles as $role)
                                     <span
-                                        class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-black uppercase tracking-widest text-gray-600 border border-gray-200">
+                                        class="px-2 py-0.5 rounded bg-gray-100 text-[10px] font-black uppercase tracking-widest text-gray-600 border border-gray-200 dark:bg-gray-800 dark:border-gray-800 dark:text-gray-300">
                                         {{ $role->name }}
                                     </span>
                                 @endforeach
@@ -77,7 +77,7 @@
                         </td>
                         <td class="px-6 py-4 text-right flex justify-end gap-2">
                             <button wire:click="edit({{ $item->id }})"
-                                class="p-2 text-gray-400 hover:text-brand-500 hover:bg-brand-50 rounded-xl transition-all">
+                                class="p-2 text-gray-400 hover:text-brand-500 hover:bg-brand-50 rounded-xl transition-all dark:text-gray-500">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2.5">
                                     <path d="M12 20h9"></path>
@@ -86,7 +86,7 @@
                             </button>
                             <button wire:click="delete({{ $item->id }})"
                                 wire:confirm="Apakah Anda yakin ingin menghapus user ini?"
-                                class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                                class="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all dark:text-gray-500">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2.5">
                                     <polyline points="3 6 5 6 21 6"></polyline>
@@ -101,7 +101,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-gray-400 italic text-sm">
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-400 italic text-sm dark:text-gray-500">
                             Tidak ada data user ditemukan.
                         </td>
                     </tr>
@@ -121,13 +121,13 @@
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                 <div
-                    class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-gray-100">
-                    <div class="bg-white p-6">
+                    class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-gray-100 dark:bg-white/[0.03] dark:border-gray-800">
+                    <div class="bg-white p-6 dark:bg-white/[0.03]">
                         <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-lg font-black text-gray-900 uppercase tracking-tight">
+                            <h3 class="text-lg font-black text-gray-900 uppercase tracking-tight dark:text-white">
                                 {{ $isEdit ? 'Edit User' : 'Tambah User Baru' }}</h3>
                             <button wire:click="$set('showModal', false)"
-                                class="text-gray-400 hover:text-gray-600 transition-all">
+                                class="text-gray-400 hover:text-gray-600 transition-all dark:text-gray-500">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -139,54 +139,54 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="col-span-2">
                                 <label
-                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1">Nama
+                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1 dark:text-gray-500">Nama
                                     Lengkap</label>
                                 <input type="text" wire:model="name"
-                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all dark:bg-white/[0.03] dark:border-gray-800">
                                 @error('name') <span
                                 class="text-[10px] text-red-500 italic font-bold ml-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
                                 <label
-                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1">Username</label>
+                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1 dark:text-gray-500">Username</label>
                                 <input type="text" wire:model="username"
-                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all dark:bg-white/[0.03] dark:border-gray-800">
                                 @error('username') <span
                                 class="text-[10px] text-red-500 italic font-bold ml-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
                                 <label
-                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1">Email</label>
+                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1 dark:text-gray-500">Email</label>
                                 <input type="email" wire:model="email"
-                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all dark:bg-white/[0.03] dark:border-gray-800">
                                 @error('email') <span
                                 class="text-[10px] text-red-500 italic font-bold ml-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div>
                                 <label
-                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1">No.
+                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1 dark:text-gray-500">No.
                                     HP / Kontak</label>
                                 <input type="text" wire:model="phone"
-                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all dark:bg-white/[0.03] dark:border-gray-800">
                             </div>
 
                             <div>
                                 <label
-                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1">Employee
+                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1 dark:text-gray-500">Employee
                                     ID (NIP)</label>
                                 <input type="text" wire:model="employee_id"
-                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all dark:bg-white/[0.03] dark:border-gray-800">
                             </div>
 
                             <div class="col-span-2">
                                 <label
-                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1">Warehouse/Gudang
+                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1 dark:text-gray-500">Warehouse/Gudang
                                     Utama</label>
                                 <select wire:model="warehouse_id"
-                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all dark:bg-white/[0.03] dark:border-gray-800">
                                     <option value="">Akses Global (Semua Gudang)</option>
                                     @foreach($warehouses as $w)
                                         <option value="{{ $w->id }}">{{ $w->name }}</option>
@@ -198,26 +198,26 @@
 
                             <div class="col-span-2">
                                 <label
-                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1">Password
+                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1 dark:text-gray-500">Password
                                     {{ $isEdit ? '(Biarkan kosong jika tidak ganti)' : '' }}</label>
                                 <input type="password" wire:model="password"
-                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                                    class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all dark:bg-white/[0.03] dark:border-gray-800">
                                 @error('password') <span
                                 class="text-[10px] text-red-500 italic font-bold ml-1">{{ $message }}</span> @enderror
                             </div>
 
                             <div class="col-span-2">
                                 <label
-                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1">Pilih
+                                    class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1 dark:text-gray-500">Pilih
                                     Role / Hak Akses</label>
                                 <div class="grid grid-cols-2 gap-2 mt-1">
                                     @foreach($roles as $role)
                                         <label
-                                            class="flex items-center gap-2 p-2 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer transition-all">
+                                            class="flex items-center gap-2 p-2 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer transition-all dark:border-gray-800 dark:hover:bg-white/[0.03]">
                                             <input type="checkbox" wire:model="selectedRoles" value="{{ $role->name }}"
                                                 class="w-4 h-4 text-brand-600 border-gray-300 rounded focus:ring-brand-500 transition-all">
                                             <span
-                                                class="text-xs font-bold text-gray-700 uppercase tracking-tight">{{ str_replace('-', ' ', $role->name) }}</span>
+                                                class="text-xs font-bold text-gray-700 uppercase tracking-tight dark:text-gray-300">{{ str_replace('-', ' ', $role->name) }}</span>
                                         </label>
                                     @endforeach
                                 </div>
@@ -228,18 +228,18 @@
                             <div class="col-span-2 flex items-center gap-2 pt-2">
                                 <input type="checkbox" wire:model="is_active" id="user_is_active"
                                     class="w-4 h-4 text-brand-600 border-gray-300 rounded focus:ring-brand-500 transition-all">
-                                <label for="user_is_active" class="text-sm font-bold text-gray-700">User ini aktif</label>
+                                <label for="user_is_active" class="text-sm font-bold text-gray-700 dark:text-gray-300">User ini aktif</label>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3">
+                    <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3 dark:bg-white/[0.03]">
                         <button wire:click="save"
                             class="px-6 py-2 bg-brand-500 text-white text-sm font-bold rounded-xl hover:bg-brand-600 shadow-md shadow-brand-200 transition-all">
                             {{ $isEdit ? 'Update User' : 'Simpan User' }}
                         </button>
                         <button wire:click="$set('showModal', false)"
-                            class="px-6 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-bold rounded-xl hover:bg-gray-50 transition-all">
+                            class="px-6 py-2 bg-white border border-gray-200 text-gray-600 text-sm font-bold rounded-xl hover:bg-gray-50 transition-all dark:bg-white/[0.03] dark:border-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]">
                             Batal
                         </button>
                     </div>

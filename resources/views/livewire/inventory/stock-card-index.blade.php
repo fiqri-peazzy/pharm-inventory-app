@@ -1,5 +1,5 @@
 <div class="space-y-4">
-    <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+    <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-100 shadow-sm dark:bg-white/[0.03] dark:border-gray-800">
         <div class="flex items-center gap-4">
             <div
                 class="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
@@ -12,41 +12,41 @@
                 </svg>
             </div>
             <div>
-                <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight leading-none">Kartu Stok & Mutasi
+                <h2 class="text-xl font-black text-gray-900 uppercase tracking-tight leading-none dark:text-white">Kartu Stok & Mutasi
                 </h2>
-                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1 block">Full
+                <span class="text-[10px] font-black uppercase tracking-widest text-gray-400 mt-1 block dark:text-gray-500">Full
                     Traceability & Movement Monitoring</span>
             </div>
         </div>
 
         <div class="flex items-center gap-2">
-            <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-100">
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-100 dark:bg-white/[0.03] dark:border-gray-800">
                 <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Inwards</span>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest dark:text-gray-500">Inwards</span>
             </div>
-            <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-100">
+            <div class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-100 dark:bg-white/[0.03] dark:border-gray-800">
                 <div class="w-2 h-2 rounded-full bg-amber-500"></div>
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Outwards</span>
+                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest dark:text-gray-500">Outwards</span>
             </div>
         </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4 dark:bg-white/[0.03] dark:border-gray-800">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="md:col-span-2">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Cari Item
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block dark:text-gray-500">Cari Item
                     (Nama/Kode)</label>
                 <input type="text" wire:model.live="search" placeholder="Cari obat atau BMHP..."
-                    class="w-full bg-gray-50 border-gray-100 rounded-xl text-sm px-4 py-3 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-medium">
+                    class="w-full bg-gray-50 border-gray-100 rounded-xl text-sm px-4 py-3 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-medium dark:bg-white/[0.03] dark:border-gray-800 dark:text-white">
             </div>
 
             @if(auth()->user()->hasAnyRole(['super-admin', 'kepala-farmasi', 'direktur', 'bupati', 'auditor']))
                 <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Gudang /
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block dark:text-gray-500">Gudang /
                         Station</label>
                     <select wire:model.live="warehouseId"
-                        class="w-full bg-gray-50 border-gray-100 rounded-xl text-sm px-4 py-3 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-bold text-gray-600">
+                        class="w-full bg-gray-50 border-gray-100 rounded-xl text-sm px-4 py-3 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-bold text-gray-600 dark:bg-white/[0.03] dark:border-gray-800 dark:text-gray-300">
                         <option value="">Semua Warehouses</option>
                         @foreach($warehouses as $w)
                             <option value="{{ $w->id }}">{{ $w->name }}</option>
@@ -55,20 +55,20 @@
                 </div>
             @else
                 <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Gudang /
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block dark:text-gray-500">Gudang /
                         Station</label>
                     <div
-                        class="w-full bg-gray-100 border-gray-200 rounded-xl text-sm px-4 py-3 font-black text-gray-400 italic">
+                        class="w-full bg-gray-100 border-gray-200 rounded-xl text-sm px-4 py-3 font-black text-gray-400 italic dark:bg-gray-800 dark:border-gray-800 dark:text-gray-500">
                         {{ auth()->user()->warehouse->name ?? 'Locked' }}
                     </div>
                 </div>
             @endif
 
             <div>
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Jenis
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block dark:text-gray-500">Jenis
                     Transaksi</label>
                 <select wire:model.live="transactionType"
-                    class="w-full bg-gray-50 border-gray-100 rounded-xl text-sm px-4 py-3 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-bold text-gray-600">
+                    class="w-full bg-gray-50 border-gray-100 rounded-xl text-sm px-4 py-3 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-bold text-gray-600 dark:bg-white/[0.03] dark:border-gray-800 dark:text-gray-300">
                     <option value="">Semua Transaksi</option>
                     <option value="receiving">Penerimaan (Receiving)</option>
                     <option value="distribution_in">Distribusi Masuk</option>
@@ -83,54 +83,54 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Dari
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block dark:text-gray-500">Dari
                         Tanggal</label>
                     <input type="date" wire:model.live="startDate"
-                        class="w-full bg-gray-50 border-gray-100 rounded-xl text-sm px-4 py-3 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-bold text-gray-600">
+                        class="w-full bg-gray-50 border-gray-100 rounded-xl text-sm px-4 py-3 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-bold text-gray-600 dark:bg-white/[0.03] dark:border-gray-800 dark:text-gray-300">
                 </div>
                 <div>
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Sampai
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 block dark:text-gray-500">Sampai
                         Tanggal</label>
                     <input type="date" wire:model.live="endDate"
-                        class="w-full bg-gray-50 border-gray-100 rounded-xl text-sm px-4 py-3 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-bold text-gray-600">
+                        class="w-full bg-gray-50 border-gray-100 rounded-xl text-sm px-4 py-3 focus:ring-emerald-500 focus:border-emerald-500 transition-all font-bold text-gray-600 dark:bg-white/[0.03] dark:border-gray-800 dark:text-gray-300">
                 </div>
             </div>
-            <div class="flex items-end pb-1 text-[10px] font-bold text-gray-400 italic">
+            <div class="flex items-end pb-1 text-[10px] font-bold text-gray-400 italic dark:text-gray-500">
                 * Menampilkan riwayat mutasi stok secara kronologis (Terbaru di atas).
             </div>
         </div>
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden dark:bg-white/[0.03] dark:border-gray-800">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-[11px]">
                 <thead>
-                    <tr class="bg-gray-50/50 border-b border-gray-100">
-                        <th class="px-6 py-4 font-black text-gray-400 uppercase">Waktu & Transaksi</th>
-                        <th class="px-6 py-4 font-black text-gray-400 uppercase">Item / Produk</th>
-                        <th class="px-6 py-4 font-black text-gray-400 uppercase">Batch & Warehouse</th>
-                        <th class="px-6 py-4 font-black text-gray-400 uppercase text-center w-24">In</th>
-                        <th class="px-6 py-4 font-black text-gray-400 uppercase text-center w-24">Out</th>
-                        <th class="px-6 py-4 font-black text-gray-400 uppercase text-right w-32">Saldo Akhir</th>
+                    <tr class="bg-gray-50/50 border-b border-gray-100 dark:bg-white/[0.02] dark:border-gray-800">
+                        <th class="px-6 py-4 font-black text-gray-400 uppercase dark:text-gray-500">Waktu & Transaksi</th>
+                        <th class="px-6 py-4 font-black text-gray-400 uppercase dark:text-gray-500">Item / Produk</th>
+                        <th class="px-6 py-4 font-black text-gray-400 uppercase dark:text-gray-500">Batch & Warehouse</th>
+                        <th class="px-6 py-4 font-black text-gray-400 uppercase text-center w-24 dark:text-gray-500">In</th>
+                        <th class="px-6 py-4 font-black text-gray-400 uppercase text-center w-24 dark:text-gray-500">Out</th>
+                        <th class="px-6 py-4 font-black text-gray-400 uppercase text-right w-32 dark:text-gray-500">Saldo Akhir</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-50">
+                <tbody class="divide-y divide-gray-50 dark:divide-gray-800">
                     @forelse($stockCards as $card)
-                        <tr class="hover:bg-gray-50/50 transition-colors">
+                        <tr class="hover:bg-gray-50/50 transition-colors dark:hover:bg-white/[0.03]">
                             <td class="px-6 py-4">
                                 <span
-                                    class="font-black text-gray-900 block leading-none mb-1">{{ $card->transaction_date->format('d/m/Y') }}</span>
+                                    class="font-black text-gray-900 block leading-none mb-1 dark:text-white">{{ $card->transaction_date->format('d/m/Y') }}</span>
                                 <div class="flex flex-col gap-1 mt-1.5">
                                     @php
                                         $statusClass = match ($card->transaction_type) {
-                                            'receiving' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                                            'distribution_in' => 'bg-blue-50 text-blue-600 border-blue-100',
-                                            'distribution_out' => 'bg-amber-50 text-amber-600 border-amber-100',
-                                            'prescription', 'dispensing' => 'bg-purple-50 text-purple-600 border-purple-100',
-                                            'adjustment' => 'bg-red-50 text-red-600 border-red-100',
-                                            'stock_opname' => 'bg-gray-50 text-gray-600 border-gray-100',
-                                            default => 'bg-gray-50 text-gray-500 border-gray-100'
+                                            'receiving' => 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/20',
+                                            'distribution_in' => 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/20',
+                                            'distribution_out' => 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/20',
+                                            'prescription', 'dispensing' => 'bg-purple-50 text-purple-600 border-purple-100 dark:bg-purple-500/15 dark:text-purple-400 dark:border-purple-500/20',
+                                            'adjustment' => 'bg-red-50 text-red-600 border-red-100 dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/20',
+                                            'stock_opname' => 'bg-gray-50 text-gray-600 border-gray-100 dark:bg-white/[0.03] dark:text-gray-300 dark:border-gray-800',
+                                            default => 'bg-gray-50 text-gray-500 border-gray-100 dark:bg-white/[0.03] dark:text-gray-400 dark:border-gray-800'
                                         };
 
                                         $icon = match ($card->transaction_type) {
@@ -151,75 +151,75 @@
                                     </div>
 
                                     <!-- Detail Asal Usul (Reference Data) -->
-                                    <div class="flex flex-col gap-0.5 mt-1 border-l-2 border-gray-100 pl-2">
+                                    <div class="flex flex-col gap-0.5 mt-1 border-l-2 border-gray-100 pl-2 dark:border-gray-800">
                                         @if($card->transaction_type == 'receiving' && $card->reference)
-                                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-tight">PBF:
+                                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-tight dark:text-gray-400">PBF:
                                                 {{ $card->reference->supplier->name ?? 'N/A' }}</span>
-                                            <span class="text-[8px] font-bold text-gray-400 italic">No:
+                                            <span class="text-[8px] font-bold text-gray-400 italic dark:text-gray-500">No:
                                                 {{ $card->reference->receiving_number }}</span>
                                         @elseif($card->transaction_type == 'distribution_in' && $card->reference)
-                                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-tight">DARI:
+                                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-tight dark:text-gray-400">DARI:
                                                 {{ $card->reference->origin->name ?? 'GUDANG' }}</span>
                                         @elseif($card->transaction_type == 'distribution_out' && $card->reference)
-                                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-tight">KE:
+                                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-tight dark:text-gray-400">KE:
                                                 {{ $card->reference->destination->name ?? 'STATION' }}</span>
                                         @elseif(($card->transaction_type == 'prescription' || $card->transaction_type == 'dispensing') && $card->reference)
-                                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-tight">PASIEN:
+                                            <span class="text-[9px] font-black text-gray-500 uppercase tracking-tight dark:text-gray-400">PASIEN:
                                                 {{ $card->reference->patient_name ?? 'UMUM' }}</span>
-                                            <span class="text-[8px] font-bold text-gray-400 italic">Rx:
+                                            <span class="text-[8px] font-bold text-gray-400 italic dark:text-gray-500">Rx:
                                                 {{ $card->reference->prescription_number }}</span>
                                         @endif
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="font-black text-gray-900 block">{{ $card->item->name }}</span>
+                                <span class="font-black text-gray-900 block dark:text-white">{{ $card->item->name }}</span>
                                 <span
-                                    class="text-[9px] text-gray-400 font-bold uppercase italic tracking-widest">{{ $card->item->code }}</span>
+                                    class="text-[9px] text-gray-400 font-bold uppercase italic tracking-widest dark:text-gray-500">{{ $card->item->code }}</span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-col gap-1">
                                     <span
-                                        class="font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-100 w-fit">Batch:
+                                        class="font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg border border-indigo-100 w-fit dark:bg-indigo-500/15 dark:text-indigo-400 dark:border-indigo-500/20">Batch:
                                         {{ $card->batch->batch_number ?? '-' }}</span>
                                     <span
-                                        class="text-[9px] font-black text-gray-400 uppercase italic">{{ $card->warehouse->name }}</span>
+                                        class="text-[9px] font-black text-gray-400 uppercase italic dark:text-gray-500">{{ $card->warehouse->name }}</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-center">
                                 @if($card->qty_in > 0)
                                     <span
-                                        class="text-lg font-black text-emerald-600 italic">+{{ number_format($card->qty_in) }}</span>
+                                        class="text-lg font-black text-emerald-600 italic dark:text-emerald-400">+{{ number_format($card->qty_in) }}</span>
                                 @else
-                                    <span class="text-gray-200">-</span>
+                                    <span class="text-gray-200 dark:text-gray-700">-</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-center">
                                 @if($card->qty_out > 0)
                                     <span
-                                        class="text-lg font-black text-amber-500 italic">-{{ number_format($card->qty_out) }}</span>
+                                        class="text-lg font-black text-amber-500 italic dark:text-amber-400">-{{ number_format($card->qty_out) }}</span>
                                 @else
-                                    <span class="text-gray-200">-</span>
+                                    <span class="text-gray-200 dark:text-gray-700">-</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex flex-col items-end">
                                     <span
-                                        class="text-xl font-black text-gray-900 tracking-tighter">{{ number_format($card->last_stock) }}</span>
-                                    <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Running
+                                        class="text-xl font-black text-gray-900 tracking-tighter dark:text-white">{{ number_format($card->last_stock) }}</span>
+                                    <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest dark:text-gray-500">Running
                                         Balance</span>
                                 </div>
                             </td>
                         </tr>
                         @if($card->notes)
-                            <tr class="bg-gray-50/20">
-                                <td colspan="6" class="px-6 py-2 border-b border-gray-100">
+                            <tr class="bg-gray-50/20 dark:bg-white/[0.02]">
+                                <td colspan="6" class="px-6 py-2 border-b border-gray-100 dark:border-gray-800">
                                     <div class="flex items-center gap-2">
                                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="3" class="text-gray-300">
+                                            stroke-width="3" class="text-gray-300 dark:text-gray-600">
                                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                                         </svg>
-                                        <span class="text-[9px] font-medium text-gray-400 italic">Catatan:
+                                        <span class="text-[9px] font-medium text-gray-400 italic dark:text-gray-500">Catatan:
                                             {{ $card->notes }}</span>
                                     </div>
                                 </td>
@@ -227,14 +227,14 @@
                         @endif
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-16 text-center italic text-gray-300">Belum ada data mutasi stok
+                            <td colspan="6" class="px-6 py-16 text-center italic text-gray-300 dark:text-gray-600">Belum ada data mutasi stok
                                 dalam periode ini.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="px-6 py-4 bg-gray-50/30 border-t border-gray-50">
+        <div class="px-6 py-4 bg-gray-50/30 border-t border-gray-50 dark:bg-white/[0.02] dark:border-gray-800">
             {{ $stockCards->links() }}
         </div>
     </div>

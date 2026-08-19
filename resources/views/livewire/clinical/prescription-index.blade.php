@@ -1,6 +1,6 @@
 <div class="space-y-6">
     <!-- Header -->
-    <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+    <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm dark:bg-white/[0.03]">
         <div>
             <h2 class="text-xl font-bold text-slate-800">Antrian Resep (Clinical Queue)</h2>
             <p class="text-sm text-slate-500">Daftar resep pasien dari poliklinik dan ruangan.</p>
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Filters -->
-    <div class="flex flex-wrap gap-4 items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+    <div class="flex flex-wrap gap-4 items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm dark:bg-white/[0.03]">
         <div class="flex-1 min-w-[200px]">
             <div class="relative">
                 <input type="text" wire:model.live.debounce.300ms="search" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" placeholder="Cari No. Resep, Nama Pasien, No. RM...">
@@ -74,7 +74,7 @@
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden dark:bg-white/[0.03]">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -234,7 +234,7 @@
     <!-- Modals -->
     @if($showDetailModal && $selectedPrescription)
         <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" wire:click.self="closeModals">
-            <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-white/[0.03]">
                 <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                     <div>
                         <h3 class="text-lg font-bold text-slate-800">Detail Resep: {{ $selectedPrescription->prescription_number }}</h3>
@@ -294,7 +294,7 @@
 
     @if($showEtiketModal && $selectedPrescription)
         <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" wire:click.self="closeModals">
-            <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
+            <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200 dark:bg-white/[0.03]">
                 <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-emerald-50 text-emerald-700">
                     <h3 class="font-bold flex items-center gap-2">
                         <i class="ph ph-tag"></i> Preview Etiket Obat
@@ -314,7 +314,7 @@
                             $textColorLight = $isRI ? 'text-purple-600' : 'text-emerald-600';
                             $borderColorInner = $isRI ? 'border-purple-100' : 'border-emerald-100';
                         @endphp
-                        <div class="bg-white border-2 {{ $borderColor }} w-full p-4 rounded-lg shadow-sm border-dashed relative overflow-hidden group transition-colors cursor-pointer">
+                        <div class="bg-white border-2 {{ $borderColor }} w-full p-4 rounded-lg shadow-sm border-dashed relative overflow-hidden group transition-colors cursor-pointer dark:bg-white/[0.03]">
                             <div class="text-[10px] font-black border-b border-slate-100 pb-1 mb-2 text-slate-400">RSUD SMART - SIMRS NF</div>
                             <div class="flex justify-between items-start mb-2">
                                 <div>
@@ -358,7 +358,7 @@
 
     @if($showPrintModal && $selectedPrescription)
         <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" wire:click.self="closeModals">
-            <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-white/[0.03]">
                 <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-indigo-50 text-indigo-700">
                     <h3 class="font-bold flex items-center gap-2">
                         <i class="ph ph-printer"></i> Preview Salinan Resep
@@ -367,7 +367,7 @@
                         <i class="ph ph-x font-bold"></i>
                     </button>
                 </div>
-                <div class="p-12 bg-white flex flex-col gap-6 font-mono text-sm leading-relaxed">
+                <div class="p-12 bg-white flex flex-col gap-6 font-mono text-sm leading-relaxed dark:bg-white/[0.03]">
                     <!-- Letterhead Placeholder -->
                     <div class="text-center border-b-2 border-slate-800 pb-4 mb-4">
                         <div class="text-lg font-black italic">RSUD SMART - SIMRS NF</div>

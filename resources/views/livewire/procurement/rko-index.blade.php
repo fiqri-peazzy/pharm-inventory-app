@@ -1,8 +1,8 @@
 <div class="p-6">
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Perencanaan RKO</h1>
-            <p class="text-sm text-gray-500">Rencana Kebutuhan Obat & Alkes Berbasis ABC-VEN</p>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white/90">Perencanaan RKO</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Rencana Kebutuhan Obat & Alkes Berbasis ABC-VEN</p>
         </div>
         <div class="flex space-x-3">
             <button wire:click="syncUsage" wire:loading.attr="disabled"
@@ -34,7 +34,7 @@
 
             <div class="flex gap-2">
                 <button wire:click="generateBatchSp('reguler')"
-                    class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm text-sm font-semibold">
+                    class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm text-sm font-semibold dark:bg-white/[0.03] dark:border-gray-800 dark:text-gray-300 dark:hover:bg-white/[0.03]">
                     Buat SP Reguler
                 </button>
                 <button wire:click="generateBatchSp('narkotika')"
@@ -50,16 +50,16 @@
     </div>
 
     <!-- Filters -->
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-wrap gap-4 items-end">
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6 flex flex-wrap gap-4 items-end dark:bg-white/[0.03] dark:border-gray-800">
         <div class="flex-1 min-w-[200px]">
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Cari Obat</label>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 dark:text-gray-400">Cari Obat</label>
             <input wire:model.live="search" type="text" placeholder="Nama atau kode obat..."
-                class="block w-full rounded-lg border-gray-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm">
+                class="block w-full rounded-lg border-gray-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:border-gray-800">
         </div>
         <div class="w-48">
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Unit/Gudang</label>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 dark:text-gray-400">Unit/Gudang</label>
             <select wire:model.live="warehouseId"
-                class="block w-full rounded-lg border-gray-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm">
+                class="block w-full rounded-lg border-gray-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:border-gray-800">
                 <option value="all">KONSOLIDASI (GLOBAL)</option>
                 @foreach($warehouses as $wh)
                     <option value="{{ $wh->id }}">{{ $wh->name }}</option>
@@ -67,9 +67,9 @@
             </select>
         </div>
         <div class="w-24">
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Proyeksi</label>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 dark:text-gray-400">Proyeksi</label>
             <select wire:model.live="projectionDays"
-                class="block w-full rounded-lg border-gray-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm">
+                class="block w-full rounded-lg border-gray-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:border-gray-800">
                 <option value="7">7 Hari</option>
                 <option value="30">30 Hari</option>
                 <option value="60">60 Hari</option>
@@ -77,9 +77,9 @@
             </select>
         </div>
         <div class="w-32">
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Kategori VEN</label>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 dark:text-gray-400">Kategori VEN</label>
             <select wire:model.live="filterVen"
-                class="block w-full rounded-lg border-gray-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm">
+                class="block w-full rounded-lg border-gray-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:border-gray-800">
                 <option value="">Semua VEN</option>
                 <option value="V">Vital</option>
                 <option value="E">Essensial</option>
@@ -87,9 +87,9 @@
             </select>
         </div>
         <div class="w-32">
-            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Kategori ABC</label>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 dark:text-gray-400">Kategori ABC</label>
             <select wire:model.live="filterAbc"
-                class="block w-full rounded-lg border-gray-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm">
+                class="block w-full rounded-lg border-gray-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm dark:border-gray-800">
                 <option value="">Semua ABC</option>
                 <option value="A">Class A</option>
                 <option value="B">Class B</option>
@@ -111,28 +111,28 @@
     @endif
 
     <!-- SUGGESTIONS TABLE -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden dark:bg-white/[0.03] dark:border-gray-800">
         <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
+            <thead class="bg-gray-50 dark:bg-white/[0.03]">
                 <tr>
-                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Item &
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">Item &
                         Klasifikasi</th>
-                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">
                         Status Stok</th>
-                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">
                         Rata-rata Harian</th>
                     <th
-                        class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider bg-brand-50 text-brand-700">
+                        class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider bg-brand-50 text-brand-700 dark:text-gray-400">
                         Usulan RKO</th>
-                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">
                         Urgency</th>
-                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi
+                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider dark:text-gray-400">Aksi
                     </th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-100">
+            <tbody class="bg-white divide-y divide-gray-100 dark:bg-white/[0.03] dark:divide-gray-800">
                 @foreach($displayData as $row)
-                    <tr class="hover:bg-gray-50 transition-colors">
+                    <tr class="hover:bg-gray-50 transition-colors dark:hover:bg-white/[0.03]">
                         <td class="px-6 py-4">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
@@ -144,8 +144,8 @@
                                         class="px-2.5 py-1 rounded-full font-bold text-xs {{ $venColor }} mr-2">{{ $row['ven'] }}</span>
                                 </div>
                                 <div>
-                                    <div class="text-sm font-semibold text-gray-900">{{ $row['item_name'] }}</div>
-                                    <div class="flex items-center text-xs text-gray-500 mt-0.5">
+                                    <div class="text-sm font-semibold text-gray-900 dark:text-white">{{ $row['item_name'] }}</div>
+                                    <div class="flex items-center text-xs text-gray-500 mt-0.5 dark:text-gray-400">
                                         <span class="mr-2">{{ $row['code'] }}</span>
                                         <span class="px-1.5 py-0.5 border rounded-md font-medium {{ $abcColor }}">Class
                                             {{ $row['abc'] }}</span>
@@ -154,16 +154,16 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 text-center">
-                            <div class="text-sm font-medium text-gray-900">
+                            <div class="text-sm font-medium text-gray-900 dark:text-white">
                                 {{ number_format($row['total_stock'] ?? $row['current_stock']) }}
                             </div>
-                            <div class="text-xs text-gray-400">Unit Tersedia</div>
+                            <div class="text-xs text-gray-400 dark:text-gray-500">Unit Tersedia</div>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <div class="text-sm font-medium text-gray-900">
+                            <div class="text-sm font-medium text-gray-900 dark:text-white">
                                 {{ number_format($row['total_avg_usage'] ?? $row['avg_usage'], 2) }}
                             </div>
-                            <div class="text-xs text-gray-400">Usage/Hari</div>
+                            <div class="text-xs text-gray-400 dark:text-gray-500">Usage/Hari</div>
                         </td>
                         <td class="px-6 py-4 text-right bg-brand-50/30">
                             <div class="text-lg font-bold text-brand-700">{{ number_format($row['suggested_qty']) }}</div>
@@ -205,7 +205,7 @@
                 @endforeach
                 @if($displayData->isEmpty())
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-gray-500 italic">
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500 italic dark:text-gray-400">
                             Tidak ada usulan pengadaan ditemukan untuk filter ini.
                         </td>
                     </tr>
@@ -233,7 +233,7 @@
                     clip-rule="evenodd"></path>
             </svg>
         </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center dark:bg-white/[0.03] dark:border-gray-800">
             <div class="p-3 bg-amber-50 rounded-xl mr-4">
                 <svg class="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -242,11 +242,11 @@
                 </svg>
             </div>
             <div>
-                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest">Urgent (VEN=V)</div>
-                <div class="text-2xl font-black text-gray-900">{{ $displayData->where('ven', 'V')->count() }} Item</div>
+                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest dark:text-gray-400">Urgent (VEN=V)</div>
+                <div class="text-2xl font-black text-gray-900 dark:text-white">{{ $displayData->where('ven', 'V')->count() }} Item</div>
             </div>
         </div>
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center dark:bg-white/[0.03] dark:border-gray-800">
             <div class="p-3 bg-brand-50 rounded-xl mr-4">
                 <svg class="w-8 h-8 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -255,8 +255,8 @@
                 </svg>
             </div>
             <div>
-                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest">Total Usulan</div>
-                <div class="text-2xl font-black text-gray-900">{{ number_format($displayData->sum('suggested_qty')) }}
+                <div class="text-xs font-bold text-gray-500 uppercase tracking-widest dark:text-gray-400">Total Usulan</div>
+                <div class="text-2xl font-black text-gray-900 dark:text-white">{{ number_format($displayData->sum('suggested_qty')) }}
                     Unit</div>
             </div>
         </div>
