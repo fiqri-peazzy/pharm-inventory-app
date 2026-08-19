@@ -24,24 +24,36 @@
             
             <div>
                 <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1.5 block">Gudang Sumber (Origin)</label>
-                <select wire:model="origin_warehouse_id" class="w-full bg-gray-50 dark:bg-white/[0.03] border-gray-100 dark:border-gray-800 rounded-xl text-sm px-4 py-3 focus:ring-brand-500 focus:border-brand-500 transition-all font-bold text-gray-700 dark:text-gray-300">
+                <select wire:model="origin_warehouse_id" class="w-full bg-gray-50 dark:bg-white/[0.03] border rounded-xl text-sm px-4 py-3 focus:ring-2 transition-all font-bold text-gray-700 dark:text-gray-300
+                    @error('origin_warehouse_id') border-red-500 focus:ring-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-100 focus:ring-brand-500 focus:border-brand-500 dark:border-gray-800 @enderror">
                     <option value="">Pilih Gudang Sumber</option>
                     @foreach($warehouses as $wh)
                         <option value="{{ $wh->id }}">{{ $wh->name }}</option>
                     @endforeach
                 </select>
-                @error('origin_warehouse_id') <span class="text-[10px] text-red-500 font-bold uppercase mt-1">Wajib diisi</span> @enderror
+                @error('origin_warehouse_id')
+                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                        {{ $message }}
+                    </p>
+                @enderror
             </div>
 
             <div>
                 <label class="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1.5 block">Unit/Depo Peminta (Destination)</label>
-                <select wire:model="destination_warehouse_id" class="w-full bg-gray-50 dark:bg-white/[0.03] border-gray-100 dark:border-gray-800 rounded-xl text-sm px-4 py-3 focus:ring-brand-500 focus:border-brand-500 transition-all font-bold text-gray-700 dark:text-gray-300">
+                <select wire:model="destination_warehouse_id" class="w-full bg-gray-50 dark:bg-white/[0.03] border rounded-xl text-sm px-4 py-3 focus:ring-2 transition-all font-bold text-gray-700 dark:text-gray-300
+                    @error('destination_warehouse_id') border-red-500 focus:ring-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-100 focus:ring-brand-500 focus:border-brand-500 dark:border-gray-800 @enderror">
                     <option value="">Pilih Unit Peminta</option>
                     @foreach($warehouses as $wh)
                         <option value="{{ $wh->id }}">{{ $wh->name }}</option>
                     @endforeach
                 </select>
-                @error('destination_warehouse_id') <span class="text-[10px] text-red-500 font-bold uppercase mt-1">{{ $message }}</span> @enderror
+                @error('destination_warehouse_id')
+                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                        {{ $message }}
+                    </p>
+                @enderror
             </div>
         </div>
 
@@ -79,8 +91,14 @@
                                 <span class="text-[9px] text-gray-400 dark:text-gray-500 font-bold uppercase italic tracking-widest">{{ $item['code'] }}</span>
                             </td>
                             <td class="px-6 py-4">
-                                <input type="number" wire:model="items.{{ $index }}.qty" step="1" class="w-full bg-gray-50 dark:bg-white/[0.03] border-gray-100 dark:border-gray-800 rounded-lg text-sm px-3 py-2 text-center font-black text-brand-600 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-inner">
-                                @error('items.'.$index.'.qty') <span class="text-[8px] text-red-500 font-bold uppercase block mt-1">Invalid</span> @enderror
+                                <input type="number" wire:model="items.{{ $index }}.qty" step="1" class="w-full bg-gray-50 dark:bg-white/[0.03] border rounded-lg text-sm px-3 py-2 text-center font-black text-brand-600 focus:ring-2 transition-all shadow-inner
+                                    @error('items.'.$index.'.qty') border-red-500 focus:ring-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-100 focus:ring-brand-500 focus:border-brand-500 dark:border-gray-800 @enderror">
+                                @error('items.'.$index.'.qty')
+                                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <button wire:click="removeItem({{ $index }})" class="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">

@@ -94,26 +94,44 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Kode Supplier</label>
-                            <input type="text" wire:model="code" class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
-                            @error('code') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                            <input type="text" wire:model="code" class="w-full rounded-lg border bg-transparent px-4 py-2 text-sm outline-none dark:bg-transparent
+                                @error('code') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
+                            @error('code')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                         <div>
                             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Tipe</label>
-                            <select wire:model="type" class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
+                            <select wire:model="type" class="w-full rounded-lg border bg-transparent px-4 py-2 text-sm outline-none dark:bg-transparent
+                                @error('type') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
                                 <option value="">Pilih Tipe</option>
                                 <option value="pbf">PBF (Farmasi)</option>
                                 <option value="distributor">Distributor</option>
                                 <option value="manufaktur">Manufaktur</option>
                                 <option value="toko">Toko</option>
                             </select>
-                            @error('type') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                            @error('type')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                     </div>
 
                     <div>
                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Supplier</label>
-                        <input type="text" wire:model="name" class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
-                        @error('name') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                        <input type="text" wire:model="name" class="w-full rounded-lg border bg-transparent px-4 py-2 text-sm outline-none dark:bg-transparent
+                            @error('name') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
+                        @error('name')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -123,13 +141,25 @@
                         </div>
                         <div>
                             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Telepon/WA</label>
-                            <input type="text" wire:model="phone" class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
-                            @error('phone') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                            <input type="text" wire:model="phone" class="w-full rounded-lg border bg-transparent px-4 py-2 text-sm outline-none dark:bg-transparent
+                                @error('phone') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
+                            @error('phone')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                         <div>
                             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Email (Untuk Notifikasi)</label>
-                            <input type="email" wire:model="email" class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
-                            @error('email') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                            <input type="email" wire:model="email" class="w-full rounded-lg border bg-transparent px-4 py-2 text-sm outline-none dark:bg-transparent
+                                @error('email') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
+                            @error('email')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                     </div>
 

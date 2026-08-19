@@ -13,25 +13,37 @@
 
                     <div>
                         <label class="mb-1.5 block text-[10px] font-black tracking-widest uppercase text-gray-500">Gudang Pemohon</label>
-                        <select wire:model="warehouse_id" class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 outline-none dark:border-gray-800 dark:bg-gray-900">
+                        <select wire:model="warehouse_id" class="w-full rounded-lg border bg-white px-4 py-2.5 text-sm focus:ring-2 outline-none dark:bg-gray-900
+                            @error('warehouse_id') border-red-500 focus:border-red-500 focus:ring-red-500/10 dark:border-red-500 @else border-gray-200 focus:border-brand-500 focus:ring-brand-500/10 dark:border-gray-800 @enderror">
                             <option value="">Pilih Gudang</option>
                             @foreach($warehouses as $wh)
                                 <option value="{{ $wh->id }}">{{ $wh->name }}</option>
                             @endforeach
                         </select>
-                        @error('warehouse_id') <span class="text-[10px] text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                        @error('warehouse_id')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
                     <div>
                         <label class="mb-1.5 block text-[10px] font-black tracking-widest uppercase text-gray-500">Pemasok / Supplier (Opsional)</label>
-                        <select wire:model="supplier_id" class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 outline-none dark:border-gray-800 dark:bg-gray-900">
+                        <select wire:model="supplier_id" class="w-full rounded-lg border bg-white px-4 py-2.5 text-sm focus:ring-2 outline-none dark:bg-gray-900
+                            @error('supplier_id') border-red-500 focus:border-red-500 focus:ring-red-500/10 dark:border-red-500 @else border-gray-200 focus:border-brand-500 focus:ring-brand-500/10 dark:border-gray-800 @enderror">
                             <option value="">-- Tanpa Supplier --</option>
                             @foreach($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                             @endforeach
                         </select>
                         <p class="text-[9px] text-gray-400 mt-1 italic leading-tight">* Memilih supplier sekarang memudahkan penggabungan PR jadi 1 PO nanti.</p>
-                        @error('supplier_id') <span class="text-[10px] text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                        @error('supplier_id')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -116,8 +128,14 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <input type="number" wire:model="rows.{{ $index }}.requested_qty" class="w-full rounded-lg border border-gray-200 py-1.5 px-3 text-sm font-bold text-center focus:border-brand-500 outline-none dark:border-gray-800 dark:bg-gray-800">
-                                        @error('rows.'.$index.'.requested_qty') <span class="text-[9px] text-red-500 block text-center mt-1">{{ $message }}</span> @enderror
+                                        <input type="number" wire:model="rows.{{ $index }}.requested_qty" class="w-full rounded-lg border py-1.5 px-3 text-sm font-bold text-center outline-none dark:bg-gray-800
+                                            @error('rows.'.$index.'.requested_qty') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
+                                        @error('rows.'.$index.'.requested_qty')
+                                            <p class="mt-1.5 flex items-center justify-center gap-1.5 text-[9px] text-red-600 dark:text-red-400">
+                                                <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                                {{ $message }}
+                                            </p>
+                                        @enderror
                                     </td>
                                     <td class="px-6 py-4">
                                         <input type="text" wire:model="rows.{{ $index }}.notes" placeholder="..." class="w-full bg-transparent border-b border-transparent focus:border-gray-300 py-1 text-xs outline-none dark:text-gray-400 italic">

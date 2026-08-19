@@ -104,12 +104,19 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1 dark:text-gray-500">Kode Akun</label>
-                                    <input type="text" wire:model="code" class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all dark:bg-white/[0.03] dark:border-gray-800 dark:text-white dark:focus:bg-white/[0.05]">
-                                    @error('code') <span class="text-[10px] text-red-500 italic font-bold ml-1 dark:text-red-400">{{ $message }}</span> @enderror
+                                    <input type="text" wire:model="code" class="block w-full px-4 py-2.5 border rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:bg-white transition-all dark:bg-white/[0.03]
+                                        @error('code') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-200 focus:ring-brand-500 dark:border-gray-800 @enderror dark:text-white dark:focus:bg-white/[0.05]">
+                                    @error('code')
+                                        <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                            {{ $message }}
+                                        </p>
+                                    @enderror
                                 </div>
                                 <div>
                                     <label class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1 dark:text-gray-500">Tipe Akun</label>
-                                    <select wire:model="type" class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all uppercase dark:bg-white/[0.03] dark:border-gray-800 dark:text-white dark:focus:bg-white/[0.05]">
+                                    <select wire:model="type" class="block w-full px-4 py-2.5 border rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:bg-white transition-all uppercase dark:bg-white/[0.03]
+                                        @error('type') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-200 focus:ring-brand-500 dark:border-gray-800 @enderror dark:text-white dark:focus:bg-white/[0.05]">
                                         <option value="">-- Pilih --</option>
                                         <option value="asset">Asset (Aktiva)</option>
                                         <option value="liability">Liability (Kewajiban)</option>
@@ -117,14 +124,25 @@
                                         <option value="revenue">Revenue (Pendapatan)</option>
                                         <option value="expense">Expense (Biaya)</option>
                                     </select>
-                                    @error('type') <span class="text-[10px] text-red-500 italic font-bold ml-1 dark:text-red-400">{{ $message }}</span> @enderror
+                                    @error('type')
+                                        <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                            {{ $message }}
+                                        </p>
+                                    @enderror
                                 </div>
                             </div>
 
                             <div>
                                 <label class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1 dark:text-gray-500">Nama Akun</label>
-                                <input type="text" wire:model="name" class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all dark:bg-white/[0.03] dark:border-gray-800 dark:text-white dark:focus:bg-white/[0.05]">
-                                @error('name') <span class="text-[10px] text-red-500 italic font-bold ml-1 dark:text-red-400">{{ $message }}</span> @enderror
+                                <input type="text" wire:model="name" class="block w-full px-4 py-2.5 border rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:bg-white transition-all dark:bg-white/[0.03]
+                                    @error('name') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-200 focus:ring-brand-500 dark:border-gray-800 @enderror dark:text-white dark:focus:bg-white/[0.05]">
+                                @error('name')
+                                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
 
                             <div>
@@ -139,7 +157,12 @@
                                         <span class="text-xs font-black uppercase">KREDIT</span>
                                     </label>
                                 </div>
-                                @error('normal_balance') <span class="text-[10px] text-red-500 italic font-bold ml-1 dark:text-red-400">{{ $message }}</span> @enderror
+                                @error('normal_balance')
+                                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
 
                             <div>

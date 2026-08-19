@@ -129,65 +129,107 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Item / Obat</label>
-                                <select wire:model="item_id" class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm">
+                                <select wire:model="item_id" class="block w-full px-3 py-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:border-transparent sm:text-sm
+                                    @error('item_id') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-300 focus:ring-indigo-500 dark:border-gray-600 @enderror">
                                     <option value="">-- Pilih Item --</option>
                                     @foreach($items as $item)
                                         <option value="{{ $item->id }}">{{ $item->name }} ({{ $item->code }})</option>
                                     @endforeach
                                 </select>
-                                @error('item_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                @error('item_id')
+                                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Supplier</label>
-                                <select wire:model="supplier_id" class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm">
+                                <select wire:model="supplier_id" class="block w-full px-3 py-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:border-transparent sm:text-sm
+                                    @error('supplier_id') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-300 focus:ring-indigo-500 dark:border-gray-600 @enderror">
                                     <option value="">-- Pilih Supplier --</option>
                                     @foreach($suppliers as $supplier)
                                         <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                                     @endforeach
                                 </select>
-                                @error('supplier_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                @error('supplier_id')
+                                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Tipe Harga</label>
-                                <select wire:model="price_type" class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm">
+                                <select wire:model="price_type" class="block w-full px-3 py-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:border-transparent sm:text-sm
+                                    @error('price_type') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-300 focus:ring-indigo-500 dark:border-gray-600 @enderror">
                                     <option value="e-catalog">E-Catalog</option>
                                     <option value="contract">Kontrak RS</option>
                                     <option value="regular">Regular</option>
                                 </select>
-                                @error('price_type') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                @error('price_type')
+                                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Harga Satuan (Sebelum PPN)</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400 sm:text-sm">Rp</span>
-                                    <input wire:model="price" type="number" step="0.01" class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm">
+                                    <input wire:model="price" type="number" step="0.01" class="block w-full pl-10 pr-3 py-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:border-transparent sm:text-sm
+                                        @error('price') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-300 focus:ring-indigo-500 dark:border-gray-600 @enderror">
                                 </div>
-                                @error('price') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                @error('price')
+                                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">PPN (%)</label>
-                                <input wire:model="ppn_percentage" type="number" step="0.1" class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm">
-                                @error('ppn_percentage') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                <input wire:model="ppn_percentage" type="number" step="0.1" class="block w-full px-3 py-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:border-transparent sm:text-sm
+                                    @error('ppn_percentage') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-300 focus:ring-indigo-500 dark:border-gray-600 @enderror">
+                                @error('ppn_percentage')
+                                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Tanggal Berlaku</label>
-                                <input wire:model="effective_date" type="date" class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm">
-                                @error('effective_date') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                <input wire:model="effective_date" type="date" class="block w-full px-3 py-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:border-transparent sm:text-sm
+                                    @error('effective_date') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-300 focus:ring-indigo-500 dark:border-gray-600 @enderror">
+                                @error('effective_date')
+                                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Berlaku Sampai</label>
-                                <input wire:model="end_date" type="date" class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm">
-                                @error('end_date') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                <input wire:model="end_date" type="date" class="block w-full px-3 py-2 border rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:border-transparent sm:text-sm
+                                    @error('end_date') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-300 focus:ring-indigo-500 dark:border-gray-600 @enderror">
+                                @error('end_date')
+                                    <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
                         </div>
 

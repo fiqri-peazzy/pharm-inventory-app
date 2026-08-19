@@ -66,7 +66,14 @@ class SettingsPage extends Component
             if (!is_dir($destination)) {
                 mkdir($destination, 0755, true);
             }
-            $this->logo->move($destination, $filename);
+
+            // Livewire's temporary uploaded file isn't a "real" HTTP upload in
+            // this request, so Symfony's UploadedFile::move() fails its
+            // is_uploaded_file() check. Copy the bytes directly instead.
+            if (!copy($this->logo->getRealPath(), $destination . DIRECTORY_SEPARATOR . $filename)) {
+                throw new \RuntimeException('Gagal menyalin file logo ke folder tujuan.');
+            }
+
             $data['logo_path'] = 'images/logo/' . $filename;
         }
 

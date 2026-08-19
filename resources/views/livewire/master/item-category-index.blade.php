@@ -91,20 +91,33 @@
                 <form wire:submit.prevent="store" class="space-y-4">
                     <div>
                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Kode Kategori</label>
-                        <input type="text" wire:model="code" class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
-                        @error('code') <span class="mt-1 text-xs text-red-500">{{ $message }}</span> @enderror
+                        <input type="text" wire:model="code" class="w-full rounded-lg border px-4 py-2.5 text-sm outline-none bg-transparent dark:bg-transparent
+                            @error('code') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
+                        @error('code')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
                     <div>
                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Kategori</label>
-                        <input type="text" wire:model="name" class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
-                        @error('name') <span class="mt-1 text-xs text-red-500">{{ $message }}</span> @enderror
+                        <input type="text" wire:model="name" class="w-full rounded-lg border px-4 py-2.5 text-sm outline-none bg-transparent dark:bg-transparent
+                            @error('name') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
+                        @error('name')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Tipe</label>
-                            <select wire:model="type" class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2.5 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
+                            <select wire:model="type" class="w-full rounded-lg border px-4 py-2.5 text-sm outline-none bg-transparent dark:bg-transparent
+                                @error('type') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
                                 <option value="">Pilih Tipe</option>
                                 <option value="obat">Obat</option>
                                 <option value="alkes">Alkes</option>
@@ -112,7 +125,12 @@
                                 <option value="reagen">Reagen</option>
                                 <option value="bahan_kimia">Bahan Kimia</option>
                             </select>
-                            @error('type') <span class="mt-1 text-xs text-red-500">{{ $message }}</span> @enderror
+                            @error('type')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
 
                         <div>
@@ -167,7 +185,8 @@
                     </div>
                     
                     <div class="flex items-center justify-center w-full">
-                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700
+                            @error('importFile') border-red-500 dark:border-red-500 @else border-gray-300 dark:border-gray-700 @enderror">
                             <div class="flex flex-col items-center justify-center pt-5 pb-6">
                                 <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
@@ -177,7 +196,12 @@
                             <input type="file" wire:model="importFile" class="hidden" />
                         </label>
                     </div>
-                    @error('importFile') <span class="mt-1 text-xs text-red-500">{{ $message }}</span> @enderror
+                    @error('importFile')
+                        <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                            {{ $message }}
+                        </p>
+                    @enderror
                     
                     <div wire:loading wire:target="importFile" class="mt-2 text-xs text-brand-500">
                         Sedang mengunggah...

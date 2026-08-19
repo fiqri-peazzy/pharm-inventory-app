@@ -41,13 +41,17 @@
                                         class="font-bold text-gray-900 block dark:text-white">{{ $row['item_name'] ?: 'Pilih Item...' }}</span>
                                     <span
                                         class="text-[10px] text-gray-400 font-medium uppercase tracking-widest dark:text-gray-500">{{ $row['item_code'] }}</span>
-                                    @error("rows.$index.item_id") <span
-                                        class="text-[10px] text-red-500 font-bold block mt-1">Item wajib dipilih</span>
+                                    @error("rows.$index.item_id")
+                                        <p class="mt-1 flex items-center gap-1 text-[10px] text-red-600 dark:text-red-400">
+                                            <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                            Item wajib dipilih
+                                        </p>
                                     @enderror
                                 </td>
                                 <td class="px-4 py-3">
                                     <input wire:model.live="rows.{{ $index }}.qty_received" type="number"
-                                        class="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:ring-1 focus:ring-brand-500 text-center font-bold dark:border-gray-800 dark:bg-white/[0.03] dark:text-white">
+                                        class="w-full px-2 py-1.5 border rounded-lg focus:ring-1 text-center font-bold dark:bg-white/[0.03] dark:text-white
+                                        @error("rows.$index.qty_received") border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-200 focus:ring-brand-500 dark:border-gray-800 @enderror">
                                     @if($row['qty_remaining'] > 0)
                                         <div class="flex flex-col items-center mt-1">
                                             <span class="text-[9px] text-gray-400 italic dark:text-gray-500">Pesanan:
@@ -56,21 +60,35 @@
                                                 {{ $row['qty_remaining'] }}</span>
                                         </div>
                                     @endif
-                                    @error("rows.$index.qty_received") <span
-                                    class="text-[10px] text-red-500 font-bold">Error</span> @enderror
+                                    @error("rows.$index.qty_received")
+                                        <p class="mt-1 flex items-center justify-center gap-1 text-[10px] text-red-600 dark:text-red-400">
+                                            <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                            Error
+                                        </p>
+                                    @enderror
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="space-y-1">
                                         <input wire:model.live="rows.{{ $index }}.batch_number" type="text"
                                             placeholder="BATCH-XXX"
-                                            class="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px] font-mono uppercase dark:bg-white/[0.03] dark:border-gray-800 dark:text-white">
+                                            class="w-full px-2 py-1 bg-white border rounded text-[10px] font-mono uppercase dark:bg-white/[0.03] dark:text-white
+                                            @error("rows.$index.batch_number") border-red-500 dark:border-red-500 @else border-gray-200 dark:border-gray-800 @enderror">
                                         <input wire:model.live="rows.{{ $index }}.expired_date" type="date"
-                                            class="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[10px] dark:bg-white/[0.03] dark:border-gray-800 dark:text-white">
+                                            class="w-full px-2 py-1 bg-white border rounded text-[10px] dark:bg-white/[0.03] dark:text-white
+                                            @error("rows.$index.expired_date") border-red-500 dark:border-red-500 @else border-gray-200 dark:border-gray-800 @enderror">
                                     </div>
-                                    @error("rows.$index.batch_number") <span
-                                    class="text-[9px] text-red-500 font-bold">Wajib</span> @enderror
-                                    @error("rows.$index.expired_date") <span
-                                    class="text-[9px] text-red-500 font-bold">Format Salah</span> @enderror
+                                    @error("rows.$index.batch_number")
+                                        <p class="mt-1 flex items-center gap-1 text-[9px] text-red-600 dark:text-red-400">
+                                            <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                            Wajib
+                                        </p>
+                                    @enderror
+                                    @error("rows.$index.expired_date")
+                                        <p class="mt-1 flex items-center gap-1 text-[9px] text-red-600 dark:text-red-400">
+                                            <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                            Format Salah
+                                        </p>
+                                    @enderror
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="space-y-1">
@@ -78,7 +96,8 @@
                                             <span
                                                 class="absolute inset-y-0 left-1 flex items-center text-gray-400 text-[8px] font-black dark:text-gray-500">Rp</span>
                                             <input wire:model.live="rows.{{ $index }}.purchase_price" type="number"
-                                                class="w-full pl-5 pr-1 py-1 bg-white border border-gray-200 rounded text-right text-[10px] font-bold dark:bg-white/[0.03] dark:border-gray-800 dark:text-white">
+                                                class="w-full pl-5 pr-1 py-1 bg-white border rounded text-right text-[10px] font-bold dark:bg-white/[0.03] dark:text-white
+                                                @error("rows.$index.purchase_price") border-red-500 dark:border-red-500 @else border-gray-200 dark:border-gray-800 @enderror">
                                         </div>
                                         <div class="relative">
                                             <span
@@ -87,8 +106,12 @@
                                                 class="w-full pl-5 pr-1 py-1 bg-white border border-gray-200 rounded text-right text-[10px] dark:bg-white/[0.03] dark:border-gray-800 dark:text-white">
                                         </div>
                                     </div>
-                                    @error("rows.$index.purchase_price") <span
-                                    class="text-[9px] text-red-500 font-bold">Error</span> @enderror
+                                    @error("rows.$index.purchase_price")
+                                        <p class="mt-1 flex items-center gap-1 text-[9px] text-red-600 dark:text-red-400">
+                                            <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                            Error
+                                        </p>
+                                    @enderror
                                 </td>
                                 <td class="px-4 py-3">
                                     <input wire:model.live="rows.{{ $index }}.ppn_percentage" type="number"
@@ -178,33 +201,47 @@
                             fisik barang telah sesuai dengan Faktur dan Surat Pesanan.</span>
                     </div>
                 </label>
-                @error('is_triangulated') <span class="text-[9px] text-red-500 font-bold block mt-1">SOP: Wajib
-                Verifikasi Triangulasi!</span> @enderror
+                @error('is_triangulated')
+                    <p class="mt-1.5 flex items-center gap-1.5 text-[9px] text-red-600 dark:text-red-400">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                        SOP: Wajib Verifikasi Triangulasi!
+                    </p>
+                @enderror
             </div>
 
             <div class="space-y-1">
                 <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest dark:text-gray-500">Supplier</label>
                 <select wire:model="supplier_id"
-                    class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 transition-all cursor-pointer dark:bg-white/[0.03] dark:border-gray-800 dark:text-white">
+                    class="w-full px-4 py-2 bg-gray-50 border rounded-xl text-sm focus:ring-2 transition-all cursor-pointer dark:bg-white/[0.03] dark:text-white
+                    @error('supplier_id') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-200 focus:ring-brand-500 dark:border-gray-800 @enderror">
                     <option value="">Pilih Supplier</option>
                     @foreach($suppliers as $supplier)
                         <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
                     @endforeach
                 </select>
-                @error('supplier_id') <span class="text-[10px] text-red-500 font-bold block">Wajib dipilih</span>
+                @error('supplier_id')
+                    <p class="mt-1.5 flex items-center gap-1.5 text-[10px] text-red-600 dark:text-red-400">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                        Wajib dipilih
+                    </p>
                 @enderror
             </div>
 
             <div class="space-y-1">
                 <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest dark:text-gray-500">Gudang Tujuan</label>
                 <select wire:model="warehouse_id"
-                    class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 transition-all cursor-pointer dark:bg-white/[0.03] dark:border-gray-800 dark:text-white">
+                    class="w-full px-4 py-2 bg-gray-50 border rounded-xl text-sm focus:ring-2 transition-all cursor-pointer dark:bg-white/[0.03] dark:text-white
+                    @error('warehouse_id') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-200 focus:ring-brand-500 dark:border-gray-800 @enderror">
                     <option value="">Pilih Gudang</option>
                     @foreach($warehouses as $warehouse)
                         <option value="{{ $warehouse->id }}">{{ $warehouse->name }}</option>
                     @endforeach
                 </select>
-                @error('warehouse_id') <span class="text-[10px] text-red-500 font-bold block">Wajib dipilih</span>
+                @error('warehouse_id')
+                    <p class="mt-1.5 flex items-center gap-1.5 text-[10px] text-red-600 dark:text-red-400">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                        Wajib dipilih
+                    </p>
                 @enderror
             </div>
 
@@ -225,8 +262,13 @@
                 <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest dark:text-gray-500">Nomor Faktur
                     Supplier</label>
                 <input wire:model="invoice_number" type="text" placeholder="Faktur-12345"
-                    class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-brand-500 transition-all outline-none dark:bg-white/[0.03] dark:border-gray-800 dark:text-white">
-                @error('invoice_number') <span class="text-[10px] text-red-500 font-bold block">Wajib diisi</span>
+                    class="w-full px-4 py-2 bg-gray-50 border rounded-xl text-sm focus:ring-2 transition-all outline-none dark:bg-white/[0.03] dark:text-white
+                    @error('invoice_number') border-red-500 focus:ring-red-500 dark:border-red-500 @else border-gray-200 focus:ring-brand-500 dark:border-gray-800 @enderror">
+                @error('invoice_number')
+                    <p class="mt-1.5 flex items-center gap-1.5 text-[10px] text-red-600 dark:text-red-400">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                        Wajib diisi
+                    </p>
                 @enderror
             </div>
 
@@ -272,7 +314,11 @@
                         </svg>
                     </div>
                 </div>
-                @error('invoice_file') <span class="text-[10px] text-red-500 font-bold block mt-1">{{ $message }}</span>
+                @error('invoice_file')
+                    <p class="mt-1.5 flex items-center gap-1.5 text-[10px] text-red-600 dark:text-red-400">
+                        <svg class="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                        {{ $message }}
+                    </p>
                 @enderror
             </div>
         </div>

@@ -53,13 +53,18 @@
                             class="mb-1.5 block text-[10px] font-black tracking-widest uppercase text-gray-500">Supplier
                             Tujuan</label>
                         <select wire:model.live="supplier_id"
-                            class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-brand-500 outline-none dark:border-gray-800 dark:bg-gray-900">
+                            class="w-full rounded-lg border bg-white px-4 py-2.5 text-sm outline-none dark:bg-gray-900
+                            @error('supplier_id') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
                             <option value="">-- Pilih Supplier --</option>
                             @foreach($suppliers as $s)
                                 <option value="{{ $s->id }}">{{ $s->name }}</option>
                             @endforeach
                         </select>
-                        @error('supplier_id') <span class="text-[10px] text-red-500 mt-1 block">{{ $message }}</span>
+                        @error('supplier_id')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
                         @enderror
                     </div>
 
@@ -67,13 +72,18 @@
                         <label class="mb-1.5 block text-[10px] font-black tracking-widest uppercase text-gray-500">Kirim
                             ke Gudang</label>
                         <select wire:model="warehouse_id"
-                            class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-brand-500 outline-none dark:border-gray-800 dark:bg-gray-900">
+                            class="w-full rounded-lg border bg-white px-4 py-2.5 text-sm outline-none dark:bg-gray-900
+                            @error('warehouse_id') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
                             <option value="">-- Pilih Gudang --</option>
                             @foreach($warehouses as $wh)
                                 <option value="{{ $wh->id }}">{{ $wh->name }}</option>
                             @endforeach
                         </select>
-                        @error('warehouse_id') <span class="text-[10px] text-red-500 mt-1 block">{{ $message }}</span>
+                        @error('warehouse_id')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
                         @enderror
                     </div>
 

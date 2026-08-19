@@ -132,9 +132,13 @@
                             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Kode
                                 Item</label>
                             <input type="text" wire:model="code"
-                                class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
+                                class="w-full rounded-lg border bg-transparent px-4 py-2 text-sm outline-none dark:bg-transparent
+                                @error('code') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
                             @error('code')
-                                <span class="text-xs text-red-500">{{ $message }}</span>
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
                             @enderror
                         </div>
                         <div>
@@ -149,10 +153,14 @@
                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Nama
                             Item</label>
                         <input type="text" wire:model="name"
-                            class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent"
+                            class="w-full rounded-lg border bg-transparent px-4 py-2 text-sm outline-none dark:bg-transparent
+                            @error('name') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror"
                             placeholder="Contoh: Amoxicillin 500mg">
                         @error('name')
-                            <span class="text-xs text-red-500">{{ $message }}</span>
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
                         @enderror
                     </div>
 
@@ -168,28 +176,36 @@
                             <label
                                 class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Kategori</label>
                             <select wire:model="item_category_id"
-                                class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
+                                class="w-full rounded-lg border bg-transparent px-4 py-2 text-sm outline-none dark:bg-transparent
+                                @error('item_category_id') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
                                 <option value="">Pilih Kategori</option>
                                 @foreach ($categories as $cat)
                                     <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                                 @endforeach
                             </select>
                             @error('item_category_id')
-                                <span class="text-xs text-red-500">{{ $message }}</span>
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
                             @enderror
                         </div>
                         <div>
                             <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">Satuan
                                 Terkecil</label>
                             <select wire:model="item_unit_id"
-                                class="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-transparent">
+                                class="w-full rounded-lg border bg-transparent px-4 py-2 text-sm outline-none dark:bg-transparent
+                                @error('item_unit_id') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-brand-500 dark:border-gray-800 @enderror">
                                 <option value="">Pilih Satuan</option>
                                 @foreach ($units as $u)
                                     <option value="{{ $u->id }}">{{ $u->name }}</option>
                                 @endforeach
                             </select>
                             @error('item_unit_id')
-                                <span class="text-xs text-red-500">{{ $message }}</span>
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
                             @enderror
                         </div>
                     </div>
@@ -259,7 +275,8 @@
 
                     <div class="flex items-center justify-center w-full">
                         <label
-                            class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                            class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700
+                            @error('importFile') border-red-500 dark:border-red-500 @else border-gray-300 dark:border-gray-700 @enderror">
                             <div class="flex flex-col items-center justify-center pt-5 pb-6">
                                 <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
@@ -274,7 +291,10 @@
                         </label>
                     </div>
                     @error('importFile')
-                        <span class="mt-1 text-xs text-red-500">{{ $message }}</span>
+                        <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                            {{ $message }}
+                        </p>
                     @enderror
 
                     <div wire:loading wire:target="importFile" class="mt-2 text-xs text-brand-500">

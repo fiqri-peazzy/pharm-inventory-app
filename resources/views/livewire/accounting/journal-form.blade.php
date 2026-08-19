@@ -127,13 +127,19 @@
                             @foreach($entries as $index => $row)
                                 <tr class="group hover:bg-gray-50/50 transition-all dark:hover:bg-white/[0.03]">
                                     <td class="px-4 py-3">
-                                        <select wire:model="entries.{{ $index }}.account_id" {{ $isViewOnly ? 'disabled' : '' }} class="block w-full px-3 py-2 border-none rounded-lg bg-transparent text-sm font-bold text-gray-900 focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all disabled:opacity-80 dark:text-white dark:focus:bg-white/[0.05]">
+                                        <select wire:model="entries.{{ $index }}.account_id" {{ $isViewOnly ? 'disabled' : '' }} class="block w-full px-3 py-2 border-none rounded-lg bg-transparent text-sm font-bold text-gray-900 focus:ring-2 focus:bg-white transition-all disabled:opacity-80 dark:text-white dark:focus:bg-white/[0.05]
+                                            @error("entries.{$index}.account_id") ring-2 ring-red-500 @else focus:ring-brand-500 @enderror">
                                             <option value="">-- Pilih Akun --</option>
                                             @foreach($accounts as $acc)
                                                 <option value="{{ $acc->id }}">{{ $acc->code }} - {{ $acc->name }}</option>
                                             @endforeach
                                         </select>
-                                        @error("entries.{$index}.account_id") <span class="text-[10px] text-red-500 ml-1 font-bold italic dark:text-red-400">{{ $message }}</span> @enderror
+                                        @error("entries.{$index}.account_id")
+                                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                                {{ $message }}
+                                            </p>
+                                        @enderror
                                     </td>
                                     <td class="px-4 py-3 bg-blue-50/20 border-l border-gray-50 dark:bg-blue-500/5 dark:border-gray-800">
                                         <div class="flex items-center gap-1">

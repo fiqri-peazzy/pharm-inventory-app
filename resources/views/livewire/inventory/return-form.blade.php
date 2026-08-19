@@ -75,30 +75,40 @@
 
                     <div>
                         <label class="block text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase mb-1 tracking-widest">Asal Barang (Warehouse)</label>
-                        <select wire:model.live="from_warehouse_id" {{ $isEdit || $isViewOnly || !empty($items) ? 'disabled' : '' }} class="w-full bg-slate-50 dark:bg-white/[0.03] border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700 dark:text-gray-300 @error('from_warehouse_id') ring-2 ring-rose-500 @enderror">
+                        <select wire:model.live="from_warehouse_id" {{ $isEdit || $isViewOnly || !empty($items) ? 'disabled' : '' }} class="w-full bg-slate-50 dark:bg-white/[0.03] border rounded-xl text-sm py-3 focus:ring-2 transition-all font-bold text-slate-700 dark:text-gray-300 @error('from_warehouse_id') border-rose-500 ring-2 ring-rose-500 @else border-none focus:ring-indigo-500 @enderror">
                             <option value="">Pilih Gudang...</option>
                             @foreach($warehouses as $wh)
                                 <option value="{{ $wh->id }}">{{ $wh->name }}</option>
                             @endforeach
                         </select>
-                        @error('from_warehouse_id') <span class="text-[10px] text-rose-500 font-bold mt-1">Wajib pilih gudang</span> @enderror
+                        @error('from_warehouse_id')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-500 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
                     @if($type === 'supplier')
                         <div>
                             <label class="block text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase mb-1 tracking-widest">Pilih Supplier</label>
-                            <select wire:model="supplier_id" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 dark:bg-white/[0.03] border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700 dark:text-gray-300 @error('supplier_id') ring-2 ring-rose-500 @enderror">
+                            <select wire:model="supplier_id" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 dark:bg-white/[0.03] border rounded-xl text-sm py-3 focus:ring-2 transition-all font-bold text-slate-700 dark:text-gray-300 @error('supplier_id') border-rose-500 ring-2 ring-rose-500 @else border-none focus:ring-indigo-500 @enderror">
                                 <option value="">Pilih Supplier...</option>
                                 @foreach($suppliers as $sup)
                                     <option value="{{ $sup->id }}">{{ $sup->name }}</option>
                                 @endforeach
                             </select>
-                            @error('supplier_id') <span class="text-[10px] text-rose-500 font-bold mt-1">Wajib pilih supplier</span> @enderror
+                            @error('supplier_id')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-500 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                     @else
                         <div>
                             <label class="block text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase mb-1 tracking-widest">Gudang Tujuan</label>
-                            <select wire:model="to_warehouse_id" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 dark:bg-white/[0.03] border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700 dark:text-gray-300 @error('to_warehouse_id') ring-2 ring-rose-500 @enderror">
+                            <select wire:model="to_warehouse_id" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 dark:bg-white/[0.03] border rounded-xl text-sm py-3 focus:ring-2 transition-all font-bold text-slate-700 dark:text-gray-300 @error('to_warehouse_id') border-rose-500 ring-2 ring-rose-500 @else border-none focus:ring-indigo-500 @enderror">
                                 <option value="">Pilih Gudang Tujuan...</option>
                                 @foreach($warehouses as $wh)
                                     @if($wh->id != $from_warehouse_id)
@@ -106,7 +116,12 @@
                                     @endif
                                 @endforeach
                             </select>
-                            @error('to_warehouse_id') <span class="text-[10px] text-rose-500 font-bold mt-1">Wajib pilih gudang tujuan</span> @enderror
+                            @error('to_warehouse_id')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-500 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                     @endif
 
@@ -117,7 +132,7 @@
 
                     <div>
                         <label class="block text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase mb-1 tracking-widest">Kategori Alasan</label>
-                        <select wire:model="reason_category" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 dark:bg-white/[0.03] border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all font-bold text-slate-700 dark:text-gray-300 @error('reason_category') ring-2 ring-rose-500 @enderror">
+                        <select wire:model="reason_category" {{ $isViewOnly ? 'disabled' : '' }} class="w-full bg-slate-50 dark:bg-white/[0.03] border rounded-xl text-sm py-3 focus:ring-2 transition-all font-bold text-slate-700 dark:text-gray-300 @error('reason_category') border-rose-500 ring-2 ring-rose-500 @else border-none focus:ring-indigo-500 @enderror">
                             <option value="">Pilih Alasan...</option>
                             @if($type === 'supplier')
                                 <option value="Damaged">Damaged</option>
@@ -133,7 +148,12 @@
                                 <option value="Consolidation">Consolidation</option>
                             @endif
                         </select>
-                        @error('reason_category') <span class="text-[10px] text-rose-500 font-bold mt-1">Wajib pilih alasan retur</span> @enderror
+                        @error('reason_category')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-500 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
                 </div>
             </div>
@@ -269,7 +289,12 @@
                     <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2 tracking-tighter uppercase">
                         <i class="ph-bold ph-list-bullets text-indigo-500"></i> DAFTAR BARANG YANG DIRETUR
                     </h3>
-                    @error('items') <span class="text-xs text-rose-500 font-bold bg-rose-50 px-3 py-1 rounded-lg">Minimal harus ada 1 barang</span> @enderror
+                    @error('items')
+                        <span class="flex items-center gap-1.5 text-xs text-rose-500 font-bold bg-rose-50 px-3 py-1 rounded-lg dark:bg-red-500/10 dark:text-red-400">
+                            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                            {{ $message }}
+                        </span>
+                    @enderror
                     <div class="text-right">
                         <p class="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest leading-none mb-1 text-right">Total Nilai Retur</p>
                         <h4 class="text-xl font-black text-slate-800 dark:text-white tracking-tight italic text-right">Rp {{ number_format($total_value) }}</h4>
@@ -351,9 +376,14 @@
                         <div class="text-left w-full md:w-2/3">
                             <label class="block text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase mb-2 tracking-widest leading-none flex items-center gap-2">
                                 Penjelasan Detail / Catatan Investigasi
-                                @error('reason') <span class="bg-rose-500 text-white px-2 py-0.5 rounded text-[8px] animate-pulse">Wajib Diisi</span> @enderror
                             </label>
-                            <textarea wire:model="reason" {{ $isViewOnly ? 'disabled' : '' }} rows="3" class="w-full bg-white dark:bg-white/[0.03] border-2 border-transparent {{ $errors->has('reason') ? 'border-rose-300' : '' }} rounded-2xl text-sm py-4 focus:ring-2 focus:ring-indigo-500 font-medium italic placeholder:text-slate-200 transition-all" placeholder="Jelaskan alasan retur secara rinci..."></textarea>
+                            <textarea wire:model="reason" {{ $isViewOnly ? 'disabled' : '' }} rows="3" class="w-full bg-white dark:bg-white/[0.03] border-2 rounded-2xl text-sm py-4 focus:ring-2 font-medium italic placeholder:text-slate-200 transition-all @error('reason') border-rose-500 focus:ring-rose-500 dark:border-red-500 @else border-transparent focus:ring-indigo-500 @enderror" placeholder="Jelaskan alasan retur secara rinci..."></textarea>
+                            @error('reason')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-500 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                         <div class="text-right w-full md:w-1/3 flex flex-col items-end">
                             <h4 class="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest mb-1 italic text-right">Estimasi Nilai Kredit:</h4>

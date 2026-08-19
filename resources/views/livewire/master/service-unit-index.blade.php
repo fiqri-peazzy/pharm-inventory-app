@@ -121,25 +121,43 @@
                     <div class="grid grid-cols-2 gap-5">
                         <div>
                             <label class="mb-1.5 block text-xs font-black tracking-widest uppercase text-gray-500 dark:text-gray-400">Kode Unit</label>
-                            <input type="text" wire:model="code" placeholder="Cth: POLI-UMM" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-mono focus:bg-white focus:ring-2 focus:ring-brand-500/20 outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                            @error('code') <span class="text-[10px] text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                            <input type="text" wire:model="code" placeholder="Cth: POLI-UMM" class="w-full rounded-lg border bg-gray-50 px-4 py-2.5 text-sm font-mono focus:bg-white outline-none dark:bg-gray-900 dark:text-white
+                                @error('code') border-red-500 focus:ring-2 focus:ring-red-500/20 dark:border-red-500 @else border-gray-200 focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 @enderror">
+                            @error('code')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                         <div>
                             <label class="mb-1.5 block text-xs font-black tracking-widest uppercase text-gray-500 dark:text-gray-400">Tipe</label>
-                            <select wire:model="type" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:bg-white focus:ring-2 focus:ring-brand-500/20 outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white">
+                            <select wire:model="type" class="w-full rounded-lg border bg-gray-50 px-4 py-2.5 text-sm focus:bg-white outline-none dark:bg-gray-900 dark:text-white
+                                @error('type') border-red-500 focus:ring-2 focus:ring-red-500/20 dark:border-red-500 @else border-gray-200 focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 @enderror">
                                 <option value="">Pilih Tipe</option>
                                 <option value="poli">Poliklinik</option>
                                 <option value="ruangan">Ruangan / Ward</option>
                                 <option value="instalasi">Instalasi / OK / IGD</option>
                             </select>
-                            @error('type') <span class="text-[10px] text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                            @error('type')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                     </div>
 
                     <div>
                         <label class="mb-1.5 block text-xs font-black tracking-widest uppercase text-gray-500 dark:text-gray-400">Nama Unit Layanan</label>
-                        <input type="text" wire:model="name" placeholder="Nama lengkap unit..." class="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:bg-white focus:ring-2 focus:ring-brand-500/20 outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white">
-                        @error('name') <span class="text-[10px] text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                        <input type="text" wire:model="name" placeholder="Nama lengkap unit..." class="w-full rounded-lg border bg-gray-50 px-4 py-2.5 text-sm focus:bg-white outline-none dark:bg-gray-900 dark:text-white
+                            @error('name') border-red-500 focus:ring-2 focus:ring-red-500/20 dark:border-red-500 @else border-gray-200 focus:ring-2 focus:ring-brand-500/20 dark:border-gray-700 @enderror">
+                        @error('name')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
 
                     <div class="grid grid-cols-2 gap-5">

@@ -137,12 +137,18 @@
                     @if(!$isViewOnly)
                         <div class="relative group">
                             <input type="file" wire:model="evidence_file" class="hidden" id="evidence-input">
-                            <label for="evidence-input" class="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-slate-200 rounded-2xl hover:border-indigo-500 hover:bg-slate-50 transition-all cursor-pointer dark:border-gray-800 dark:hover:bg-white/[0.03]">
+                            <label for="evidence-input" class="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-2xl hover:border-indigo-500 hover:bg-slate-50 transition-all cursor-pointer dark:hover:bg-white/[0.03]
+                                @error('evidence_file') border-rose-500 dark:border-rose-500 @else border-slate-200 dark:border-gray-800 @enderror">
                                 <i class="ph-bold ph-cloud-arrow-up text-3xl text-slate-300 group-hover:text-indigo-500 mb-2 dark:text-gray-600"></i>
                                 <span class="text-[10px] font-black text-slate-400 group-hover:text-indigo-600 uppercase dark:text-gray-500">Klik untuk Upload</span>
                             </label>
                         </div>
-                        @error('evidence_file') <span class="text-[10px] text-rose-500 font-bold mt-1 block italic dark:text-rose-400">{{ $message }}</span> @enderror
+                        @error('evidence_file')
+                            <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-500 dark:text-red-400">
+                                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     @endif
 
                     @if($evidence_file)
@@ -176,13 +182,25 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-[10px] font-black text-indigo-400 uppercase mb-1 tracking-widest dark:text-indigo-400">Laporan Investigasi</label>
-                            <textarea wire:model="investigation_report" {{ $isViewOnly ? 'disabled' : '' }} rows="4" class="w-full bg-white border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-300 font-medium italic dark:bg-white/[0.05] dark:text-gray-200 dark:placeholder:text-gray-600" placeholder="Kenapa selisih besar ini terjadi?"></textarea>
-                            @error('investigation_report') <span class="text-[10px] text-rose-500 font-bold mt-1 block dark:text-rose-400">{{ $message }}</span> @enderror
+                            <textarea wire:model="investigation_report" {{ $isViewOnly ? 'disabled' : '' }} rows="4" class="w-full bg-white border rounded-xl text-sm py-3 focus:ring-2 transition-all placeholder:text-slate-300 font-medium italic dark:bg-white/[0.05] dark:text-gray-200 dark:placeholder:text-gray-600
+                                @error('investigation_report') border-rose-500 focus:ring-rose-500 dark:border-rose-500 @else border-none focus:ring-indigo-500 @enderror" placeholder="Kenapa selisih besar ini terjadi?"></textarea>
+                            @error('investigation_report')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-500 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-[10px] font-black text-indigo-400 uppercase mb-1 tracking-widest dark:text-indigo-400">Tindakan Koreksif</label>
-                            <textarea wire:model="corrective_action" {{ $isViewOnly ? 'disabled' : '' }} rows="3" class="w-full bg-white border-none rounded-xl text-sm py-3 focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-300 font-medium italic dark:bg-white/[0.05] dark:text-gray-200 dark:placeholder:text-gray-600" placeholder="Apa langkah biar gak kejadian lagi?"></textarea>
-                            @error('corrective_action') <span class="text-[10px] text-rose-500 font-bold mt-1 block dark:text-rose-400">{{ $message }}</span> @enderror
+                            <textarea wire:model="corrective_action" {{ $isViewOnly ? 'disabled' : '' }} rows="3" class="w-full bg-white border rounded-xl text-sm py-3 focus:ring-2 transition-all placeholder:text-slate-300 font-medium italic dark:bg-white/[0.05] dark:text-gray-200 dark:placeholder:text-gray-600
+                                @error('corrective_action') border-rose-500 focus:ring-rose-500 dark:border-rose-500 @else border-none focus:ring-indigo-500 @enderror" placeholder="Apa langkah biar gak kejadian lagi?"></textarea>
+                            @error('corrective_action')
+                                <p class="mt-1.5 flex items-center gap-1.5 text-xs text-rose-500 dark:text-red-400">
+                                    <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
                         </div>
                     </div>
                 </div>

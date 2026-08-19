@@ -186,9 +186,13 @@
                                         class="text-[10px] font-black uppercase tracking-widest text-red-500 mb-2 block">Catatan
                                         Penolakan (Wajib jika menolak):</label>
                                     <textarea wire:model="rejectionReason" rows="3" placeholder="Tuliskan alasan jika pengajuan ditolak..."
-                                        class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 sm:p-4 text-sm outline-none focus:border-red-500 dark:focus:border-red-500 transition-all"></textarea>
+                                        class="w-full rounded-xl border bg-white dark:bg-gray-800 p-3 sm:p-4 text-sm outline-none transition-all
+                                        @error('rejectionReason') border-red-500 focus:border-red-500 dark:border-red-500 @else border-gray-200 focus:border-red-500 dark:border-gray-700 dark:focus:border-red-500 @enderror"></textarea>
                                     @error('rejectionReason')
-                                        <span class="text-[10px] text-red-500 mt-1 block">{{ $message }}</span>
+                                        <p class="mt-1.5 flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                                            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l6.516 11.598c.75 1.334-.213 2.98-1.742 2.98H3.483c-1.53 0-2.493-1.646-1.743-2.98L8.257 3.1zM11 14a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V7a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                                            {{ $message }}
+                                        </p>
                                     @enderror
                                 </div>
                             @endif
