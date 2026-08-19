@@ -10,7 +10,9 @@
 
 <div x-data="{
     flatpickrInstance: null,
-    init() {
+    async init() {
+        const { default: flatpickr } = await import('flatpickr');
+        await import('flatpickr/dist/flatpickr.min.css');
         this.$nextTick(() => {
             this.flatpickrInstance = flatpickr(this.$refs.dateInput, {
                 mode: '{{ $mode }}',

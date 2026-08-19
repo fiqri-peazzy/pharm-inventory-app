@@ -426,7 +426,7 @@
 
             let __chartsInitInProgress = false;
 
-            function initDashboardCharts() {
+            async function initDashboardCharts() {
                 // Guard against overlapping calls (e.g. the dark-mode observer
                 // firing while a previous render is still in flight) — ApexCharts
                 // throws if a chart's DOM node is torn down mid-render.
@@ -434,6 +434,10 @@
                 __chartsInitInProgress = true;
 
                 try {
+                    if (!window.ApexCharts) {
+                        const mod = await import('apexcharts');
+                        window.ApexCharts = mod.default;
+                    }
                     __initDashboardChartsInner();
                 } finally {
                     __chartsInitInProgress = false;

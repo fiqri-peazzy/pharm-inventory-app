@@ -34,7 +34,9 @@
             </div>
 
             <div x-data="{
-                init() {
+                async init() {
+                    const { default: flatpickr } = await import('flatpickr');
+                    await import('flatpickr/dist/flatpickr.min.css');
                     flatpickr(this.$refs.datepicker, {
                         mode: 'range',
                         static: true,

@@ -1,17 +1,11 @@
 import './bootstrap';
-import Alpine from 'alpinejs';
-import ApexCharts from 'apexcharts';
 
-// flatpickr
-import flatpickr from 'flatpickr';
-import 'flatpickr/dist/flatpickr.min.css';
-// FullCalendar
-import { Calendar } from '@fullcalendar/core';
-
-
+// ApexCharts (~12MB unpacked), flatpickr, and FullCalendar are NOT imported
+// eagerly here on purpose — they used to load on every single page
+// regardless of whether that page needed them, which made the whole app
+// feel heavy. Each consumer below dynamically imports only what it needs.
 
 // Alpine.js is handled by Livewire 3 automatically
-window.ApexCharts = ApexCharts;
 
 // Initialize components on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
