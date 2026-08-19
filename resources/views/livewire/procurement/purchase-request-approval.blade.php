@@ -38,7 +38,7 @@
                                 <span
                                     class="font-bold text-gray-900 dark:text-white uppercase tracking-tight">{{ $request->request_number }}</span>
                                 <span
-                                    class="text-[10px] text-gray-500 italic">{{ $request->request_date->format('d M Y') }}</span>
+                                    class="text-[10px] text-gray-500 dark:text-gray-400 italic">{{ $request->request_date->format('d M Y') }}</span>
                             </div>
                         </td>
                         <td class="px-6 py-4">
@@ -58,13 +58,13 @@
                         <td class="px-6 py-4 text-center">
                             @php
                                 $statusColors = [
-                                    'submitted' => 'bg-blue-50 text-blue-700 ring-blue-700/10',
-                                    'approved' => 'bg-green-50 text-green-700 ring-green-700/10',
-                                    'rejected' => 'bg-red-50 text-red-700 ring-red-700/10',
+                                    'submitted' => 'bg-blue-50 text-blue-700 ring-blue-700/10 dark:bg-blue-500/15 dark:text-blue-400 dark:ring-blue-500/20',
+                                    'approved' => 'bg-green-50 text-green-700 ring-green-700/10 dark:bg-green-500/15 dark:text-green-400 dark:ring-green-500/20',
+                                    'rejected' => 'bg-red-50 text-red-700 ring-red-700/10 dark:bg-red-500/15 dark:text-red-400 dark:ring-red-500/20',
                                 ];
                             @endphp
                             <span
-                                class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest {{ $statusColors[$request->status] ?? 'bg-gray-50 text-gray-700' }} ring-1 ring-inset">
+                                class="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-widest {{ $statusColors[$request->status] ?? 'bg-gray-50 text-gray-700 dark:bg-white/[0.05] dark:text-gray-400' }} ring-1 ring-inset">
                                 {{ $request->status }}
                             </span>
                         </td>
@@ -94,8 +94,8 @@
     <div x-data="{ open: @entangle('showApprovalModal') }" x-show="open" x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
         class="fixed inset-0 z-[9999] overflow-hidden" style="display: none;">
-        <div class="flex h-screen items-center justify-center p-4 sm:p-6">
-            <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" @click="open = false"></div>
+        <div class="flex h-screen items-center justify-center p-4 sm:p-6" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
+            <div class="fixed inset-0 bg-gray-900/35 backdrop-blur-[2px]" @click="open = false"></div>
 
             <div
                 class="relative w-full h-[90vh] sm:h-auto sm:max-w-4xl rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-2xl overflow-hidden flex flex-col z-[10000]">
@@ -107,7 +107,7 @@
                             <h3
                                 class="text-base sm:text-lg font-black uppercase text-gray-900 dark:text-white tracking-tighter">
                                 Review Purchase Request</h3>
-                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-1">
+                            <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mt-1">
                                 {{ $selectedPr->request_number }} • {{ $selectedPr->warehouse->name }}</p>
                         </div>
                         <button @click="open = false"
@@ -160,7 +160,7 @@
                                                         {{ $detail->item->unit?->name }}</span>
                                                 </td>
                                                 <td
-                                                    class="px-3 sm:px-4 py-3 sm:py-4 text-[10px] text-gray-500 italic hidden sm:table-cell">
+                                                    class="px-3 sm:px-4 py-3 sm:py-4 text-[10px] text-gray-500 dark:text-gray-400 italic hidden sm:table-cell">
                                                     {{ $detail->notes ?: '-' }}</td>
                                             </tr>
                                         @endforeach
@@ -173,7 +173,7 @@
                                 <div
                                     class="mt-6 p-4 rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700">
                                     <label
-                                        class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 block">Notes
+                                        class="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2 block">Notes
                                         dari Pemohon:</label>
                                     <p class="text-xs text-gray-600 dark:text-gray-400">{{ $selectedPr->notes }}</p>
                                 </div>

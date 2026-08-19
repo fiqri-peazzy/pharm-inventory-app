@@ -63,13 +63,13 @@
 
     <!-- Modal -->
     <div x-data="{ open: @entangle('isOpen') }" x-show="open" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-        <div class="flex min-h-screen items-center justify-center p-4">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" @click="open = false"></div>
+        <div class="flex min-h-screen items-center justify-center p-4" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
+            <div class="fixed inset-0 bg-gray-500/40 backdrop-blur-[2px] transition-opacity" @click="open = false"></div>
 
             <div class="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900">
                 <div class="mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $isEdit ? 'Ubah Satuan' : 'Tambah Satuan' }}</h3>
-                    <button @click="open = false" class="text-gray-400 hover:text-gray-500">
+                    <button @click="open = false" class="text-gray-400 hover:text-gray-500 dark:text-gray-400 dark:hover:text-gray-300">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </button>
                 </div>
@@ -88,12 +88,12 @@
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <input type="checkbox" wire:model="is_active" id="is_active_unit" class="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500">
+                        <input type="checkbox" wire:model="is_active" id="is_active_unit" class="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800">
                         <label for="is_active_unit" class="text-sm text-gray-700 dark:text-gray-300">Satuan Aktif</label>
                     </div>
 
                     <div class="mt-6 flex gap-3">
-                        <button type="button" @click="open = false" class="w-full rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">Batal</button>
+                        <button type="button" @click="open = false" class="w-full rounded-lg border border-gray-200 bg-white py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-800 dark:bg-white/[0.03] dark:text-gray-400 dark:hover:bg-white/[0.05]">Batal</button>
                         <button type="submit" class="w-full rounded-lg bg-brand-500 py-2.5 text-sm font-medium text-white hover:bg-brand-600">
                             {{ $isEdit ? 'Simpan Perubahan' : 'Simpan Satuan' }}
                         </button>

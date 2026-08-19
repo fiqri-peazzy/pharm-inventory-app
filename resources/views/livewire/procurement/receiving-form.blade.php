@@ -331,10 +331,10 @@
         <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="open = false"
-            class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+            class="fixed inset-0 bg-slate-900/35 backdrop-blur-[2px] transition-opacity"></div>
 
         <!-- Modal Content Container -->
-        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
             <div x-show="open" x-transition:enter="ease-out duration-300"
                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"

@@ -34,22 +34,37 @@
                                 kolom yang diperlukan sesuai panduan.
                             </p>
                             <ul class="space-y-2 text-xs text-gray-500 dark:text-gray-400">
-                                <li class="flex gap-2 items-start"><span class="text-blue-500 mt-0.5">✓</span> Daftar
-                                    item diambil dari master data sistem</li>
-                                <li class="flex gap-2 items-start"><span class="text-blue-500 mt-0.5">✓</span> Sheet
-                                    referensi supplier & gudang tersedia</li>
-                                <li class="flex gap-2 items-start"><span class="text-blue-500 mt-0.5">✓</span> Panduan
-                                    pengisian lengkap di sheet PANDUAN</li>
-                                <li class="flex gap-2 items-start"><span class="text-blue-500 mt-0.5">✓</span> Isi
-                                    <strong>batch_number</strong>, <strong>expired_date</strong>,
-                                    <strong>qty_received</strong>, <strong>qty_used</strong>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-4 h-4 shrink-0 mt-0.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>Daftar item diambil dari master data sistem</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-4 h-4 shrink-0 mt-0.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>Sheet referensi supplier & gudang tersedia</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-4 h-4 shrink-0 mt-0.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>Panduan pengisian lengkap di sheet PANDUAN</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <svg class="w-4 h-4 shrink-0 mt-0.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span>Isi <strong>batch_number</strong>, <strong>expired_date</strong>,
+                                        <strong>qty_received</strong>, <strong>qty_used</strong></span>
                                 </li>
                             </ul>
                             <div class="mt-auto">
                                 <button wire:click="downloadTemplate" wire:loading.attr="disabled"
                                     wire:target="downloadTemplate"
                                     class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all duration-150 disabled:opacity-70">
-                                    <span wire:loading.remove wire:target="downloadTemplate">
+                                    <span wire:loading.remove wire:target="downloadTemplate" class="inline-flex items-center gap-2">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -152,7 +167,7 @@
                                 <button type="submit" :disabled="{{ $isImporting ? 'true' : 'false' }}"
                                     wire:loading.attr="disabled" wire:target="import"
                                     class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all duration-150 disabled:opacity-70">
-                                    <span wire:loading.remove wire:target="import">
+                                    <span wire:loading.remove wire:target="import" class="inline-flex items-center gap-2">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

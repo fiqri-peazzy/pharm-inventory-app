@@ -122,10 +122,10 @@
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
              @click="open = false" 
-             class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+             class="fixed inset-0 bg-slate-900/35 backdrop-blur-[2px] transition-opacity"></div>
 
         <!-- Modal Content Container -->
-        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
             <div x-show="open"
                  x-transition:enter="ease-out duration-300"
                  x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -141,7 +141,7 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         Pilih Item Permintaan
                     </div>
-                    <button @click="open = false" class="text-slate-400 dark:text-gray-500 hover:text-slate-600 transition-colors bg-white dark:bg-white/[0.03] w-8 h-8 rounded-lg border border-slate-100 dark:border-gray-800 flex items-center justify-center shadow-sm">
+                    <button @click="open = false" class="text-slate-400 dark:text-gray-500 hover:text-slate-600 dark:hover:text-gray-300 transition-colors bg-white dark:bg-white/[0.03] w-8 h-8 rounded-lg border border-slate-100 dark:border-gray-800 flex items-center justify-center shadow-sm">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"></path></svg>
                     </button>
                 </div>
@@ -174,7 +174,7 @@
                                         <div>
                                             <div class="font-bold text-slate-800 dark:text-white group-hover:text-indigo-700 text-base leading-tight">{{ $item->name }}</div>
                                             <div class="text-[9px] text-slate-400 dark:text-gray-500 uppercase font-black tracking-widest mt-1 flex items-center gap-2">
-                                                <span class="px-1.5 py-0.5 bg-slate-100 rounded text-slate-500 dark:text-gray-400">{{ $item->code }}</span>
+                                                <span class="px-1.5 py-0.5 bg-slate-100 dark:bg-white/[0.06] rounded text-slate-500 dark:text-gray-400">{{ $item->code }}</span>
                                                 <span class="text-indigo-400">•</span>
                                                 <span>{{ $item->category->name ?? 'Tanpa Kategori' }}</span>
                                             </div>
@@ -185,7 +185,7 @@
                                     </div>
                                 </button>
                             @empty
-                                <div class="p-16 text-center text-slate-300">
+                                <div class="p-16 text-center text-slate-300 dark:text-gray-600">
                                     @if(strlen($search) >= 2)
                                         <svg class="w-12 h-12 mx-auto opacity-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                         <p class="text-[10px] font-black uppercase tracking-widest">Item tidak ditemukan</p>

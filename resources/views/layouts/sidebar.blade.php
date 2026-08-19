@@ -63,7 +63,7 @@
         </a>
     </div>
 
-    <div class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+    <div class="flex flex-col flex-1 min-h-0 overflow-y-auto overflow-x-hidden duration-300 ease-linear custom-scrollbar pr-1">
         <nav class="mb-6">
             <div class="flex flex-col gap-4">
                 @foreach ($menuGroups as $groupIndex => $menuGroup)

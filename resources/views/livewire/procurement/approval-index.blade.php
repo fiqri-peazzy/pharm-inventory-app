@@ -81,16 +81,16 @@
     <!-- Review Modal -->
     @if($isOpen && $selected_request)
     <div class="fixed inset-0 z-[999] overflow-y-auto">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" wire:click="closeModal"></div>
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
+            <div class="fixed inset-0 bg-gray-500/40 backdrop-blur-[2px] transition-opacity" wire:click="closeModal"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
             <div class="relative inline-block align-bottom bg-white dark:bg-gray-800 rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-gray-200 dark:border-gray-700">
                 <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-gray-50 dark:bg-gray-700/50">
                     <div>
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white">Tinjauan Permintaan Barang</h3>
-                        <p class="text-xs text-gray-500">{{ $selected_request->request_number }} | Diajukan oleh: {{ $selected_request->creator->name }}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $selected_request->request_number }} | Diajukan oleh: {{ $selected_request->creator->name }}</p>
                     </div>
-                    <button type="button" wire:click="closeModal" class="text-gray-400 hover:text-gray-500">
+                    <button type="button" wire:click="closeModal" class="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
@@ -110,7 +110,7 @@
 
                     <div class="mb-4 flex items-center justify-between">
                          <h4 class="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-tight">Detail Barang & Koreksi Jumlah</h4>
-                         <span class="text-[10px] bg-red-50 text-red-600 px-2 py-1 rounded font-bold uppercase tracking-widest border border-red-100">Cek kuantitas sebelum setuju</span>
+                         <span class="text-[10px] bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded font-bold uppercase tracking-widest border border-red-100 dark:border-red-800">Cek kuantitas sebelum setuju</span>
                     </div>
 
                     <div class="border dark:border-gray-700 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-gray-800">
@@ -129,13 +129,13 @@
                                     <td class="px-4 py-4 font-bold text-gray-800 dark:text-gray-200">
                                         {{ $item['item_name'] }}
                                     </td>
-                                    <td class="px-4 py-4 text-center text-gray-500 font-medium">
+                                    <td class="px-4 py-4 text-center text-gray-500 dark:text-gray-400 font-medium">
                                         {{ number_format($item['requested_qty']) }}
                                     </td>
-                                    <td class="px-4 py-3 border-x dark:border-gray-700 bg-indigo-50/20">
-                                        <input type="number" wire:model="details.{{ $index }}.approved_qty" class="w-full px-3 py-2 border-gray-200 dark:border-gray-600 rounded-lg text-center font-black text-indigo-700 bg-white dark:bg-gray-800 focus:ring-1 focus:ring-indigo-500 shadow-sm">
+                                    <td class="px-4 py-3 border-x dark:border-gray-700 bg-indigo-50/20 dark:bg-indigo-900/10">
+                                        <input type="number" wire:model="details.{{ $index }}.approved_qty" class="w-full px-3 py-2 border-gray-200 dark:border-gray-600 rounded-lg text-center font-black text-indigo-700 dark:text-indigo-400 bg-white dark:bg-gray-800 focus:ring-1 focus:ring-indigo-500 shadow-sm">
                                     </td>
-                                    <td class="px-4 py-4 text-gray-400 italic text-[10px]">
+                                    <td class="px-4 py-4 text-gray-400 dark:text-gray-500 italic text-[10px]">
                                         {{ $selected_request->details[$index]->notes ?? '-' }}
                                     </td>
                                 </tr>
@@ -146,11 +146,11 @@
                 </div>
 
                 <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center rounded-b-xl">
-                    <button type="button" wire:click="reject" class="px-6 py-2 text-[10px] font-black text-red-600 bg-white dark:bg-gray-800 border-2 border-red-600 rounded-lg hover:bg-red-50 transition-all uppercase tracking-widest shadow-sm active:scale-95">
+                    <button type="button" wire:click="reject" class="px-6 py-2 text-[10px] font-black text-red-600 dark:text-red-400 bg-white dark:bg-gray-800 border-2 border-red-600 dark:border-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all uppercase tracking-widest shadow-sm active:scale-95">
                         Tolak Permintaan
                     </button>
                     <div class="flex space-x-3">
-                        <button type="button" wire:click="closeModal" class="px-4 py-2 text-[10px] font-black text-gray-500 bg-white dark:bg-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 uppercase tracking-widest transition-all">
+                        <button type="button" wire:click="closeModal" class="px-4 py-2 text-[10px] font-black text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 uppercase tracking-widest transition-all">
                             Tutup
                         </button>
                         <button type="button" wire:click="approve" class="px-8 py-2 text-[10px] font-black text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700 shadow-lg shadow-green-500/20 active:scale-95 transition-all uppercase tracking-widest">

@@ -77,7 +77,7 @@
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @keydown.escape.window="closeModal()"
         class="fixed inset-0 z-[9999] flex items-center justify-center p-4" style="display:none">
         {{-- Backdrop --}}
-        <div @click="closeModal()" class="absolute inset-0 bg-gray-900/70 backdrop-blur-sm"></div>
+        <div @click="closeModal()" class="absolute inset-0 bg-gray-900/35 backdrop-blur-[2px]"></div>
 
         {{-- Modal Container --}}
         <div

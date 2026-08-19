@@ -145,10 +145,10 @@
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
              @click="open = false"
-             class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+             class="fixed inset-0 bg-slate-900/35 backdrop-blur-[2px] transition-opacity"></div>
 
         <!-- Modal Content Container -->
-        <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="flex items-center justify-center min-h-screen p-4" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
             <div x-show="open"
                  x-transition:enter="ease-out duration-300"
                  x-transition:enter-start="opacity-0 scale-95"

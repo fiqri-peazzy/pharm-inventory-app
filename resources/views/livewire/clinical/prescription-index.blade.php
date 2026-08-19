@@ -233,57 +233,57 @@
 
     <!-- Modals -->
     @if($showDetailModal && $selectedPrescription)
-        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" wire:click.self="closeModals">
-            <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-white/[0.03]">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/35 backdrop-blur-[2px]" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }" wire:click.self="closeModals">
+            <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-gray-900">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 dark:border-gray-800 dark:bg-white/[0.02]">
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800">Detail Resep: {{ $selectedPrescription->prescription_number }}</h3>
-                        <p class="text-xs text-slate-500">Pasien: {{ $selectedPrescription->patient_name }} ({{ $selectedPrescription->medical_record_number }})</p>
+                        <h3 class="text-lg font-bold text-slate-800 dark:text-white">Detail Resep: {{ $selectedPrescription->prescription_number }}</h3>
+                        <p class="text-xs text-slate-500 dark:text-gray-400">Pasien: {{ $selectedPrescription->patient_name }} ({{ $selectedPrescription->medical_record_number }})</p>
                     </div>
-                    <button wire:click="closeModals" class="p-2 hover:bg-slate-200 rounded-full transition-colors">
+                    <button wire:click="closeModals" class="p-2 hover:bg-slate-200 rounded-full transition-colors dark:hover:bg-gray-800 dark:text-gray-400">
                         <i class="ph ph-x font-bold"></i>
                     </button>
                 </div>
                 <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
                     <div class="grid grid-cols-2 gap-6 text-sm">
                         <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Dokter Pengirim</p>
-                            <p class="font-bold text-slate-700">{{ $selectedPrescription->doctor_name }}</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 dark:text-gray-500">Dokter Pengirim</p>
+                            <p class="font-bold text-slate-700 dark:text-gray-300">{{ $selectedPrescription->doctor_name }}</p>
                         </div>
                         <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Unit/Poli Asal</p>
-                            <p class="font-bold text-slate-700">{{ $selectedPrescription->serviceUnit->name ?? '-' }}</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 dark:text-gray-500">Unit/Poli Asal</p>
+                            <p class="font-bold text-slate-700 dark:text-gray-300">{{ $selectedPrescription->serviceUnit->name ?? '-' }}</p>
                         </div>
                     </div>
 
                     <div>
-                        <table class="w-full text-left border-collapse rounded-xl overflow-hidden border border-slate-100">
+                        <table class="w-full text-left border-collapse rounded-xl overflow-hidden border border-slate-100 dark:border-gray-800">
                             <thead>
-                                <tr class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                <tr class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider dark:bg-white/[0.02] dark:text-gray-400">
                                     <th class="px-4 py-3">Nama Obat</th>
                                     <th class="px-4 py-3 text-center">Jumlah</th>
                                     <th class="px-4 py-3">Instruksi/Sig</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-50 text-xs">
+                            <tbody class="divide-y divide-slate-50 text-xs dark:divide-gray-800">
                                 @foreach($selectedPrescription->details as $detail)
-                                    <tr class="hover:bg-slate-50/50">
+                                    <tr class="hover:bg-slate-50/50 dark:hover:bg-white/[0.03]">
                                         <td class="px-4 py-3">
-                                            <div class="font-bold text-slate-800">{{ $detail->item->name }}</div>
-                                            <div class="text-[10px] text-slate-400">{{ $detail->item->code }}</div>
+                                            <div class="font-bold text-slate-800 dark:text-white">{{ $detail->item->name }}</div>
+                                            <div class="text-[10px] text-slate-400 dark:text-gray-500">{{ $detail->item->code }}</div>
                                         </td>
-                                        <td class="px-4 py-3 text-center font-black text-slate-700">{{ $detail->qty }}</td>
-                                        <td class="px-4 py-3 italic text-indigo-600 font-medium">{{ $detail->instruction }}</td>
+                                        <td class="px-4 py-3 text-center font-black text-slate-700 dark:text-gray-300">{{ $detail->qty }}</td>
+                                        <td class="px-4 py-3 italic text-indigo-600 font-medium dark:text-indigo-400">{{ $detail->instruction }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                    <button wire:click="closeModals" class="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">Tutup</button>
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 dark:bg-white/[0.02] dark:border-gray-800">
+                    <button wire:click="closeModals" class="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition-colors dark:text-gray-400 dark:hover:bg-gray-800">Tutup</button>
                     @if($selectedPrescription->status === 'completed')
-                        <button wire:click="printPrescription({{ $selectedPrescription->id }})" class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md transition-all flex items-center gap-2">
+                        <button wire:click="printPrescription({{ $selectedPrescription->id }})" class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md transition-all flex items-center gap-2 dark:shadow-none">
                             <i class="ph-fill ph-printer"></i> Cetak Resep
                         </button>
                     @endif
@@ -293,17 +293,17 @@
     @endif
 
     @if($showEtiketModal && $selectedPrescription)
-        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" wire:click.self="closeModals">
-            <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200 dark:bg-white/[0.03]">
-                <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-emerald-50 text-emerald-700">
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/35 backdrop-blur-[2px]" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }" wire:click.self="closeModals">
+            <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200 dark:bg-gray-900">
+                <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-emerald-50 text-emerald-700 dark:border-gray-800 dark:bg-emerald-500/10 dark:text-emerald-400">
                     <h3 class="font-bold flex items-center gap-2">
                         <i class="ph ph-tag"></i> Preview Etiket Obat
                     </h3>
-                    <button wire:click="closeModals" class="p-1 hover:bg-emerald-100 rounded-full transition-colors">
+                    <button wire:click="closeModals" class="p-1 hover:bg-emerald-100 rounded-full transition-colors dark:hover:bg-emerald-500/20">
                         <i class="ph ph-x font-bold"></i>
                     </button>
                 </div>
-                <div class="p-8 bg-slate-50 flex flex-col items-center gap-6">
+                <div class="p-8 bg-slate-50 flex flex-col items-center gap-6 dark:bg-white/[0.02]">
                     <!-- Virtual Labels -->
                     @foreach($selectedPrescription->details as $detail)
                         @php
@@ -315,11 +315,11 @@
                             $borderColorInner = $isRI ? 'border-purple-100' : 'border-emerald-100';
                         @endphp
                         <div class="bg-white border-2 {{ $borderColor }} w-full p-4 rounded-lg shadow-sm border-dashed relative overflow-hidden group transition-colors cursor-pointer dark:bg-white/[0.03]">
-                            <div class="text-[10px] font-black border-b border-slate-100 pb-1 mb-2 text-slate-400">RSUD SMART - SIMRS NF</div>
+                            <div class="text-[10px] font-black border-b border-slate-100 pb-1 mb-2 text-slate-400 dark:border-gray-800 dark:text-gray-500">RSUD SMART - SIMRS NF</div>
                             <div class="flex justify-between items-start mb-2">
                                 <div>
-                                    <div class="text-xs font-bold text-slate-800">{{ $selectedPrescription->patient_name }}</div>
-                                    <div class="text-[9px] text-slate-400">Tgl: {{ date('d/m/Y') }}</div>
+                                    <div class="text-xs font-bold text-slate-800 dark:text-white">{{ $selectedPrescription->patient_name }}</div>
+                                    <div class="text-[9px] text-slate-400 dark:text-gray-500">Tgl: {{ date('d/m/Y') }}</div>
                                     @if($isRI && $selectedPrescription->room_bed_number)
                                         <div class="text-[9px] font-bold text-purple-600 mt-0.5 flex items-center gap-1">
                                             <i class="ph ph-bed"></i> Kamar: {{ $selectedPrescription->room_bed_number }}
@@ -327,28 +327,28 @@
                                     @endif
                                 </div>
                                 <div class="flex flex-col items-end gap-1">
-                                    <div class="text-[10px] font-black bg-slate-100 px-1.5 py-0.5 rounded">{{ $selectedPrescription->prescription_number }}</div>
+                                    <div class="text-[10px] font-black bg-slate-100 px-1.5 py-0.5 rounded dark:bg-white/[0.06] dark:text-gray-300">{{ $selectedPrescription->prescription_number }}</div>
                                     @if($isRI)
-                                        <div class="text-[8px] font-bold bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded border border-purple-200 flex items-center gap-0.5">
+                                        <div class="text-[8px] font-bold bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded border border-purple-200 flex items-center gap-0.5 dark:bg-purple-500/15 dark:text-purple-400 dark:border-purple-500/20">
                                             <i class="ph ph-bed"></i> RAWAT INAP
                                         </div>
                                     @else
-                                        <div class="text-[8px] font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded border border-green-200 flex items-center gap-0.5">
+                                        <div class="text-[8px] font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded border border-green-200 flex items-center gap-0.5 dark:bg-green-500/15 dark:text-green-400 dark:border-green-500/20">
                                             <i class="ph ph-user-check"></i> RAWAT JALAN
                                         </div>
                                     @endif
                                 </div>
                             </div>
-                            <div class="{{ $bgColor }} p-2 rounded border {{ $borderColorInner }} mb-2">
-                                <div class="text-[11px] font-bold {{ $textColor }} uppercase">{{ $detail->item->name }}</div>
-                                <div class="text-[10px] font-medium {{ $textColorLight }} italic">SIG: {{ $detail->instruction }}</div>
+                            <div class="{{ $bgColor }} p-2 rounded border {{ $borderColorInner }} mb-2 dark:bg-white/[0.03]">
+                                <div class="text-[11px] font-bold {{ $textColor }} uppercase dark:text-white">{{ $detail->item->name }}</div>
+                                <div class="text-[10px] font-medium {{ $textColorLight }} italic dark:text-gray-400">SIG: {{ $detail->instruction }}</div>
                             </div>
-                            <div class="text-[8px] text-right text-slate-300 italic">Antigravity V.1</div>
+                            <div class="text-[8px] text-right text-slate-300 italic dark:text-gray-600">Antigravity V.1</div>
                         </div>
                     @endforeach
                 </div>
-                <div class="p-4 border-t border-slate-100 flex justify-center gap-3">
-                    <button onclick="window.print()" class="w-full py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-lg shadow-emerald-200 transition-all flex items-center justify-center gap-2">
+                <div class="p-4 border-t border-slate-100 flex justify-center gap-3 dark:border-gray-800">
+                    <button onclick="window.print()" class="w-full py-3 text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-lg shadow-emerald-200 transition-all flex items-center justify-center gap-2 dark:shadow-none">
                         <i class="ph-fill ph-printer"></i> Cetak Semua Etiket
                     </button>
                 </div>
@@ -357,31 +357,31 @@
     @endif
 
     @if($showPrintModal && $selectedPrescription)
-        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" wire:click.self="closeModals">
-            <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-white/[0.03]">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-indigo-50 text-indigo-700">
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/35 backdrop-blur-[2px]" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }" wire:click.self="closeModals">
+            <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-gray-900">
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-indigo-50 text-indigo-700 dark:border-gray-800 dark:bg-indigo-500/10 dark:text-indigo-400">
                     <h3 class="font-bold flex items-center gap-2">
                         <i class="ph ph-printer"></i> Preview Salinan Resep
                     </h3>
-                    <button wire:click="closeModals" class="p-1 hover:bg-indigo-100 rounded-full transition-colors">
+                    <button wire:click="closeModals" class="p-1 hover:bg-indigo-100 rounded-full transition-colors dark:hover:bg-indigo-500/20">
                         <i class="ph ph-x font-bold"></i>
                     </button>
                 </div>
-                <div class="p-12 bg-white flex flex-col gap-6 font-mono text-sm leading-relaxed dark:bg-white/[0.03]">
+                <div class="p-12 bg-white flex flex-col gap-6 font-mono text-sm leading-relaxed text-slate-800 dark:bg-white/[0.02] dark:text-gray-200">
                     <!-- Letterhead Placeholder -->
-                    <div class="text-center border-b-2 border-slate-800 pb-4 mb-4">
+                    <div class="text-center border-b-2 border-slate-800 pb-4 mb-4 dark:border-gray-700">
                         <div class="text-lg font-black italic">RSUD SMART - SIMRS NF</div>
                         <div class="text-[10px]">Jl. Contoh Alamat No. 123, Kabupaten/Kota, Indonesia</div>
                     </div>
 
-                    <div class="flex justify-between items-start border-b border-slate-100 pb-4">
+                    <div class="flex justify-between items-start border-b border-slate-100 pb-4 dark:border-gray-800">
                         <div class="space-y-1">
-                            <div class="text-[10px] uppercase font-bold text-slate-400">PASIEN</div>
+                            <div class="text-[10px] uppercase font-bold text-slate-400 dark:text-gray-500">PASIEN</div>
                             <div class="font-black">{{ $selectedPrescription->patient_name }}</div>
                             <div class="text-xs">RM: {{ $selectedPrescription->medical_record_number }}</div>
                         </div>
                         <div class="text-right space-y-1">
-                            <div class="text-[10px] uppercase font-bold text-slate-400">NO. RESEP</div>
+                            <div class="text-[10px] uppercase font-bold text-slate-400 dark:text-gray-500">NO. RESEP</div>
                             <div class="font-black">{{ $selectedPrescription->prescription_number }}</div>
                             <div class="text-xs">{{ $selectedPrescription->created_at->format('d/m/Y') }}</div>
                         </div>
@@ -393,7 +393,7 @@
                                 <span class="font-black text-lg">R/</span>
                                 <span class="ml-4 font-bold">{{ $detail->item->name }}</span>
                                 <span class="ml-2">No. ( {{ $detail->qty }} )</span>
-                                <div class="ml-10 italic text-slate-600 font-medium">S . {{ $detail->instruction }}</div>
+                                <div class="ml-10 italic text-slate-600 font-medium dark:text-gray-400">S . {{ $detail->instruction }}</div>
                             </div>
                         @endforeach
                     </div>
@@ -401,12 +401,12 @@
                     <div class="mt-8 flex justify-end">
                         <div class="text-center w-48">
                             <div class="text-xs mb-12">Dokter Pemeriksa,</div>
-                            <div class="font-bold border-b border-slate-800 pb-1">( {{ $selectedPrescription->doctor_name }} )</div>
+                            <div class="font-bold border-b border-slate-800 pb-1 dark:border-gray-600">( {{ $selectedPrescription->doctor_name }} )</div>
                         </div>
                     </div>
                 </div>
-                <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-center gap-3">
-                    <button onclick="window.print()" class="w-full py-3 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-center gap-3 dark:bg-white/[0.02] dark:border-gray-800">
+                    <button onclick="window.print()" class="w-full py-3 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 dark:shadow-none">
                         <i class="ph-fill ph-printer"></i> Cetak Sekarang (PDF)
                     </button>
                 </div>

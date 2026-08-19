@@ -141,7 +141,7 @@
 
     <!-- Modal Detail Permintaan -->
     @if($showDetailModal && $selectedRequest)
-        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" wire:click.self="closeModals">
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/35 backdrop-blur-[2px]" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }" wire:click.self="closeModals">
             <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-gray-900">
                 <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 dark:border-gray-800 dark:bg-white/[0.02]">
                     <div>
@@ -208,7 +208,7 @@
 
     <!-- Modal Konfirmasi Proses -->
     @if($showConfirmModal && $selectedRequest)
-        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" wire:click.self="closeModals">
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/35 backdrop-blur-[2px]" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }" wire:click.self="closeModals">
             <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200 dark:bg-gray-900">
                 <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-amber-50 text-amber-700 dark:border-gray-800 dark:bg-amber-500/10 dark:text-amber-400">
                     <h3 class="font-bold flex items-center gap-2">

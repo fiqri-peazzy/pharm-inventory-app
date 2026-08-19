@@ -50,7 +50,7 @@
                                 {{ $price->supplier->name }}
                             </td>
                             <td class="px-6 py-4 text-center">
-                                <span class="px-2 py-0.5 text-[9px] font-black uppercase rounded-full {{ $price->price_type === 'e-catalog' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700' }} border {{ $price->price_type === 'e-catalog' ? 'border-blue-200' : 'border-purple-200' }}">
+                                <span class="px-2 py-0.5 text-[9px] font-black uppercase rounded-full {{ $price->price_type === 'e-catalog' ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400' : 'bg-purple-100 text-purple-700 dark:bg-purple-500/15 dark:text-purple-400' }} border {{ $price->price_type === 'e-catalog' ? 'border-blue-200 dark:border-blue-500/20' : 'border-purple-200 dark:border-purple-500/20' }}">
                                     {{ $price->price_type }}
                                 </span>
                             </td>
@@ -68,11 +68,11 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 @if($price->is_active)
-                                    <span class="inline-flex items-center px-2 py-0.5 text-[9px] font-bold text-green-700 bg-green-100 rounded-full border border-green-200 uppercase">
+                                    <span class="inline-flex items-center px-2 py-0.5 text-[9px] font-bold text-green-700 bg-green-100 rounded-full border border-green-200 uppercase dark:bg-green-500/15 dark:text-green-400 dark:border-green-500/20">
                                         Aktif
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-0.5 text-[9px] font-bold text-red-700 bg-red-100 rounded-full border border-red-200 uppercase">
+                                    <span class="inline-flex items-center px-2 py-0.5 text-[9px] font-bold text-red-700 bg-red-100 rounded-full border border-red-200 uppercase dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/20">
                                         Mati
                                     </span>
                                 @endif
@@ -108,8 +108,8 @@
 
     @if($isOpen)
     <div class="fixed inset-0 z-[999] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" wire:click="closeModal"></div>
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
+            <div class="fixed inset-0 bg-gray-500/40 backdrop-blur-[2px] transition-opacity" aria-hidden="true" wire:click="closeModal"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <div class="relative inline-block align-bottom bg-white dark:bg-gray-800 rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-gray-200 dark:border-gray-700">
                 <form wire:submit.prevent="store">
@@ -117,7 +117,7 @@
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white" id="modal-title">
                             {{ $selected_id ? 'Edit Harga Item' : 'Tambah Harga Item' }}
                         </h3>
-                        <button type="button" wire:click="closeModal" class="text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <button type="button" wire:click="closeModal" class="text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300 focus:outline-none">
                             <span class="sr-only">Close</span>
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -164,7 +164,7 @@
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Harga Satuan (Sebelum PPN)</label>
                                 <div class="relative">
-                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 sm:text-sm">Rp</span>
+                                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500 dark:text-gray-400 sm:text-sm">Rp</span>
                                     <input wire:model="price" type="number" step="0.01" class="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent sm:text-sm">
                                 </div>
                                 @error('price') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
@@ -192,7 +192,7 @@
                         </div>
 
                         <div class="flex items-center mt-4">
-                            <input wire:model="is_active" type="checkbox" id="is_active" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded transition duration-150 ease-in-out cursor-pointer">
+                            <input wire:model="is_active" type="checkbox" id="is_active" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded transition duration-150 ease-in-out cursor-pointer">
                             <label for="is_active" class="ml-2 block text-sm text-gray-900 dark:text-gray-300 cursor-pointer">Harga Aktif</label>
                         </div>
                     </div>

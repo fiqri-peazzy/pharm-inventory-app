@@ -115,8 +115,8 @@
     <!-- Modal Form -->
     @if($showModal)
         <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
+                <div class="fixed inset-0 bg-gray-500/40 backdrop-blur-[2px] transition-opacity" aria-hidden="true"
                     wire:click="$set('showModal', false)"></div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
@@ -215,7 +215,7 @@
                                         <label
                                             class="flex items-center gap-2 p-2 border border-gray-100 rounded-lg hover:bg-gray-50 cursor-pointer transition-all dark:border-gray-800 dark:hover:bg-white/[0.03]">
                                             <input type="checkbox" wire:model="selectedRoles" value="{{ $role->name }}"
-                                                class="w-4 h-4 text-brand-600 border-gray-300 rounded focus:ring-brand-500 transition-all">
+                                                class="w-4 h-4 text-brand-600 border-gray-300 rounded focus:ring-brand-500 transition-all dark:border-gray-700 dark:bg-gray-800">
                                             <span
                                                 class="text-xs font-bold text-gray-700 uppercase tracking-tight dark:text-gray-300">{{ str_replace('-', ' ', $role->name) }}</span>
                                         </label>
@@ -227,7 +227,7 @@
 
                             <div class="col-span-2 flex items-center gap-2 pt-2">
                                 <input type="checkbox" wire:model="is_active" id="user_is_active"
-                                    class="w-4 h-4 text-brand-600 border-gray-300 rounded focus:ring-brand-500 transition-all">
+                                    class="w-4 h-4 text-brand-600 border-gray-300 rounded focus:ring-brand-500 transition-all dark:border-gray-700 dark:bg-gray-800">
                                 <label for="user_is_active" class="text-sm font-bold text-gray-700 dark:text-gray-300">User ini aktif</label>
                             </div>
                         </div>

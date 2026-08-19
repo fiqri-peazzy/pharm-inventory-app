@@ -282,21 +282,21 @@
         <div x-show="open" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="open = false"
-            class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+            class="fixed inset-0 bg-slate-900/35 backdrop-blur-[2px] transition-opacity"></div>
 
         <!-- Modal Content Container -->
-        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0">
+        <div class="flex items-center justify-center min-h-screen p-4 text-center sm:p-0" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
             <div x-show="open" x-transition:enter="ease-out duration-300"
                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
                 x-transition:leave="ease-in duration-200"
                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                class="relative inline-block w-full max-w-2xl text-left bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all align-middle">
+                class="relative inline-block w-full max-w-2xl text-left bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-gray-800 overflow-hidden transform transition-all align-middle">
 
                 <!-- Header -->
                 <div
-                    class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center text-xs uppercase font-black tracking-widest text-slate-500">
+                    class="px-6 py-4 bg-slate-50 dark:bg-white/[0.02] border-b border-slate-100 dark:border-gray-800 flex justify-between items-center text-xs uppercase font-black tracking-widest text-slate-500 dark:text-gray-400">
                     <div class="flex items-center gap-2">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2.5">
@@ -306,7 +306,7 @@
                         Tambah Item Pesanan Manual
                     </div>
                     <button @click="open = false"
-                        class="text-slate-400 hover:text-slate-600 transition-colors bg-white w-8 h-8 rounded-lg border border-slate-100 flex items-center justify-center shadow-sm">
+                        class="text-slate-400 hover:text-slate-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors bg-white dark:bg-gray-800 w-8 h-8 rounded-lg border border-slate-100 dark:border-gray-700 flex items-center justify-center shadow-sm">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2.5">
                             <path d="M18 6L6 18M6 6l12 12"></path>
@@ -318,9 +318,9 @@
                     <!-- Search Input -->
                     <div class="relative">
                         <input type="text" wire:model.live.debounce.300ms="itemSearch"
-                            class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 font-bold text-slate-700 shadow-inner"
+                            class="w-full pl-12 pr-4 py-4 bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 font-bold text-slate-700 dark:text-white shadow-inner"
                             placeholder="Cari nama barang atau kode...">
-                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="3">
                                 <circle cx="11" cy="11" r="8"></circle>
@@ -331,7 +331,7 @@
 
                     <!-- Results List -->
                     <div
-                        class="max-h-[400px] overflow-y-auto rounded-xl border border-slate-100 divide-y divide-slate-100 bg-white shadow-sm">
+                        class="max-h-[400px] overflow-y-auto rounded-xl border border-slate-100 dark:border-gray-800 divide-y divide-slate-100 dark:divide-gray-800 bg-white dark:bg-gray-900 shadow-sm">
                         <!-- Loading State -->
                         <div wire:loading wire:target="itemSearch" class="p-16 text-center">
                             <svg class="animate-spin h-8 w-8 text-brand-500 mx-auto" xmlns="http://www.w3.org/2000/svg"
@@ -342,7 +342,7 @@
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                 </path>
                             </svg>
-                            <p class="text-[10px] text-slate-400 mt-4 uppercase font-black tracking-widest italic">
+                            <p class="text-[10px] text-slate-400 dark:text-gray-500 mt-4 uppercase font-black tracking-widest italic">
                                 Mencari Data...</p>
                         </div>
 
@@ -350,32 +350,32 @@
                         <div wire:loading.remove wire:target="itemSearch">
                             @forelse($searchResults as $item)
                                 <button wire:click="addItem({{ $item->id }})"
-                                    class="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-all text-left group">
+                                    class="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-all text-left group">
                                     <div class="flex items-center gap-4">
                                         <div
-                                            class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center font-black text-lg border border-emerald-100 shadow-sm shadow-emerald-50">
+                                            class="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center font-black text-lg border border-emerald-100 dark:border-emerald-800 shadow-sm shadow-emerald-50 dark:shadow-none">
                                             {{ substr($item->name, 0, 1) }}
                                         </div>
                                         <div>
                                             <div
-                                                class="font-bold text-slate-800 group-hover:text-emerald-700 text-base leading-tight">
+                                                class="font-bold text-slate-800 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-400 text-base leading-tight">
                                                 {{ $item->name }}</div>
                                             <div
-                                                class="text-[9px] text-slate-400 uppercase font-black tracking-widest mt-1 flex items-center gap-2">
+                                                class="text-[9px] text-slate-400 dark:text-gray-500 uppercase font-black tracking-widest mt-1 flex items-center gap-2">
                                                 <span
-                                                    class="px-1.5 py-0.5 bg-slate-100 rounded text-slate-500">{{ $item->code }}</span>
+                                                    class="px-1.5 py-0.5 bg-slate-100 dark:bg-gray-800 rounded text-slate-500 dark:text-gray-400">{{ $item->code }}</span>
                                                 <span class="text-indigo-400">•</span>
                                                 <span>{{ $item->unit?->name ?? 'N/A' }}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div
-                                        class="text-[10px] font-black text-emerald-600 bg-white border border-emerald-200 px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all uppercase tracking-widest shadow-sm hover:bg-emerald-600 hover:text-white hover:border-emerald-600">
+                                        class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 bg-white dark:bg-gray-800 border border-emerald-200 dark:border-emerald-700 px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all uppercase tracking-widest shadow-sm hover:bg-emerald-600 hover:text-white hover:border-emerald-600">
                                         TAMBAHKAN
                                     </div>
                                 </button>
                             @empty
-                                <div class="p-16 text-center text-slate-300">
+                                <div class="p-16 text-center text-slate-300 dark:text-gray-600">
                                     @if(strlen($itemSearch) >= 2)
                                         <svg class="w-12 h-12 mx-auto opacity-20 mb-4" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -401,7 +401,7 @@
 
                 <!-- Footer -->
                 <div
-                    class="px-6 py-4 bg-slate-50 border-t border-slate-100 text-[9px] text-slate-400 font-bold uppercase tracking-widest italic">
+                    class="px-6 py-4 bg-slate-50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-gray-800 text-[9px] text-slate-400 dark:text-gray-500 font-bold uppercase tracking-widest italic">
                     * Menampilkan data master barang aktif
                 </div>
             </div>
