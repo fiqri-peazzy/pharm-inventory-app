@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Response;
 
@@ -32,10 +33,12 @@ class ManualBookController extends Controller
      */
     private function generatePdf()
     {
+        $setting = Setting::current();
+
         $data = [
             'generated_at' => now()->translatedFormat('d F Y'),
-            'hospital_name' => 'RSUD Bumi Panua',
-            'app_name' => 'Medivault',
+            'hospital_name' => $setting->hospital_name,
+            'app_name' => $setting->app_name,
             'version' => '1.0',
         ];
 

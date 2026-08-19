@@ -11,6 +11,10 @@
                     <input type="text" wire:model="appName" class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
                 </div>
                 <div>
+                    <label class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1">Nama Rumah Sakit/Instansi (untuk dokumen)</label>
+                    <input type="text" wire:model="hospitalName" class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
+                </div>
+                <div>
                     <label class="block text-[11px] font-black text-gray-400 uppercase tracking-wider ml-1 mb-1">Nomor Telepon</label>
                     <input type="text" wire:model="appPhone" class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all">
                 </div>

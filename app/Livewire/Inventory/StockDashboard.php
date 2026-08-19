@@ -27,6 +27,10 @@ class StockDashboard extends Component
     public $distributionChart = [];
     public $trendChart = [];
 
+    // Health Ratio
+    public $healthRatio = 0;
+    public $healthStatus = 'OPTIMAL';
+
     public function mount($warehouseId = null)
     {
         $this->warehouseId = $warehouseId;
@@ -50,6 +54,25 @@ class StockDashboard extends Component
         }
         
         $this->loadCharts();
+        $this->loadHealthRatio();
+    }
+
+    public function loadHealthRatio()
+    {
+        $totalItems = $this->summary['total_items'] ?? 0;
+        $problemCount = ($this->summary['low_stock_count'] ?? 0) + ($this->summary['near_expired_count'] ?? 0);
+
+        $this->healthRatio = $totalItems > 0
+            ? max(0, round((($totalItems - $problemCount) / $totalItems) * 100, 1))
+            : 100;
+
+        if ($this->healthRatio >= 90) {
+            $this->healthStatus = 'OPTIMAL';
+        } elseif ($this->healthRatio >= 70) {
+            $this->healthStatus = 'PERLU PERHATIAN';
+        } else {
+            $this->healthStatus = 'KRITIS';
+        }
     }
 
     public function loadSummary()
@@ -192,8 +215,37 @@ class StockDashboard extends Component
             ->get()
             ->toArray();
             
-        // Trend Chart (Example for last 7 days)
-        // Implementation for line chart data...
+        // Trend Chart (Distribusi keluar per hari, 7 hari terakhir)
+        $startDate = Carbon::now()->subDays(6)->startOfDay();
+        $endDate = Carbon::now()->endOfDay();
+
+        $trendQuery = \App\Models\StockCard::where('transaction_date', '>=', $startDate)
+            ->where('transaction_date', '<=', $endDate);
+
+        if (!$this->isGlobal) {
+            $trendQuery->where('warehouse_id', $this->warehouseId);
+        }
+
+        $rows = $trendQuery->select(
+                DB::raw('DATE(transaction_date) as day'),
+                DB::raw('SUM(qty_out) as total_out')
+            )
+            ->groupBy('day')
+            ->pluck('total_out', 'day');
+
+        $categories = [];
+        $series = [];
+        for ($i = 0; $i < 7; $i++) {
+            $date = Carbon::now()->subDays(6 - $i);
+            $key = $date->format('Y-m-d');
+            $categories[] = $date->translatedFormat('d M');
+            $series[] = (int) ($rows[$key] ?? 0);
+        }
+
+        $this->trendChart = [
+            'categories' => $categories,
+            'series' => $series,
+        ];
     }
 
     public function getTotalValueFormattedProperty()

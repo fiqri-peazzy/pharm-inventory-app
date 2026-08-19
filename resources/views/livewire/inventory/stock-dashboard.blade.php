@@ -328,6 +328,13 @@
                 <div id="distributionChart" class="min-h-[280px]" wire:ignore></div>
             </div>
 
+            <!-- Chart: Tren Distribusi 7 Hari Terakhir -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 h-fit">
+                <h3 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-6">Tren Distribusi
+                    Barang (7 Hari Terakhir)</h3>
+                <div id="trendChart" class="min-h-[200px]" wire:ignore></div>
+            </div>
+
             <!-- Global Only: Daftar Gudang -->
             @if ($isGlobal)
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden h-fit">
@@ -374,9 +381,9 @@
                 <div class="relative z-10">
                     <h4 class="text-white/40 text-[9px] font-black uppercase tracking-[0.2em] mb-3">Health Ratio</h4>
                     <div class="flex items-baseline gap-2 mb-4">
-                        <span class="text-white text-3xl font-black italic tracking-tighter">94.2%</span>
+                        <span class="text-white text-3xl font-black italic tracking-tighter">{{ number_format($healthRatio, 1) }}%</span>
                         <span
-                            class="text-emerald-400 text-[10px] font-bold uppercase tracking-widest italic animate-pulse">OPTIMAL</span>
+                            class="text-emerald-400 text-[10px] font-bold uppercase tracking-widest italic animate-pulse">{{ $healthStatus }}</span>
                     </div>
                     <p class="text-[9px] text-white/50 leading-relaxed font-medium uppercase tracking-[0.1em]">Sistem
                         otomatis memantau ketersediaan barang di seluruh instalasi farmasi secara real-time.</p>
@@ -475,6 +482,62 @@
                     }
                 };
                 new ApexCharts(chartEl, options).render();
+
+                const trendData = @json($trendChart);
+                const trendEl = document.querySelector("#trendChart");
+                if (trendEl && trendData && trendData.series) {
+                    trendEl.innerHTML = '';
+                    const trendOptions = {
+                        series: [{
+                            name: 'Barang Keluar',
+                            data: trendData.series
+                        }],
+                        chart: {
+                            type: 'line',
+                            height: 200,
+                            fontFamily: 'Inter, sans-serif',
+                            toolbar: {
+                                show: false
+                            }
+                        },
+                        colors: ['#6366f1'],
+                        stroke: {
+                            curve: 'smooth',
+                            width: 3
+                        },
+                        xaxis: {
+                            categories: trendData.categories,
+                            labels: {
+                                style: {
+                                    fontSize: '9px',
+                                    fontWeight: 700
+                                }
+                            }
+                        },
+                        yaxis: {
+                            labels: {
+                                style: {
+                                    fontSize: '9px',
+                                    fontWeight: 700
+                                }
+                            }
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        grid: {
+                            strokeDashArray: 4
+                        },
+                        tooltip: {
+                            y: {
+                                formatter: function(val) {
+                                    return new Intl.NumberFormat('id-ID').format(val) + ' unit';
+                                }
+                            }
+                        }
+                    };
+                    new ApexCharts(trendEl, trendOptions).render();
+                }
             }
         </script>
     @endpush

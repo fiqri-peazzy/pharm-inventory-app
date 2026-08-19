@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\ActivityLog;
 use App\Models\User;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -118,8 +121,54 @@ class AuthController extends Controller
             'email' => 'required|email|exists:users,email',
         ]);
 
-        // TODO: Implement email token logic
-        
-        return back()->with('status', 'Link reset password telah dikirim ke email Anda.');
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', 'Link reset password telah dikirim ke email Anda.');
+        }
+
+        throw ValidationException::withMessages([
+            'email' => 'Gagal mengirim link reset password. Silakan coba lagi.',
+        ]);
+    }
+
+    public function showNewPassword(Request $request, string $token)
+    {
+        return view('pages.auth.new-password', [
+            'token' => $token,
+            'email' => $request->query('email'),
+        ]);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()->route('login')->with('status', 'Password berhasil direset. Silakan login dengan password baru Anda.');
+        }
+
+        throw ValidationException::withMessages([
+            'email' => 'Token reset password tidak valid atau sudah kedaluwarsa.',
+        ]);
     }
 }
