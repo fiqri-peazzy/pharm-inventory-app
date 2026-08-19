@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Manajemen Role & Hak Akses')
+
 @section('content')
     <div class="p-6">
         <div class="mb-6">

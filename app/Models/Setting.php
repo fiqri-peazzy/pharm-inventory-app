@@ -33,4 +33,19 @@ class Setting extends Model
             ]
         );
     }
+
+    /**
+     * Safe accessor for the configured app name, used in places (like the
+     * base layout's <title> tag) that render on every single page — falls
+     * back to config('app.name') instead of throwing if the settings table
+     * isn't reachable yet (fresh install before migrations, test DB, etc.).
+     */
+    public static function appName(): string
+    {
+        try {
+            return static::current()->app_name ?: config('app.name', 'Sistem Farmasi');
+        } catch (\Throwable $e) {
+            return config('app.name', 'Sistem Farmasi');
+        }
+    }
 }

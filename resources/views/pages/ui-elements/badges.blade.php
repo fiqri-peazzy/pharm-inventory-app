@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'UI Elements - Badges')
+
 @section('content')
     <x-common.page-breadcrumb pageTitle="Badges" />
 

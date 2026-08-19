@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Basic Tables')
+
 @section('content')
     <x-common.page-breadcrumb pageTitle="From Elements" />
     <div class="space-y-6">

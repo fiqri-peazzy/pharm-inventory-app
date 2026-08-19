@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Master Satuan Item')
+
 @section('content')
     <x-common.page-breadcrumb pageTitle="Satuan Item" />
 

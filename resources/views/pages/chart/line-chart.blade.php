@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Grafik Garis')
+
 @section('content')
     <x-common.page-breadcrumb pageTitle="Line chart" />
     <div class="space-y-6">

@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Neraca Saldo (Trial Balance)')
+
 @section('content')
     <div class="p-6">
         <div class="mb-6">

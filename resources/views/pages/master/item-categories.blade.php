@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Master Kategori Item')
+
 @section('content')
     <x-common.page-breadcrumb pageTitle="Kategori Item" />
 

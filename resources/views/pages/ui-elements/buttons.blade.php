@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'UI Elements - Buttons')
+
 @php
     use Illuminate\Support\HtmlString;
 

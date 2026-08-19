@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Log Aktivitas Pengguna')
+
 @section('content')
     <div class="p-6">
         <div class="mb-6">

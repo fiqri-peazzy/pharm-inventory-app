@@ -1,5 +1,7 @@
 @extends('layouts.fullscreen-layout')
 
+@section('title', 'Halaman Tidak Ditemukan')
+
 @section('content')
 @php
     $currentYear = date('Y');

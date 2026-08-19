@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Master Supplier')
+
 @section('content')
     <x-common.page-breadcrumb pageTitle="Daftar Supplier" />
 

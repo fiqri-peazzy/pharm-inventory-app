@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Edit Penerimaan Barang')
+
 @section('content')
 <div class="p-6">
     <div class="mb-6 flex items-center justify-between">

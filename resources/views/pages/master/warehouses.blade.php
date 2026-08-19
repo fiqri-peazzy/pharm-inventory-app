@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Master Gudang & Depo')
+
 @section('content')
     <x-common.page-breadcrumb pageTitle="Manajemen Gudang & Depo" />
 

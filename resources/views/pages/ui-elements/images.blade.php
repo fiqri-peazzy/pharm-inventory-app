@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'UI Elements - Images')
+
 @php
     $images = [
         [

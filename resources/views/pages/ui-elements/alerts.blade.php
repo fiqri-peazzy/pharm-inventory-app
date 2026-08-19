@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'UI Elements - Alerts')
+
 @section('content')
     <x-common.page-breadcrumb pageTitle="Alerts" />
 

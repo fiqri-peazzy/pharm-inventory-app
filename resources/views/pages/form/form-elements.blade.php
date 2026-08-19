@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Form Elements')
+
 @section('content')
     <x-common.page-breadcrumb pageTitle="From Elements" />
     <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">

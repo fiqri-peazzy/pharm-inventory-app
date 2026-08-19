@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Optimasi Batas Stok')
+
 @section('content')
 <div class="p-6">
     <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">

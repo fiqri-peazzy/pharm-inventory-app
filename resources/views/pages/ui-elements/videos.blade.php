@@ -1,6 +1,8 @@
 
 @extends('layouts.app')
 
+@section('title', 'UI Elements - Videos')
+
 @section('content')
     {{-- Page Breadcrumb --}}
     <x-common.page-breadcrumb pageTitle="Videos" />

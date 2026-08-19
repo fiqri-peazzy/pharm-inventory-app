@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Master Item Obat & BMHP')
+
 @section('content')
     <x-common.page-breadcrumb pageTitle="Daftar Obat & BMHP" />
 
