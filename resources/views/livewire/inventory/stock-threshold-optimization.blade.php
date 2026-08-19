@@ -197,17 +197,48 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <button
-                                wire:click="applyThreshold({{ $row['item']->id }}, {{ $row['suggested_min'] }}, {{ $row['suggested_max'] }}, {{ $row['suggested_rp'] }}, {{ $row['adu'] }})"
-                                class="p-2 text-brand-600 hover:bg-brand-50 rounded-lg transition-all dark:text-brand-400 dark:hover:bg-brand-500/15"
-                                title="Terapkan Saran">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2.5">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                            </button>
+                            <div class="flex items-center justify-end gap-1">
+                                <button wire:click="askAi({{ $row['item']->id }}, {{ $row['current_stock'] }}, {{ $row['current_min'] === '-' ? 0 : $row['current_min'] }}, {{ $row['adu'] }}, {{ $row['suggested_rp'] }}, {{ $row['suggested_max'] }})"
+                                    wire:loading.attr="disabled" wire:target="askAi({{ $row['item']->id }}, {{ $row['current_stock'] }}, {{ $row['current_min'] === '-' ? 0 : $row['current_min'] }}, {{ $row['adu'] }}, {{ $row['suggested_rp'] }}, {{ $row['suggested_max'] }})"
+                                    class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all dark:text-indigo-400 dark:hover:bg-indigo-500/15 disabled:opacity-50"
+                                    title="Tanya rekomendasi AI">
+                                    <div wire:loading wire:target="askAi({{ $row['item']->id }}, {{ $row['current_stock'] }}, {{ $row['current_min'] === '-' ? 0 : $row['current_min'] }}, {{ $row['adu'] }}, {{ $row['suggested_rp'] }}, {{ $row['suggested_max'] }})">
+                                        <svg class="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                    </div>
+                                    <div wire:loading.remove wire:target="askAi({{ $row['item']->id }}, {{ $row['current_stock'] }}, {{ $row['current_min'] === '-' ? 0 : $row['current_min'] }}, {{ $row['adu'] }}, {{ $row['suggested_rp'] }}, {{ $row['suggested_max'] }})">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M3 12h2m14 0h2M5.6 18.4l1.4-1.4m10-10l1.4-1.4" />
+                                            <circle cx="12" cy="12" r="4" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                </button>
+                                <button
+                                    wire:click="applyThreshold({{ $row['item']->id }}, {{ $row['suggested_min'] }}, {{ $row['suggested_max'] }}, {{ $row['suggested_rp'] }}, {{ $row['adu'] }})"
+                                    class="p-2 text-brand-600 hover:bg-brand-50 rounded-lg transition-all dark:text-brand-400 dark:hover:bg-brand-500/15"
+                                    title="Terapkan Saran">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
                         </td>
                     </tr>
+                    @if (isset($aiRecommendations[$row['item']->id]))
+                        <tr class="bg-indigo-50/50 dark:bg-indigo-500/[0.06]">
+                            <td colspan="6" class="px-6 py-3">
+                                <div class="ai-fade-up flex items-start gap-2.5">
+                                    <div class="ai-glow-badge w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-brand-500 flex items-center justify-center shrink-0 mt-0.5">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M3 12h2m14 0h2M5.6 18.4l1.4-1.4m10-10l1.4-1.4" /><circle cx="12" cy="12" r="4" /></svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-indigo-500 dark:text-indigo-400 mb-0.5">Rekomendasi AI</p>
+                                        <p class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">{{ $aiRecommendations[$row['item']->id]['text'] }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    @endif
                 @empty
                     <tr>
                         <td colspan="6" class="px-6 py-12 text-center">

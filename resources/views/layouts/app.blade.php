@@ -147,6 +147,8 @@ window.addEventListener('resize', checkMobile);">
 @stack('scripts')
 {{-- Floating Manual Book Button --}}
 <x-manual-book-float />
+@livewire('a-i.daily-briefing-modal')
+@livewire('a-i.chat-assistant')
 @livewireScripts
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>

@@ -76,6 +76,11 @@ MAIL_PASSWORD=                            # WAJIB
 MAIL_ENCRYPTION=ssl
 MAIL_FROM_ADDRESS="noreply@domain-anda.com"
 MAIL_FROM_NAME="${APP_NAME}"
+
+# Fitur AI (pop-up ringkasan harian, rekomendasi restock, chat assistant).
+# Dapatkan API key GRATIS di https://aistudio.google.com/apikey
+GEMINI_API_KEY=                           # WAJIB jika ingin fitur AI aktif
+GEMINI_MODEL=gemini-2.5-flash
 ```
 
 cPanel biasanya menyediakan SMTP lokal (`mail.domain-anda.com`, port 465/587) begitu Anda membuat email account di **cPanel > Email Accounts** — pakai itu, bukan Gmail SMTP untuk email transaksional aplikasi.
@@ -107,7 +112,7 @@ Di **cPanel > MultiPHP Manager**, set PHP version untuk domain ini ke **PHP 8.2*
 
 ## 5. Cron job (WAJIB untuk queue & scheduler)
 
-Aplikasi pakai `QUEUE_CONNECTION=database` (import Excel, dsb kemungkinan queued job) dan Laravel scheduler. Tambahkan di **cPanel > Cron Jobs**:
+Aplikasi pakai `QUEUE_CONNECTION=database` (import Excel, dsb kemungkinan queued job) dan Laravel scheduler — termasuk generate ringkasan AI harian tiap jam 01:00 (`ai:generate-daily-briefing`). Tambahkan di **cPanel > Cron Jobs**:
 
 ```
 * * * * * cd /home/USER/pharm_app && php artisan schedule:run >> /dev/null 2>&1

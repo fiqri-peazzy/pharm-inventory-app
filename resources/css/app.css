@@ -281,6 +281,35 @@
   @apply bg-brand-50 group-hover:bg-brand-100 dark:bg-brand-500/15 dark:group-hover:bg-brand-500/20;
 }
 
+/* Subtle motion used by AI features (briefing modal, restock advisor, chat
+   assistant) — kept minimal and slow so it reads as "polished", not flashy. */
+@keyframes ai-fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes ai-glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(99 102 241 / 0.35); }
+  50% { box-shadow: 0 0 0 8px rgb(99 102 241 / 0); }
+}
+@keyframes ai-shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+.ai-fade-up {
+  animation: ai-fade-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.ai-glow-badge {
+  animation: ai-glow-pulse 2.4s ease-in-out infinite;
+}
+.ai-shimmer-text {
+  background: linear-gradient(90deg, currentColor 40%, rgb(255 255 255 / 0.9) 50%, currentColor 60%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: ai-shimmer 1.8s linear infinite;
+}
+
 @utility no-scrollbar {
   /* Chrome, Safari and Opera */
   &::-webkit-scrollbar {

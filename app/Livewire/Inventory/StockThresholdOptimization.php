@@ -7,6 +7,7 @@ use App\Models\Item;
 use App\Models\Warehouse;
 use App\Models\ItemWarehouseSetting;
 use App\Services\StockSuggestionService;
+use App\Services\AI\RestockAdvisorService;
 use Livewire\WithPagination;
 
 class StockThresholdOptimization extends Component
@@ -20,6 +21,10 @@ class StockThresholdOptimization extends Component
     public $editMin = '';
     public $editMax = '';
     public $editRP = '';
+
+    /** @var array<int, array{text:string, ai_generated:bool}> */
+    public array $aiRecommendations = [];
+    public ?int $aiLoadingItemId = null;
 
     protected $listeners = ['refreshSuggestions' => '$refresh'];
 
@@ -66,6 +71,29 @@ class StockThresholdOptimization extends Component
         $this->editMin = $currentMin === '-' ? 0 : $currentMin;
         $this->editMax = $currentMax === '-' ? 0 : $currentMax;
         $this->editRP = $currentRP === '-' ? 0 : $currentRP;
+    }
+
+    public function askAi($itemId, $currentStock, $currentMin, $adu, $suggestedRp, $suggestedMax)
+    {
+        $this->aiLoadingItemId = $itemId;
+
+        $item = Item::with(['category', 'unit'])->find($itemId);
+        if (!$item) {
+            $this->aiLoadingItemId = null;
+            return;
+        }
+
+        $service = app(RestockAdvisorService::class);
+        $result = $service->advise($item, $this->warehouseId, [
+            'current_stock' => $currentStock,
+            'current_min' => $currentMin,
+            'adu' => $adu,
+            'suggested_rp' => $suggestedRp,
+            'suggested_max' => $suggestedMax,
+        ]);
+
+        $this->aiRecommendations[$itemId] = $result;
+        $this->aiLoadingItemId = null;
     }
 
     public function cancelEdit()
