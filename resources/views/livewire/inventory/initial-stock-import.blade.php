@@ -141,7 +141,7 @@
                                 <!-- Warning box -->
                                 <div
                                     class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-3 rounded-lg text-xs text-amber-700 dark:text-amber-300">
-                                    <strong>⚠️ Perhatian:</strong> Pastikan data pada template sudah benar sebelum
+                                    <strong>Perhatian:</strong> Pastikan data pada template sudah benar sebelum
                                     diproses.
                                     Setiap baris akan dibuatkan transaksi <strong>Penerimaan Barang</strong> resmi ke
                                     Gudang Utama.

@@ -17,13 +17,13 @@
                 class="rounded-xl border border-gray-100 bg-white py-2.5 px-4 text-sm outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-gray-900 shadow-sm">
                 <option value="">Semua Status</option>
                 <option value="draft">Draft</option>
-                <option value="submitted">Submitted 📝</option>
-                <option value="pending_director">Pending Direktur 🏛️</option>
-                <option value="approved">Approved ✓</option>
-                <option value="sent">Sent 🚀</option>
+                <option value="submitted">Submitted</option>
+                <option value="pending_director">Pending Direktur</option>
+                <option value="approved">Approved</option>
+                <option value="sent">Sent</option>
                 <option value="partial_received">Partial Received</option>
-                <option value="completed">Completed ✓</option>
-                <option value="cancelled">Cancelled ✕</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
             </select>
         </div>
 

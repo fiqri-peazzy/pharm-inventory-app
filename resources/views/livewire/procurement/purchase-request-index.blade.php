@@ -180,7 +180,7 @@
                 
                 <div class="flex items-center gap-3">
                     <button wire:click="combineSelected" class="px-6 py-2.5 bg-brand-500 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/20">
-                        Gabung ke PO 🔗
+                        Gabung ke PO
                     </button>
                     <button wire:click="$set('selectedPRs', [])" class="px-4 py-2.5 bg-white/5 text-gray-400 hover:text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all">
                         Batal

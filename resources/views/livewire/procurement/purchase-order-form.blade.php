@@ -39,8 +39,8 @@
                         <select wire:model.live="sp_type"
                             class="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm focus:border-brand-500 outline-none dark:border-gray-800 dark:bg-gray-900 font-bold {{ $sp_type !== 'reguler' ? 'text-red-600 bg-red-50' : 'text-gray-700' }}">
                             <option value="reguler">SP REGULER</option>
-                            <option value="narkotika">SP NARKOTIKA 🛡️</option>
-                            <option value="psikotropika">SP PSIKOTROPIKA 🛡️</option>
+                            <option value="narkotika">SP NARKOTIKA</option>
+                            <option value="psikotropika">SP PSIKOTROPIKA</option>
                         </select>
                         @if($sp_type !== 'reguler')
                             <span class="text-[9px] text-red-500 mt-1 block font-bold italic tracking-tighter">* Membutuhkan
@@ -128,7 +128,7 @@
                 </button>
                 <button wire:click="save('submitted')" wire:loading.attr="disabled"
                     class="w-full rounded-xl bg-brand-500 py-4 text-xs font-black uppercase tracking-widest text-white hover:bg-brand-600 shadow-lg shadow-brand-500/20">
-                    <span wire:loading.remove wire:target="save('submitted')">Submit Pesanan 🛡️</span>
+                    <span wire:loading.remove wire:target="save('submitted')">Submit Pesanan</span>
                     <span wire:loading wire:target="save('submitted')">Mengirim...</span>
                 </button>
             </div>

@@ -205,7 +205,7 @@
                             </button>
                             <button wire:click="approve"
                                 class="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 rounded-xl bg-green-600 hover:bg-green-700 text-xs font-black uppercase tracking-widest text-white shadow-lg shadow-green-600/20 transition-all">
-                                Setujui & Approve ✓
+                                Setujui & Approve
                             </button>
                         @endif
                     </div>

@@ -10,10 +10,10 @@
                 </svg>
             </div>
             <div class="flex-1">
-                <h3 class="text-lg font-black text-gray-900 mb-2 dark:text-white">📊 Panduan Optimasi Batas Stok</h3>
+                <h3 class="text-lg font-black text-gray-900 mb-2 dark:text-white">Panduan Optimasi Batas Stok</h3>
                 <div class="grid md:grid-cols-2 gap-4 text-sm">
                     <div class="space-y-2">
-                        <p class="font-semibold text-brand-700 dark:text-brand-400">🎯 Cara Menggunakan:</p>
+                        <p class="font-semibold text-brand-700 dark:text-brand-400">Cara Menggunakan:</p>
                         <ul class="space-y-1 text-gray-700 dark:text-gray-300">
                             <li class="flex items-start gap-2">
                                 <span class="text-brand-500 font-bold">1.</span>
@@ -21,7 +21,7 @@
                             </li>
                             <li class="flex items-start gap-2">
                                 <span class="text-brand-500 font-bold">2.</span>
-                                <span><strong>Gunakan saran sistem</strong> dengan klik tombol ✓</span>
+                                <span><strong>Gunakan saran sistem</strong> dengan klik tombol centang</span>
                             </li>
                             <li class="flex items-start gap-2">
                                 <span class="text-brand-500 font-bold">3.</span>
@@ -30,7 +30,7 @@
                         </ul>
                     </div>
                     <div class="space-y-2">
-                        <p class="font-semibold text-brand-700 dark:text-brand-400">📖 Penjelasan Istilah:</p>
+                        <p class="font-semibold text-brand-700 dark:text-brand-400">Penjelasan Istilah:</p>
                         <ul class="space-y-1 text-gray-700 text-xs dark:text-gray-300">
                             <li><strong class="text-amber-600 dark:text-amber-400">RP (Reorder Point)</strong>: Titik pemesanan ulang = (ADU
                                 × 7 hari) + Safety Stock</li>

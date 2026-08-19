@@ -67,7 +67,7 @@
                     <span wire:loading wire:target="save('draft')">Memproses...</span>
                 </button>
                 <button wire:click="save('submitted')" wire:loading.attr="disabled" class="flex-[1.5] rounded-xl bg-indigo-600 py-3.5 text-xs font-black uppercase tracking-widest text-white hover:bg-indigo-700 shadow-lg shadow-indigo-600/20 transition-all disabled:opacity-50">
-                    <span wire:loading.remove wire:target="save('submitted')">Submit PR 🚀</span>
+                    <span wire:loading.remove wire:target="save('submitted')">Submit PR</span>
                     <span wire:loading wire:target="save('submitted')">Mengirim...</span>
                 </button>
             </div>
