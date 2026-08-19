@@ -85,12 +85,15 @@
             const savedTheme = localStorage.getItem('theme');
             const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
             const theme = savedTheme || systemTheme;
+            // This runs in <head>, before <body> exists in the DOM yet — guard
+            // against it (Alpine's theme store applies the same classes to
+            // body once it boots, right after the DOM is ready).
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark');
-                document.body.classList.add('dark', 'bg-gray-900');
+                document.body?.classList.add('dark', 'bg-gray-900');
             } else {
                 document.documentElement.classList.remove('dark');
-                document.body.classList.remove('dark', 'bg-gray-900');
+                document.body?.classList.remove('dark', 'bg-gray-900');
             }
         })();
     </script>

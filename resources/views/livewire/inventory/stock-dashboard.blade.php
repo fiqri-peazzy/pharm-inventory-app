@@ -399,10 +399,12 @@
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
         <script>
+            // 'livewire:navigated' fires on the initial page load AND on every
+            // subsequent Livewire navigation, so a single listener is enough.
+            // Registering 'livewire:initialized' as well caused both to fire
+            // together on first load, double-initializing the charts and
+            // racing to destroy/rebuild the same DOM nodes mid-render.
             document.addEventListener('livewire:navigated', () => {
-                initDashboardCharts();
-            });
-            document.addEventListener('livewire:initialized', () => {
                 initDashboardCharts();
             });
 
@@ -422,7 +424,23 @@
                 return document.documentElement.classList.contains('dark');
             }
 
+            let __chartsInitInProgress = false;
+
             function initDashboardCharts() {
+                // Guard against overlapping calls (e.g. the dark-mode observer
+                // firing while a previous render is still in flight) — ApexCharts
+                // throws if a chart's DOM node is torn down mid-render.
+                if (__chartsInitInProgress) return;
+                __chartsInitInProgress = true;
+
+                try {
+                    __initDashboardChartsInner();
+                } finally {
+                    __chartsInitInProgress = false;
+                }
+            }
+
+            function __initDashboardChartsInner() {
                 // Destroy any previously rendered chart instances before re-rendering.
                 __dashboardCharts.forEach(c => {
                     try { c.destroy(); } catch (e) {}

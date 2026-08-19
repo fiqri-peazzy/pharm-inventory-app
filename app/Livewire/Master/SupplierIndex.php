@@ -6,11 +6,13 @@ use App\Models\Supplier;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 
 class SupplierIndex extends Component
 {
     use WithPagination;
 
+    #[Url(as: 'search', history: false)]
     public $search = '';
     public $isOpen = false;
     public $isEdit = false;

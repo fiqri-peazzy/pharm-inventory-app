@@ -9,6 +9,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use App\Imports\ItemImport;
 use App\Exports\ItemExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -17,6 +18,7 @@ class ItemIndex extends Component
 {
     use WithPagination, WithFileUploads;
 
+    #[Url(as: 'search', history: false)]
     public $search = '';
     public $isOpen = false;
     public $isImportModalOpen = false;
