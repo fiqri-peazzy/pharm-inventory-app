@@ -37,9 +37,11 @@ class TemplateStockSheet implements FromArray, WithTitle, WithStyles, WithColumn
             'invoice_date',    // K - Tanggal faktur YYYY-MM-DD
         ];
 
-        // Leave 50 empty rows for staff to fill
+        // Leave 50 empty rows for staff to fill. Nothing is pre-filled here on
+        // purpose — a pre-filled invoice_date used to get dragged/copied down
+        // by spreadsheet apps into blank rows, making the sheet confusing.
         for ($i = 0; $i < 50; $i++) {
-            $rows[] = ['', '', '', '', '', '', '', 0, 0, '', date('Y-m-d')];
+            $rows[] = ['', '', '', '', '', '', '', '', '', '', ''];
         }
 
         return $rows;

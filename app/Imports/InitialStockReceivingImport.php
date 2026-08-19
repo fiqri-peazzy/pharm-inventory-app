@@ -10,12 +10,14 @@ class InitialStockReceivingImport implements WithMultipleSheets
     public $skippedCount = 0;
     public $receivingCount = 0;
     public $errors = [];
+    public $rowResults = [];
 
     protected $sheetImporter;
 
-    public function __construct()
+    public function __construct(bool $dryRun = false)
     {
         $this->sheetImporter = new \App\Imports\Sheets\StockReceivingSheetImport();
+        $this->sheetImporter->dryRun = $dryRun;
     }
 
     public function sheets(): array
@@ -32,6 +34,7 @@ class InitialStockReceivingImport implements WithMultipleSheets
             'skipped' => $this->sheetImporter->skippedCount,
             'receivings' => $this->sheetImporter->receivingCount,
             'errors' => $this->sheetImporter->errors,
+            'rowResults' => $this->sheetImporter->rowResults,
         ];
     }
 }
