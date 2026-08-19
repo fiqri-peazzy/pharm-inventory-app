@@ -6,26 +6,49 @@
     <title>Laporan Distribusi</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-            margin: 20px;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10.5px;
+            color: #1f2937;
+            line-height: 1.5;
+            margin: 24px 28px;
         }
 
         .doc-title {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1D4ED8;
         }
 
         .doc-title h2 {
-            margin: 5px 0;
-            font-size: 18px;
+            margin: 0 0 6px 0;
+            font-size: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1f2937;
+        }
+
+        .doc-title p {
+            margin: 2px 0;
+            font-size: 10px;
+            color: #6b7280;
         }
 
         .summary-box {
-            background: #f5f5f5;
-            padding: 10px;
+            background: #f9fafb;
+            padding: 10px 12px;
             margin: 15px 0;
-            border: 1px solid #ddd;
+            border: 1px solid #e5e7eb;
+        }
+
+        .summary-box h3 {
+            margin: 0 0 10px 0;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1D4ED8;
         }
 
         .summary-grid {
@@ -41,27 +64,50 @@
 
         .summary-item strong {
             display: block;
-            font-size: 10px;
-            color: #666;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #6b7280;
+            font-weight: normal;
+            margin-bottom: 3px;
         }
 
         .summary-item .value {
             font-size: 14px;
             font-weight: bold;
+            color: #1f2937;
         }
 
         .metrics {
             margin: 15px 0;
         }
 
+        .metrics h3 {
+            margin: 10px 0;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1D4ED8;
+        }
+
         .metric-item {
             display: inline-block;
             width: 32%;
             padding: 10px;
-            background: #f9f9f9;
-            border: 1px solid #ddd;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
             margin-right: 1%;
             text-align: center;
+        }
+
+        .metric-item strong {
+            display: block;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #6b7280;
+            font-weight: normal;
         }
 
         table {
@@ -72,30 +118,67 @@
 
         th,
         td {
-            border: 1px solid #000;
-            padding: 6px;
+            border: 1px solid #e5e7eb;
+            padding: 7px 8px;
             text-align: left;
         }
 
         th {
-            background-color: #e0e0e0;
+            background-color: #1D4ED8;
+            color: #ffffff;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         td {
             font-size: 10px;
         }
 
+        tbody tr:nth-child(even) td {
+            background-color: #f9fafb;
+        }
+
+        .mono {
+            font-family: Courier, monospace;
+        }
+
         .text-center {
             text-align: center;
         }
 
+        .text-right {
+            text-align: right;
+        }
+
         .insights {
             margin: 15px 0;
-            padding: 10px;
-            background: #fff5f5;
-            border-left: 3px solid #ff6b6b;
+            padding: 10px 12px;
+            background: #eff6ff;
+            border-left: 3px solid #1D4ED8;
+        }
+
+        .insights h3 {
+            margin: 0 0 10px 0;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1D4ED8;
+        }
+
+        .footer {
+            margin-top: 26px;
+            padding-top: 8px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 8px;
+            color: #9ca3af;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 2px 0;
         }
     </style>
 </head>
@@ -113,7 +196,7 @@
 
     <!-- Summary -->
     <div class="summary-box">
-        <h3 style="margin: 0 0 10px 0;">Ringkasan</h3>
+        <h3>Ringkasan</h3>
         <div class="summary-grid">
             <div class="summary-item">
                 <strong>Total Distribusi</strong>
@@ -137,22 +220,22 @@
 
     <!-- Metrics -->
     <div class="metrics">
-        <h3 style="margin: 10px 0;">Efficiency Metrics</h3>
+        <h3>Efficiency Metrics</h3>
         <div class="metric-item">
             <strong>Avg Lead Time</strong>
-            <div style="font-size: 18px; font-weight: bold; color: #3b82f6;">
+            <div style="font-size: 18px; font-weight: bold; color: #1D4ED8;">
                 {{ $data['analysis']['efficiency_metrics']['avg_lead_time'] }} days
             </div>
         </div>
         <div class="metric-item">
             <strong>Fill Rate</strong>
-            <div style="font-size: 18px; font-weight: bold; color: #22c55e;">
+            <div style="font-size: 18px; font-weight: bold; color: #1D4ED8;">
                 {{ $data['analysis']['efficiency_metrics']['fill_rate'] }}%
             </div>
         </div>
         <div class="metric-item">
             <strong>On-Time Rate</strong>
-            <div style="font-size: 18px; font-weight: bold; color: #a855f7;">
+            <div style="font-size: 18px; font-weight: bold; color: #1D4ED8;">
                 {{ $data['analysis']['efficiency_metrics']['on_time_rate'] }}%
             </div>
         </div>
@@ -161,7 +244,7 @@
     <!-- Insights -->
     @if(count($data['analysis']['recommendations']) > 0)
         <div class="insights">
-            <h3 style="margin: 0 0 10px 0;">Insights:</h3>
+            <h3>Insights</h3>
             @foreach($data['analysis']['recommendations'] as $insight)
                 <p style="margin: 5px 0;">• {{ $insight['message'] }}</p>
             @endforeach
@@ -177,19 +260,19 @@
                 <th style="width: 25%;">Asal</th>
                 <th style="width: 25%;">Tujuan</th>
                 <th class="text-center" style="width: 8%;">Items</th>
-                <th class="text-center" style="width: 10%;">Qty</th>
+                <th class="text-right" style="width: 10%;">Qty</th>
                 <th class="text-center" style="width: 10%;">Status</th>
             </tr>
         </thead>
         <tbody>
             @forelse($data['distributions'] as $dist)
                 <tr>
-                    <td>{{ $dist->distribution_number }}</td>
-                    <td>{{ $dist->created_at->format('d/m/Y') }}</td>
+                    <td class="mono">{{ $dist->distribution_number }}</td>
+                    <td class="mono">{{ $dist->created_at->format('d/m/Y') }}</td>
                     <td>{{ $dist->origin->name }}</td>
                     <td>{{ $dist->destination->name }}</td>
                     <td class="text-center">{{ $dist->details->count() }}</td>
-                    <td class="text-center">{{ number_format($dist->details->sum('qty_sent')) }}</td>
+                    <td class="text-right">{{ number_format($dist->details->sum('qty_sent')) }}</td>
                     <td class="text-center">{{ ucfirst($dist->status) }}</td>
                 </tr>
             @empty
@@ -200,7 +283,7 @@
         </tbody>
     </table>
 
-    <div style="margin-top: 30px; font-size: 9px; color: #666;">
+    <div class="footer">
         <p>Laporan ini digenerate otomatis oleh sistem {{ \App\Models\Setting::current()->app_name }}</p>
     </div>
 </body>

@@ -6,36 +6,53 @@
     <title>Laporan Buku Stok</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            font-size: 11px;
-            margin: 20px;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10.5px;
+            color: #1f2937;
+            line-height: 1.5;
+            margin: 24px 28px;
         }
 
         .doc-title {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1D4ED8;
         }
 
         .doc-title h2 {
-            margin: 5px 0;
-            font-size: 18px;
+            margin: 0 0 6px 0;
+            font-size: 15px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1f2937;
         }
 
         .doc-title p {
-            margin: 3px 0;
-            font-size: 11px;
+            margin: 2px 0;
+            font-size: 10px;
+            color: #6b7280;
+        }
+
+        .doc-title p strong {
+            color: #1f2937;
         }
 
         .analysis-box {
-            background: #f5f5f5;
-            padding: 10px;
+            background: #f9fafb;
+            padding: 10px 12px;
             margin: 15px 0;
-            border: 1px solid #ddd;
+            border: 1px solid #e5e7eb;
         }
 
         .analysis-box h3 {
             margin: 0 0 10px 0;
-            font-size: 13px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1D4ED8;
         }
 
         .analysis-grid {
@@ -51,25 +68,38 @@
 
         .analysis-item strong {
             display: block;
-            font-size: 10px;
-            color: #666;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #6b7280;
             margin-bottom: 3px;
+            font-weight: normal;
         }
 
         .analysis-item .value {
             font-size: 14px;
             font-weight: bold;
+            color: #1f2937;
         }
 
         .recommendations {
             margin: 15px 0;
         }
 
+        .recommendations h3 {
+            margin: 10px 0;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #1D4ED8;
+        }
+
         .recommendation-item {
-            padding: 8px;
+            padding: 8px 10px;
             margin: 5px 0;
-            border-left: 3px solid #ff6b6b;
-            background: #fff5f5;
+            border-left: 3px solid #1D4ED8;
+            background: #eff6ff;
         }
 
         table {
@@ -80,20 +110,30 @@
 
         th,
         td {
-            border: 1px solid #000;
-            padding: 6px;
+            border: 1px solid #e5e7eb;
+            padding: 7px 8px;
             text-align: left;
         }
 
         th {
-            background-color: #e0e0e0;
+            background-color: #1D4ED8;
+            color: #ffffff;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 9px;
             text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         td {
             font-size: 10px;
+        }
+
+        tbody tr:nth-child(even) td {
+            background-color: #f9fafb;
+        }
+
+        .mono {
+            font-family: Courier, monospace;
         }
 
         .text-right {
@@ -115,9 +155,16 @@
         }
 
         .footer {
-            margin-top: 30px;
-            font-size: 9px;
-            color: #666;
+            margin-top: 26px;
+            padding-top: 8px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 8px;
+            color: #9ca3af;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 2px 0;
         }
     </style>
 </head>
@@ -142,22 +189,22 @@
             <div class="analysis-item">
                 <strong>ABC Class</strong>
                 <div class="value">{{ $data['abc_class']['class'] }}</div>
-                <div style="font-size: 9px; color: #666;">{{ $data['abc_class']['description'] }}</div>
+                <div style="font-size: 9px; color: #6b7280;">{{ $data['abc_class']['description'] }}</div>
             </div>
             <div class="analysis-item">
                 <strong>Movement Pattern</strong>
                 <div class="value">{{ $data['movement_pattern']['pattern'] }}</div>
-                <div style="font-size: 9px; color: #666;">ADU: {{ $data['movement_pattern']['adu'] }}/day</div>
+                <div style="font-size: 9px; color: #6b7280;">ADU: {{ $data['movement_pattern']['adu'] }}/day</div>
             </div>
             <div class="analysis-item">
                 <strong>Health Score</strong>
                 <div class="value">{{ $data['health_score']['score'] }}%</div>
-                <div style="font-size: 9px; color: #666;">{{ $data['health_score']['status'] }}</div>
+                <div style="font-size: 9px; color: #6b7280;">{{ $data['health_score']['status'] }}</div>
             </div>
             <div class="analysis-item">
                 <strong>Current Stock</strong>
                 <div class="value">{{ number_format($data['current_stock']) }}</div>
-                <div style="font-size: 9px; color: #666;">{{ $data['item']->unit->name }}</div>
+                <div style="font-size: 9px; color: #6b7280;">{{ $data['item']->unit->name }}</div>
             </div>
         </div>
     </div>
@@ -165,11 +212,11 @@
     <!-- Recommendations -->
     @if(count($data['recommendations']) > 0)
         <div class="recommendations">
-            <h3 style="margin: 10px 0; font-size: 13px;">Rekomendasi:</h3>
+            <h3>Rekomendasi</h3>
             @foreach($data['recommendations'] as $rec)
                 <div class="recommendation-item">
                     <strong>{{ $rec['message'] }}</strong><br>
-                    <span style="font-size: 9px; color: #666;">→ {{ $rec['action'] }}</span>
+                    <span style="font-size: 9px; color: #6b7280;">→ {{ $rec['action'] }}</span>
                 </div>
             @endforeach
         </div>
@@ -191,9 +238,9 @@
         <tbody>
             @forelse($data['stockCards'] as $card)
                 <tr>
-                    <td>{{ $card->transaction_date->format('d/m/Y H:i') }}</td>
+                    <td class="mono">{{ $card->transaction_date->format('d/m/Y H:i') }}</td>
                     <td>{{ str_replace('_', ' ', $card->transaction_type) }}</td>
-                    <td>{{ $card->batch?->batch_number ?? '-' }}</td>
+                    <td class="mono">{{ $card->batch?->batch_number ?? '-' }}</td>
                     <td class="text-right {{ $card->qty_in > 0 ? 'text-green' : '' }}">
                         {{ $card->qty_in > 0 ? number_format($card->qty_in) : '-' }}
                     </td>
