@@ -31,6 +31,7 @@
         .header {
             text-align: center;
             margin-bottom: 20px;
+            margin-top: 0;
         }
 
         .header h2 {
@@ -71,6 +72,8 @@
 </head>
 
 <body>
+    @include('pdf.partials.kop-header')
+
     <div class="header">
         <h2>RENCANA KEBUTUHAN OBAT (RKO)</h2>
         <p>Unit/Gudang: {{ $warehouse }} | Proyeksi: {{ $days }} Hari | Per Tanggal: {{ $date }}</p>

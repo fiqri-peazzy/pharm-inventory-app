@@ -5,10 +5,10 @@
     <title>Berita Acara Penerimaan - {{ $receiving->receiving_number }}</title>
     <style>
         body { font-family: 'Helvetica', sans-serif; font-size: 12px; color: #333; line-height: 1.4; }
-        .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
-        .header h1 { margin: 0; font-size: 18px; text-transform: uppercase; }
-        .header p { margin: 2px 0; font-size: 11px; }
-        
+        .doc-title { text-align: center; margin: 4px 0 20px; }
+        .doc-title h1 { margin: 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .doc-title p { margin: 2px 0; font-size: 10.5px; color: #555; }
+
         .info-table { width: 100%; margin-bottom: 20px; border-collapse: collapse; }
         .info-table td { padding: 4px 0; vertical-align: top; }
         .info-table .label { width: 120px; font-weight: bold; }
@@ -35,9 +35,10 @@
         <button onclick="window.print()" style="padding: 8px 20px; background: #2d3436; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">CETAK BERITA ACARA</button>
     </div>
 
-    <div class="header">
+    @include('pdf.partials.kop-header')
+
+    <div class="doc-title">
         <h1>Berita Acara Penerimaan Barang</h1>
-        <p>Instalasi Farmasi Rumah Sakit</p>
         <p>No. Dokumen: {{ $receiving->receiving_number }}</p>
     </div>
 

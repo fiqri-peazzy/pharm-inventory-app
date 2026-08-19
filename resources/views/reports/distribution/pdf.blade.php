@@ -11,14 +11,12 @@
             margin: 20px;
         }
 
-        .header {
+        .doc-title {
             text-align: center;
             margin-bottom: 20px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
         }
 
-        .header h2 {
+        .doc-title h2 {
             margin: 5px 0;
             font-size: 18px;
         }
@@ -103,7 +101,9 @@
 </head>
 
 <body>
-    <div class="header">
+    @include('pdf.partials.kop-header')
+
+    <div class="doc-title">
         <h2>LAPORAN DISTRIBUSI</h2>
         <p>Periode: {{ \Carbon\Carbon::parse($filters['date_from'])->format('d/m/Y') }} -
             {{ \Carbon\Carbon::parse($filters['date_to'])->format('d/m/Y') }}
@@ -201,7 +201,7 @@
     </table>
 
     <div style="margin-top: 30px; font-size: 9px; color: #666;">
-        <p>Laporan ini digenerate otomatis oleh sistem Medivault Pharmacy Inventory</p>
+        <p>Laporan ini digenerate otomatis oleh sistem {{ \App\Models\Setting::current()->app_name }}</p>
     </div>
 </body>
 

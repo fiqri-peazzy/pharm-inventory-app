@@ -12,24 +12,6 @@
             color: #333;
         }
 
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 18px;
-            text-transform: uppercase;
-        }
-
-        .header p {
-            margin: 2px 0;
-            font-size: 10px;
-        }
-
         .title {
             text-align: center;
             text-decoration: underline;
@@ -113,11 +95,7 @@
 </head>
 
 <body>
-    <div class="header">
-        <h1>RSUD JAILOLO</h1>
-        <p>Jl. Inpres Jailolo, Halmahera Barat, Maluku Utara</p>
-        <p>Telp: (0922) 2221062 | Email: rsud.jailolo@gmail.com</p>
-    </div>
+    @include('pdf.partials.kop-header')
 
     <div class="type-badge">
         SP {{ $order->sp_type }}
@@ -212,18 +190,19 @@
         {{ $order->notes ?: 'Mohon barang dikirim tepat waktu sesuai dengan pesanan.' }}
     </div>
 
+    @php $setting = \App\Models\Setting::current(); @endphp
     <div class="footer">
         <table class="footer-table">
             <tr>
                 <td>
                     Mengetahui,<br>
-                    Direktur RSUD Jailolo
+                    Direktur {{ $setting->hospital_name ?: $setting->app_name }}
                     <div class="sig-space"></div>
                     <strong>( .................................... )</strong>
                 </td>
                 <td></td>
                 <td>
-                    Jailolo, {{ date('d F Y') }}<br>
+                    {{ date('d F Y') }}<br>
                     Pejabat Pengadaan / Apoteker
                     <div class="sig-space"></div>
                     <strong>( .................................... )</strong><br>
@@ -234,7 +213,7 @@
     </div>
 
     <div style="margin-top: 30px; font-size: 8px; color: #999; text-align: center;">
-        Dokumen ini dihasilkan secara otomatis oleh Sistem Inventori Farmasi RSUD Jailolo.
+        Dokumen ini dihasilkan secara otomatis oleh Sistem Inventori Farmasi.
     </div>
 </body>
 

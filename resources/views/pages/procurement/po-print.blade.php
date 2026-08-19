@@ -3,14 +3,29 @@
 @section('title', 'Cetak Surat Pesanan (PO) - POS Pharm')
 
 @section('content')
+    @php
+        $setting = \App\Models\Setting::current();
+        $hospitalName = $setting->hospital_name ?: $setting->app_name;
+        $contactLines = collect([
+            $setting->address ? $setting->address : null,
+            collect([
+                $setting->phone ? 'Telp: ' . $setting->phone : null,
+                $setting->email ? 'Email: ' . $setting->email : null,
+            ])->filter()->implode(' | ') ?: null,
+        ])->filter();
+    @endphp
     <div class="p-8 bg-white min-h-[1000px] max-w-4xl mx-auto shadow-lg border">
         <!-- Header Dokumen -->
         <div class="flex justify-between items-start border-b-2 border-black pb-4 mb-6">
             <div class="flex gap-4 items-center">
-                <div class="w-20 h-20 bg-gray-200 flex items-center justify-center font-bold text-xs text-center border">LOGO RSUD</div>
+                @if($setting->logo_path)
+                    <img src="{{ asset($setting->logo_path) }}" alt="Logo" class="w-20 h-20 object-contain border">
+                @else
+                    <div class="w-20 h-20 bg-gray-200 flex items-center justify-center font-bold text-xs text-center border">LOGO</div>
+                @endif
                 <div>
-                    <h1 class="text-xl font-black uppercase">RSUD Kabupaten XYZ</h1>
-                    <p class="text-[10px] leading-tight font-medium">Jl. Raya Farmasi No. 123, Kota Sehat, Indonesia<br>Telp: (021) 1234567 | Fax: (021) 7654321<br>Email: farmasi@rsud-xyz.go.id</p>
+                    <h1 class="text-xl font-black uppercase">{{ $hospitalName }}</h1>
+                    <p class="text-[10px] leading-tight font-medium">{!! $contactLines->implode('<br>') !!}</p>
                 </div>
             </div>
             <div class="text-right">
@@ -30,7 +45,7 @@
             <div class="border p-4 rounded-lg relative">
                 <span class="absolute -top-2 left-3 bg-white px-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">Alamat Pengiriman</span>
                 <p class="font-black uppercase">{{ $order->warehouse->name }}</p>
-                <p class="text-xs mt-1">RSUD Kabupaten XYZ - Instalasi Farmasi</p>
+                <p class="text-xs mt-1">{{ $hospitalName }} - Instalasi Farmasi</p>
                 <p class="text-xs">Tgl Pesanan: {{ date('d/m/Y', strtotime($order->po_date)) }}</p>
             </div>
         </div>
@@ -86,9 +101,9 @@
                 </div>
             </div>
             <div class="text-center">
-                <p class="mb-20">Kota Sehat, {{ date('d F Y') }}<br><strong>Pejabat Pembuat Komitmen (PPK)</strong></p>
-                <p class="font-black underline uppercase">dr. HEBAT SEKALI, Sp.An</p>
-                <p class="text-xs italic">NIP: 19800101 200501 1 001</p>
+                <p class="mb-20">{{ date('d F Y') }}<br><strong>Pejabat Pembuat Komitmen (PPK)</strong></p>
+                <p class="font-black underline uppercase">( .................................... )</p>
+                <p class="text-xs italic">NIP: ..........................</p>
             </div>
         </div>
 

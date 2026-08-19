@@ -218,25 +218,7 @@ class StockReceivingSheetImport implements ToCollection, WithHeadingRow
             }
 
             if (!$receiving) {
-                $receiving = Receiving::create([
-                    'receiving_number' => 'INIT-' . date('Ymd') . '-' . str_pad($this->receivingCount + 1, 4, '0', STR_PAD_LEFT),
-                    'supplier_id' => $supplierId,
-                    'warehouse_id' => $warehouseId,
-                    'receiving_date' => $invoiceDate,
-                    'invoice_number' => $invoiceNumber,
-                    'invoice_date' => $invoiceDate,
-                    'total_amount' => $totalAmount,
-                    'ppn_amount' => 0,
-                    'grand_total' => $totalAmount,
-                    'notes' => $isFallbackGroup
-                        ? 'Import saldo awal stok (sistem lama) - tanpa nomor faktur'
-                        : 'Import saldo awal stok (sistem lama)',
-                    'status' => 'posted',
-                    'created_by' => Auth::id() ?? 1,
-                    'approved_by' => Auth::id() ?? 1,
-                    'approved_at' => now(),
-                ]);
-                $this->receivingCount++;
+                $receiving = $this->createReceivingWithRetry($supplierId, $warehouseId, $invoiceDate, $invoiceNumber, $totalAmount, $isFallbackGroup);
             }
 
             ReceivingDetail::create([
@@ -313,6 +295,52 @@ class StockReceivingSheetImport implements ToCollection, WithHeadingRow
         }
     }
 
+    /**
+     * Create a Receiving document with an auto-generated document number,
+     * retrying with the next sequence number if a collision occurs (e.g. a
+     * previous run today, a retried/duplicated request, or a race with
+     * another import happening at the same time).
+     */
+    private function createReceivingWithRetry(?int $supplierId, ?int $warehouseId, string $invoiceDate, string $invoiceNumber, float $totalAmount, bool $isFallbackGroup): Receiving
+    {
+        $maxAttempts = 20;
+
+        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+            $this->receivingCount++;
+            $receivingNumber = 'INIT-' . date('Ymd') . '-' . str_pad($this->receivingCount, 4, '0', STR_PAD_LEFT);
+
+            try {
+                return Receiving::create([
+                    'receiving_number' => $receivingNumber,
+                    'supplier_id' => $supplierId,
+                    'warehouse_id' => $warehouseId,
+                    'receiving_date' => $invoiceDate,
+                    'invoice_number' => $invoiceNumber,
+                    'invoice_date' => $invoiceDate,
+                    'total_amount' => $totalAmount,
+                    'ppn_amount' => 0,
+                    'grand_total' => $totalAmount,
+                    'notes' => $isFallbackGroup
+                        ? 'Import saldo awal stok (sistem lama) - tanpa nomor faktur'
+                        : 'Import saldo awal stok (sistem lama)',
+                    'status' => 'posted',
+                    'created_by' => Auth::id() ?? 1,
+                    'approved_by' => Auth::id() ?? 1,
+                    'approved_at' => now(),
+                ]);
+            } catch (\Illuminate\Database\QueryException $e) {
+                // 23000 = integrity constraint violation (duplicate receiving_number).
+                // Bump the counter and try the next number instead of failing the
+                // whole import over a stale in-memory sequence.
+                if ($e->getCode() !== '23000' || $attempt === $maxAttempts - 1) {
+                    throw $e;
+                }
+            }
+        }
+
+        throw new \RuntimeException('Gagal membuat nomor dokumen penerimaan setelah beberapa percobaan.');
+    }
+
     private function preloadCaches(): void
     {
         foreach (ItemCategory::all() as $cat) {
@@ -327,6 +355,16 @@ class StockReceivingSheetImport implements ToCollection, WithHeadingRow
 
         $mainWarehouse = Warehouse::where('is_main', true)->first() ?? Warehouse::first();
         $this->mainWarehouseId = $mainWarehouse?->id ?? 1;
+
+        // Continue today's receiving-number sequence from whatever is already
+        // in the database instead of always starting at 0001 — a previous
+        // import run today (or a partially-completed one) would otherwise
+        // cause an immediate duplicate-key collision on the very first row.
+        $prefix = 'INIT-' . date('Ymd') . '-';
+        $lastNumber = Receiving::where('receiving_number', 'like', $prefix . '%')
+            ->orderByDesc('receiving_number')
+            ->value('receiving_number');
+        $this->receivingCount = $lastNumber ? (int) substr($lastNumber, strlen($prefix)) : 0;
 
         // Preload existing item+batch+warehouse combinations so re-imports of
         // the same file (or overlapping data) are flagged as duplicates

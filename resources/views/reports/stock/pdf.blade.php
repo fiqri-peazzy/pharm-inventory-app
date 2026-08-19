@@ -11,19 +11,17 @@
             margin: 20px;
         }
 
-        .header {
+        .doc-title {
             text-align: center;
             margin-bottom: 20px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
         }
 
-        .header h2 {
+        .doc-title h2 {
             margin: 5px 0;
             font-size: 18px;
         }
 
-        .header p {
+        .doc-title p {
             margin: 3px 0;
             font-size: 11px;
         }
@@ -125,7 +123,9 @@
 </head>
 
 <body>
-    <div class="header">
+    @include('pdf.partials.kop-header')
+
+    <div class="doc-title">
         <h2>LAPORAN BUKU STOK</h2>
         <p><strong>{{ $data['item']->name }}</strong> ({{ $data['item']->code }})</p>
         <p>Gudang: {{ $data['warehouse']->name }}</p>
@@ -214,7 +214,7 @@
     </table>
 
     <div class="footer">
-        <p>Laporan ini digenerate otomatis oleh sistem Medivault Pharmacy Inventory</p>
+        <p>Laporan ini digenerate otomatis oleh sistem {{ \App\Models\Setting::current()->app_name }}</p>
     </div>
 </body>
 
