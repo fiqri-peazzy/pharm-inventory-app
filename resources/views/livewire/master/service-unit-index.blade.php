@@ -104,7 +104,7 @@
          x-transition:leave-end="opacity-0 scale-95"
          class="fixed inset-0 z-[999] overflow-y-auto" style="display: none;">
         <div class="flex min-h-screen items-center justify-center p-4" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
-            <div class="fixed inset-0 bg-gray-900/35 backdrop-blur-[2px] transition-opacity" @click="open = false"></div>
+            <div class="fixed inset-0 bg-gray-900/35 transition-opacity" @click="open = false"></div>
 
             <div class="relative w-full max-w-xl rounded-2xl bg-white p-8 shadow-2xl dark:bg-gray-800 border border-white/20">
                 <div class="mb-6 flex items-center justify-between border-b border-gray-100 dark:border-gray-700 pb-4">

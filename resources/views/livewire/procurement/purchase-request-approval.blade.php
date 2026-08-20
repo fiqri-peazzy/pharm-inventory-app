@@ -95,7 +95,7 @@
         x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
         class="fixed inset-0 z-[9999] overflow-hidden" style="display: none;">
         <div class="flex h-screen items-center justify-center p-4 sm:p-6" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
-            <div class="fixed inset-0 bg-gray-900/35 backdrop-blur-[2px]" @click="open = false"></div>
+            <div class="fixed inset-0 bg-gray-900/35" @click="open = false"></div>
 
             <div
                 class="relative w-full h-[90vh] sm:h-auto sm:max-w-4xl rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-2xl overflow-hidden flex flex-col z-[10000]">
@@ -122,6 +122,38 @@
                     <!-- Content -->
                     <div class="flex-1 overflow-y-auto custom-scrollbar">
                         <div class="p-4 sm:p-6">
+                            <!-- AI Analysis -->
+                            <div class="mb-5">
+                                @if (!$aiAnalysis)
+                                    <button wire:click="analyzeWithAi" wire:loading.attr="disabled" wire:target="analyzeWithAi"
+                                        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-brand-500 text-white text-xs font-black uppercase tracking-widest hover:shadow-lg hover:shadow-brand-500/20 disabled:opacity-60 transition-all">
+                                        <div wire:loading wire:target="analyzeWithAi">
+                                            <svg class="animate-spin" width="14" height="14" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                                        </div>
+                                        <svg wire:loading.remove wire:target="analyzeWithAi" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M3 12h2m14 0h2M5.6 18.4l1.4-1.4m10-10l1.4-1.4" /><circle cx="12" cy="12" r="4" /></svg>
+                                        Analisis dengan AI
+                                    </button>
+                                @else
+                                    <div class="ai-fade-up rounded-xl border {{ !empty($aiAnalysis['anomalies']) ? 'bg-amber-50 dark:bg-amber-500/10 border-amber-200 dark:border-amber-500/20' : 'bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/20' }} p-3.5">
+                                        <div class="flex items-start gap-2.5">
+                                            <div class="ai-glow-badge w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-brand-500 flex items-center justify-center shrink-0 mt-0.5">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M3 12h2m14 0h2M5.6 18.4l1.4-1.4m10-10l1.4-1.4" /><circle cx="12" cy="12" r="4" /></svg>
+                                            </div>
+                                            <div class="flex-1">
+                                                <p class="text-[10px] font-black uppercase tracking-widest {{ !empty($aiAnalysis['anomalies']) ? 'text-amber-600 dark:text-amber-400' : 'text-indigo-500 dark:text-indigo-400' }} mb-1">
+                                                    Analisis AI {{ !empty($aiAnalysis['anomalies']) ? '— Ada Kejanggalan' : '' }}
+                                                </p>
+                                                @if ($aiAnalysis['text'])
+                                                    <p class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">{{ $aiAnalysis['text'] }}</p>
+                                                @else
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400 italic">AI sedang tidak tersedia saat ini.</p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+
                             <!-- Items Table -->
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left text-xs sm:text-sm whitespace-nowrap">

@@ -114,15 +114,13 @@
 
     <!-- Modal Form -->
     @if($showModal)
-        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
-                <div class="fixed inset-0 bg-gray-500/40 backdrop-blur-[2px] transition-opacity" aria-hidden="true"
+        <div class="fixed inset-0 z-50 flex items-start justify-center p-4 pt-24 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
+                <div class="fixed inset-0 bg-gray-500/40 transition-opacity" aria-hidden="true"
                     wire:click="$set('showModal', false)"></div>
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                 <div
-                    class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-gray-100 dark:bg-gray-900 dark:border-gray-800">
-                    <div class="bg-white p-6 dark:bg-gray-900">
+                    class="relative w-full max-w-xl bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all border border-gray-100 dark:bg-gray-900 dark:border-gray-800 max-h-[85vh] flex flex-col">
+                    <div class="bg-white p-6 dark:bg-gray-900 overflow-y-auto custom-scrollbar min-h-0">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-black text-gray-900 uppercase tracking-tight dark:text-white">
                                 {{ $isEdit ? 'Edit User' : 'Tambah User Baru' }}</h3>
@@ -262,7 +260,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3 dark:bg-white/[0.03]">
+                    <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3 dark:bg-white/[0.03] sm:shrink-0">
                         <button wire:click="save"
                             class="px-6 py-2 bg-brand-500 text-white text-sm font-bold rounded-xl hover:bg-brand-600 shadow-md shadow-brand-200 transition-all">
                             {{ $isEdit ? 'Update User' : 'Simpan User' }}
@@ -273,7 +271,6 @@
                         </button>
                     </div>
                 </div>
-            </div>
         </div>
     @endif
 </div>

@@ -6,7 +6,7 @@
     class="fixed inset-0 z-[999999] flex items-center justify-center p-4 overflow-y-auto"
     :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }"
 >
-    <div @click="open = false" class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm"
+    <div @click="open = false" class="fixed inset-0 bg-gray-900/50"
         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
         x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
@@ -24,7 +24,7 @@
             <div class="absolute inset-0 opacity-40" style="background: radial-gradient(circle at 85% 0%, rgb(255 255 255 / 0.25), transparent 55%);"></div>
 
             <div class="relative flex items-start gap-3.5">
-                <div class="ai-glow-badge w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center shrink-0">
+                <div class="ai-glow-badge w-11 h-11 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M3 12h2m14 0h2M5.6 18.4l1.4-1.4m10-10l1.4-1.4" />
                         <circle cx="12" cy="12" r="4" stroke-linecap="round" stroke-linejoin="round" />

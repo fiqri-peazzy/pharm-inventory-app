@@ -60,7 +60,7 @@
         x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-100"
         x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
 
-        <div @click="closePalette()" class="fixed inset-0 bg-gray-900/40 backdrop-blur-[2px]"></div>
+        <div @click="closePalette()" class="fixed inset-0 bg-gray-900/40"></div>
 
         <div @click.stop
             class="relative w-full max-w-xl rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden"

@@ -233,7 +233,7 @@
 
     <!-- Modals -->
     @if($showDetailModal && $selectedPrescription)
-        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/35 backdrop-blur-[2px]" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }" wire:click.self="closeModals">
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/35" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }" wire:click.self="closeModals">
             <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-gray-900">
                 <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 dark:border-gray-800 dark:bg-white/[0.02]">
                     <div>
@@ -293,7 +293,7 @@
     @endif
 
     @if($showEtiketModal && $selectedPrescription)
-        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/35 backdrop-blur-[2px]" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }" wire:click.self="closeModals">
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/35" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }" wire:click.self="closeModals">
             <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200 dark:bg-gray-900">
                 <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-emerald-50 text-emerald-700 dark:border-gray-800 dark:bg-emerald-500/10 dark:text-emerald-400">
                     <h3 class="font-bold flex items-center gap-2">
@@ -357,7 +357,7 @@
     @endif
 
     @if($showPrintModal && $selectedPrescription)
-        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/35 backdrop-blur-[2px]" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }" wire:click.self="closeModals">
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/35" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }" wire:click.self="closeModals">
             <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 dark:bg-gray-900">
                 <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-indigo-50 text-indigo-700 dark:border-gray-800 dark:bg-indigo-500/10 dark:text-indigo-400">
                     <h3 class="font-bold flex items-center gap-2">

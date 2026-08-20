@@ -132,7 +132,7 @@
     @if ($viewingDistribution)
         <div x-data class="fixed inset-0 z-99999 flex items-center justify-center p-4 overflow-y-auto"
             :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
-            <div wire:click="closeDetail" class="fixed inset-0 bg-gray-900/40 backdrop-blur-[2px]"></div>
+            <div wire:click="closeDetail" class="fixed inset-0 bg-gray-900/40"></div>
 
             <div @click.stop class="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-2xl overflow-hidden">
                 <!-- Header -->

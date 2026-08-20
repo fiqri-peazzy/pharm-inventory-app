@@ -8,6 +8,7 @@ use App\Models\Warehouse;
 use App\Models\StockCard;
 use App\Services\Reports\StockAnalysisService;
 use App\Services\Reports\PdfExportService;
+use App\Services\AI\ReportInsightService;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -15,11 +16,13 @@ class StockReportController extends Controller
 {
     protected $analysisService;
     protected $pdfService;
+    protected $insightService;
 
-    public function __construct(StockAnalysisService $analysisService, PdfExportService $pdfService)
+    public function __construct(StockAnalysisService $analysisService, PdfExportService $pdfService, ReportInsightService $insightService)
     {
         $this->analysisService = $analysisService;
         $this->pdfService = $pdfService;
+        $this->insightService = $insightService;
     }
 
     /**
@@ -66,8 +69,10 @@ class StockReportController extends Controller
             
             $stockCards = $query->orderBy('transaction_date', 'desc')->paginate(50);
         }
-        
-        return view('reports.stock.index', compact('warehouses', 'items', 'filters', 'data', 'stockCards'));
+
+        $aiNarrative = $data ? $this->insightService->narrateStockAnalysis($data) : null;
+
+        return view('reports.stock.index', compact('warehouses', 'items', 'filters', 'data', 'stockCards', 'aiNarrative'));
     }
 
     /**

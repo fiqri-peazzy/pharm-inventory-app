@@ -3,6 +3,7 @@
 namespace App\Livewire\Procurement;
 
 use App\Models\PurchaseRequest;
+use App\Services\AI\ApprovalAdvisorService;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,7 @@ class PurchaseRequestApproval extends Component
     public $showApprovalModal = false;
     public $selectedPr;
     public $rejectionReason = '';
+    public ?array $aiAnalysis = null;
 
     public function render()
     {
@@ -34,8 +36,18 @@ class PurchaseRequestApproval extends Component
 
     public function selectPr($id)
     {
-        $this->selectedPr = PurchaseRequest::with('details.item')->findOrFail($id);
+        $this->selectedPr = PurchaseRequest::with(['warehouse', 'details.item'])->findOrFail($id);
         $this->showApprovalModal = true;
+        $this->aiAnalysis = null;
+    }
+
+    public function analyzeWithAi(ApprovalAdvisorService $service)
+    {
+        if (!$this->selectedPr) {
+            return;
+        }
+
+        $this->aiAnalysis = $service->analyze($this->selectedPr);
     }
 
     public function approve()

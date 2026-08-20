@@ -80,12 +80,10 @@
 
     <!-- Review Modal -->
     @if($isOpen && $selected_request)
-    <div class="fixed inset-0 z-[999] overflow-y-auto">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
-            <div class="fixed inset-0 bg-gray-500/40 backdrop-blur-[2px] transition-opacity" wire:click="closeModal"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-            <div class="relative inline-block align-bottom bg-white dark:bg-gray-800 rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-gray-200 dark:border-gray-700">
-                <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-gray-50 dark:bg-gray-700/50">
+    <div class="fixed inset-0 z-[999] flex items-start justify-center p-4 pt-24 overflow-y-auto" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
+            <div class="fixed inset-0 bg-gray-500/40 transition-opacity" wire:click="closeModal"></div>
+            <div class="relative w-full max-w-4xl bg-white dark:bg-gray-800 rounded-xl text-left overflow-hidden shadow-xl transform transition-all border border-gray-200 dark:border-gray-700 max-h-[85vh] flex flex-col">
+                <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-gray-50 dark:bg-gray-700/50 sm:shrink-0">
                     <div>
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white">Tinjauan Permintaan Barang</h3>
                         <p class="text-xs text-gray-500 dark:text-gray-400">{{ $selected_request->request_number }} | Diajukan oleh: {{ $selected_request->creator->name }}</p>
@@ -95,7 +93,7 @@
                     </button>
                 </div>
 
-                <div class="px-6 py-6">
+                <div class="px-6 py-6 overflow-y-auto custom-scrollbar sm:min-h-0">
                     <div class="grid grid-cols-2 gap-6 mb-6">
                         <div class="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg">
                             <h4 class="text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase mb-2">Informasi Unit</h4>
@@ -145,7 +143,7 @@
                     </div>
                 </div>
 
-                <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center rounded-b-xl">
+                <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center rounded-b-xl sm:shrink-0">
                     <button type="button" wire:click="reject" class="px-6 py-2 text-[10px] font-black text-red-600 dark:text-red-400 bg-white dark:bg-gray-800 border-2 border-red-600 dark:border-red-500 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all uppercase tracking-widest shadow-sm active:scale-95">
                         Tolak Permintaan
                     </button>

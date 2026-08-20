@@ -78,9 +78,9 @@
     <!-- Modal -->
     <div x-data="{ open: @entangle('isOpen') }" x-show="open" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
         <div class="flex min-h-screen items-center justify-center p-4" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
-            <div class="fixed inset-0 bg-gray-500/40 backdrop-blur-[2px] transition-opacity" @click="open = false"></div>
+            <div class="fixed inset-0 bg-gray-500/40 transition-opacity" @click="open = false"></div>
 
-            <div class="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900">
+            <div class="relative w-full max-w-lg max-h-[85vh] overflow-y-auto custom-scrollbar rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900">
                 <div class="mb-4 flex items-center justify-between">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $isEdit ? 'Ubah Kategori' : 'Tambah Kategori' }}</h3>
                     <button @click="open = false" class="text-gray-400 hover:text-gray-500 dark:text-gray-400 dark:hover:text-gray-300">
@@ -165,7 +165,7 @@
     <!-- Import Modal -->
     <div x-data="{ open: @entangle('isImportModalOpen') }" x-show="open" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
         <div class="flex min-h-screen items-center justify-center p-4" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
-            <div class="fixed inset-0 bg-gray-500/40 backdrop-blur-[2px] transition-opacity" @click="open = false"></div>
+            <div class="fixed inset-0 bg-gray-500/40 transition-opacity" @click="open = false"></div>
 
             <div class="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl dark:bg-gray-900">
                 <div class="mb-4 flex items-center justify-between">

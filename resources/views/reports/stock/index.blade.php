@@ -78,6 +78,24 @@
             </div>
 
             @if($data)
+                @if ($aiNarrative)
+                    <div class="ai-fade-up rounded-2xl bg-gradient-to-br from-indigo-600 via-brand-500 to-violet-600 p-5 relative overflow-hidden mb-6">
+                        <div class="absolute inset-0 opacity-40" style="background: radial-gradient(circle at 90% 0%, rgb(255 255 255 / 0.25), transparent 55%);"></div>
+                        <div class="relative flex items-start gap-3.5">
+                            <div class="ai-glow-badge w-9 h-9 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center shrink-0">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2M5.6 5.6l1.4 1.4m10 10l1.4 1.4M3 12h2m14 0h2M5.6 18.4l1.4-1.4m10-10l1.4-1.4" />
+                                    <circle cx="12" cy="12" r="4" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-white/60 mb-1">AI Insight</p>
+                                <p class="text-sm font-semibold text-white leading-relaxed">{{ $aiNarrative }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Analysis Dashboard -->
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
                     <!-- ABC Class -->

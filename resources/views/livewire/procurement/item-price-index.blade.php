@@ -107,13 +107,11 @@
     </div>
 
     @if($isOpen)
-    <div class="fixed inset-0 z-[999] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
-            <div class="fixed inset-0 bg-gray-500/40 backdrop-blur-[2px] transition-opacity" aria-hidden="true" wire:click="closeModal"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="relative inline-block align-bottom bg-white dark:bg-gray-800 rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-gray-200 dark:border-gray-700">
-                <form wire:submit.prevent="store">
-                    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+    <div class="fixed inset-0 z-[999] flex items-start justify-center p-4 pt-24 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
+            <div class="fixed inset-0 bg-gray-500/40 transition-opacity" aria-hidden="true" wire:click="closeModal"></div>
+            <div class="relative w-full max-w-2xl bg-white dark:bg-gray-800 rounded-xl text-left overflow-hidden shadow-xl transform transition-all border border-gray-200 dark:border-gray-700 max-h-[85vh] flex flex-col">
+                <form wire:submit.prevent="store" class="flex flex-col min-h-0">
+                    <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between sm:shrink-0">
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white" id="modal-title">
                             {{ $selected_id ? 'Edit Harga Item' : 'Tambah Harga Item' }}
                         </h3>
@@ -125,7 +123,7 @@
                         </button>
                     </div>
 
-                    <div class="px-6 py-6 space-y-4">
+                    <div class="px-6 py-6 space-y-4 overflow-y-auto custom-scrollbar sm:min-h-0">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Item / Obat</label>
@@ -239,7 +237,7 @@
                         </div>
                     </div>
 
-                    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 flex justify-end space-x-3">
+                    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-100 dark:border-gray-700 flex justify-end space-x-3 sm:shrink-0">
                         <button type="button" wire:click="closeModal" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             Batal
                         </button>
