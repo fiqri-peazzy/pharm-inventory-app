@@ -94,7 +94,7 @@
                 </button>
 
                 <!-- Notification Dropdown -->
-                <x-header.notification-dropdown />
+                @livewire('common.notification-dropdown')
             </div>
 
             <!-- User Dropdown -->

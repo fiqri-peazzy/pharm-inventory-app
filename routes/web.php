@@ -272,6 +272,12 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
             ->name('reports.trial-balance');
     });
 
+    // Personal account — every authenticated user manages their own profile,
+    // no special permission required beyond being logged in.
+    Route::get('/profile', function () {
+        return view('pages.profile');
+    })->name('profile');
+
     // Settings & Activity Log
     Route::get('/settings', function () {
         return view('pages.settings.index');

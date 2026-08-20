@@ -49,6 +49,10 @@ class PrescriptionDispense extends Component
                 'qty_prescribed' => $detail->qty,
                 'instruction' => $detail->instruction,
                 'batch_id' => $suggestedBatch?->id,
+                // Immutable reference to the FEFO-recommended batch, so the UI
+                // can warn if the user later picks a different (non-FEFO) one.
+                'fefo_batch_id' => $suggestedBatch?->id,
+                'override_reason' => '',
                 'available_batches' => $batches->toArray(),
                 'selected_batch_qty' => $suggestedBatch?->current_qty ?? 0
             ];
@@ -78,6 +82,13 @@ class PrescriptionDispense extends Component
                 $this->dispatch('notify', ['type' => 'error', 'message' => 'Stok Batch tidak mencukupi untuk ' . $row['item_name']]);
                 return;
             }
+            // FEFO deviation guard: dispensing a batch other than the one
+            // with the earliest expiry is allowed (e.g. the FEFO batch is
+            // reserved/damaged), but must be justified for audit purposes.
+            if ($row['batch_id'] != $row['fefo_batch_id'] && trim($row['override_reason'] ?? '') === '') {
+                $this->dispatch('notify', ['type' => 'error', 'message' => 'Beri alasan untuk ' . $row['item_name'] . ' karena batch yang dipilih bukan urutan FEFO (kadaluarsa terdekat).']);
+                return;
+            }
         }
 
         try {
@@ -86,7 +97,8 @@ class PrescriptionDispense extends Component
                 return [
                     'id' => $row['detail_id'],
                     'qty_dispensed' => $row['qty_prescribed'],
-                    'item_batch_id' => $row['batch_id']
+                    'item_batch_id' => $row['batch_id'],
+                    'fefo_override_reason' => $row['batch_id'] != $row['fefo_batch_id'] ? $row['override_reason'] : null,
                 ];
             }, $this->details);
 

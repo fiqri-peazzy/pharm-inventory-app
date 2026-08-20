@@ -77,6 +77,16 @@
                                                     {{ $row['selected_batch_qty'] < $row['qty_prescribed'] ? 'Stok Tidak Cukup' : 'Siap Dispense' }}
                                                 </span>
                                             </div>
+                                            @if($row['batch_id'] != $row['fefo_batch_id'])
+                                                <div class="mt-2 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 rounded-lg p-2.5">
+                                                    <p class="flex items-center gap-1.5 text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wide mb-1.5">
+                                                        <i class="ph-bold ph-warning-circle"></i> Bukan batch FEFO (kadaluarsa terdekat)
+                                                    </p>
+                                                    <input type="text" wire:model.live="details.{{ $index }}.override_reason"
+                                                        placeholder="Wajib isi alasan, mis: batch FEFO sedang dikarantina"
+                                                        class="w-full px-2.5 py-1.5 text-[11px] bg-white dark:bg-white/[0.03] border border-amber-200 dark:border-amber-500/30 rounded-md focus:ring-1 focus:ring-amber-500 dark:text-white">
+                                                </div>
+                                            @endif
                                         @endif
                                     </td>
                                     <td class="px-6 py-5">

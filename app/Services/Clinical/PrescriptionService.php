@@ -44,6 +44,11 @@ class PrescriptionService
                 ]);
 
                 // 3. Create Stock Card
+                $notes = "Dispensing Resep No: " . $prescription->prescription_number;
+                if (!empty($item['fefo_override_reason'])) {
+                    $notes .= " | Batch bukan urutan FEFO — alasan: " . $item['fefo_override_reason'];
+                }
+
                 StockCard::create([
                     'item_id' => $detail->item_id,
                     'warehouse_id' => $prescription->warehouse_id,
@@ -55,7 +60,7 @@ class PrescriptionService
                     'reference_type' => Prescription::class,
                     'reference_id' => $prescription->id,
                     'transaction_date' => Carbon::now(),
-                    'notes' => "Dispensing Resep No: " . $prescription->prescription_number,
+                    'notes' => $notes,
                 ]);
             }
 
