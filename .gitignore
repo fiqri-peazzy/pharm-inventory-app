@@ -19,6 +19,8 @@
 /storage/*.key
 /storage/pail
 /vendor
+/vendor.zip
+/build.zip
 /deploy-artifacts
 Homestead.json
 Homestead.yaml
