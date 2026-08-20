@@ -1,3 +1,11 @@
+<div>
+@if($status !== 'draft')
+    <div class="mb-4 flex items-center gap-2 px-4 py-3 bg-blue-50 border border-blue-100 rounded-xl text-blue-700 text-xs font-bold dark:bg-blue-500/10 dark:border-blue-500/20 dark:text-blue-400">
+        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Mode lihat saja — penerimaan berstatus "{{ ucfirst($status) }}" sudah tidak bisa diubah.
+    </div>
+@endif
+<fieldset @if($status !== 'draft') disabled @endif style="display: contents;">
 <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
     <!-- Main Form Section -->
     <div class="xl:col-span-3 space-y-6">
@@ -70,9 +78,16 @@
                                 <td class="px-4 py-3">
                                     <div class="space-y-1">
                                         <input wire:model.live="rows.{{ $index }}.batch_number" type="text"
-                                            placeholder="BATCH-XXX"
+                                            placeholder="BATCH-XXX" list="batch-suggestions-{{ $index }}"
                                             class="w-full px-2 py-1 bg-white border rounded text-[10px] font-mono uppercase dark:bg-white/[0.03] dark:text-white
                                             @error("rows.$index.batch_number") border-red-500 dark:border-red-500 @else border-gray-200 dark:border-gray-800 @enderror">
+                                        @if($row['item_id'])
+                                            <datalist id="batch-suggestions-{{ $index }}">
+                                                @foreach($this->existingBatchNumbers($row['item_id']) as $bn)
+                                                    <option value="{{ $bn }}"></option>
+                                                @endforeach
+                                            </datalist>
+                                        @endif
                                         <input wire:model.live="rows.{{ $index }}.expired_date" type="date"
                                             class="w-full px-2 py-1 bg-white border rounded text-[10px] dark:bg-white/[0.03] dark:text-white
                                             @error("rows.$index.expired_date") border-red-500 dark:border-red-500 @else border-gray-200 dark:border-gray-800 @enderror">
@@ -368,6 +383,7 @@
             </div>
         </div>
     </div>
+</fieldset>
 
     <!-- Item Search Modal -->
     <div x-data="{ open: false }" @open-item-modal.window="open = true" @close-item-modal.window="open = false"

@@ -100,9 +100,11 @@
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                                     </a>
                                 @endif
-                                <button class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all dark:text-gray-500 dark:hover:bg-blue-500/15" title="Lihat Detail">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                </button>
+                                @if($item->status !== 'draft')
+                                    <a href="{{ route('procurement.receivings.edit', $item->id) }}" class="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all dark:text-gray-500 dark:hover:bg-blue-500/15" title="Lihat Detail">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </a>
+                                @endif
                             </div>
                         </td>
                     </tr>

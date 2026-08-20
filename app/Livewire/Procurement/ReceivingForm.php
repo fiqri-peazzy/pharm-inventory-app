@@ -234,6 +234,59 @@ class ReceivingForm extends Component
         $this->calculateTotals();
     }
 
+    public function updated($name)
+    {
+        if (preg_match('/^rows\.(\d+)\.batch_number$/', $name, $m)) {
+            $this->syncBatchInfo((int) $m[1]);
+        }
+    }
+
+    /**
+     * When staff types a batch number that already exists for this item,
+     * auto-fill the expiry date from the known record (or warn if what
+     * they typed conflicts with it) so a typo doesn't fragment FEFO
+     * tracking into two "different" batches that are really the same one.
+     */
+    protected function syncBatchInfo($index)
+    {
+        $row = $this->rows[$index] ?? null;
+        if (!$row || empty($row['item_id']) || empty($row['batch_number'])) {
+            return;
+        }
+
+        $existing = ItemBatch::where('item_id', $row['item_id'])
+            ->where('batch_number', $row['batch_number'])
+            ->first();
+
+        if (!$existing) {
+            return;
+        }
+
+        $knownDate = $existing->expired_date->format('Y-m-d');
+
+        if (empty($row['expired_date'])) {
+            $this->rows[$index]['expired_date'] = $knownDate;
+        } elseif ($row['expired_date'] !== $knownDate) {
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => "Nomor batch \"{$row['batch_number']}\" untuk item ini sudah pernah tercatat dengan ED " . $existing->expired_date->format('d/m/Y') . ". Pastikan ED yang diinput sesuai kemasan fisik.",
+            ]);
+        }
+    }
+
+    public function existingBatchNumbers($itemId)
+    {
+        if (!$itemId) {
+            return [];
+        }
+
+        return ItemBatch::where('item_id', $itemId)
+            ->select('batch_number')
+            ->distinct()
+            ->limit(10)
+            ->pluck('batch_number');
+    }
+
     public function save($status = 'draft')
     {
         $this->validate();
