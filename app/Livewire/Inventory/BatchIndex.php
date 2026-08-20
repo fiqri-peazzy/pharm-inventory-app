@@ -43,6 +43,12 @@ class BatchIndex extends Component
             ->when($this->status == 'expired', fn($q) => $q->expired())
             ->when($this->status == 'near_expired', fn($q) => $q->nearExpired())
             ->when($this->status == 'active', fn($q) => $q->active())
+            ->when($this->status == 'depleted', fn($q) => $q->where('current_qty', '<=', 0))
+            // Default view: only batches that still have physical stock and
+            // therefore still need monitoring. Depleted batches remain
+            // accessible via the explicit "Habis/Dimusnahkan" filter for
+            // audit purposes, but shouldn't clutter the default list.
+            ->when($this->status == '', fn($q) => $q->where('current_qty', '>', 0))
             ->orderBy('expired_date', 'asc');
 
         return view('livewire.inventory.batch-index', [

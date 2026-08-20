@@ -69,10 +69,11 @@
                     Kedaluwarsa</label>
                 <select wire:model.live="status"
                     class="w-full bg-gray-50 border-gray-100 rounded-xl text-sm px-4 py-3 focus:ring-amber-500 focus:border-amber-500 transition-all font-bold text-gray-600 dark:bg-white/[0.03] dark:border-gray-800 dark:text-gray-300">
-                    <option value="">Semua Batch</option>
+                    <option value="">Batch Aktif (Masih Ada Stok)</option>
                     <option value="active">Active (Masih Bagus)</option>
                     <option value="near_expired">Mendekati ED (< 90 hari)</option>
                     <option value="expired">Sudah ED (Expired)</option>
+                    <option value="depleted">Habis/Dimusnahkan (Riwayat)</option>
                 </select>
             </div>
         </div>

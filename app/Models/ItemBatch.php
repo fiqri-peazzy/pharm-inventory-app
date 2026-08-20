@@ -57,19 +57,35 @@ class ItemBatch extends Model
         return $query->where('status', 'available');
     }
 
+    /**
+     * Batches that are past their expiry date AND still have physical stock
+     * on hand. A batch that's already been fully disposed (current_qty = 0)
+     * has nothing left to act on, so it shouldn't keep showing up as an
+     * active "expired" alert.
+     */
     public function scopeExpired($query)
     {
-        return $query->where('expired_date', '<=', now());
+        return $query->where('expired_date', '<=', now())
+            ->where('current_qty', '>', 0);
     }
 
     public function scopeNearExpired($query, $days = 90)
     {
         return $query->where('expired_date', '>', now())
-            ->where('expired_date', '<=', now()->addDays($days));
+            ->where('expired_date', '<=', now()->addDays($days))
+            ->where('current_qty', '>', 0);
     }
 
     public function getStatusLabelAttribute()
     {
+        // A batch with nothing left in stock (fully used, transferred out,
+        // or disposed) has no actionable expiry concern anymore — flagging
+        // it as "EXPIRED" is misleading once there's no physical stock to
+        // act on.
+        if ($this->current_qty <= 0) {
+            return (object) ['label' => 'HABIS/DIMUSNAHKAN', 'color' => 'bg-gray-100 text-gray-500 border-gray-200', 'urgency' => -1];
+        }
+
         $daysToExpiry = now()->diffInDays($this->expired_date, false);
 
         if ($daysToExpiry <= 0) {
