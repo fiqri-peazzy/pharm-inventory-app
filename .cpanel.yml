@@ -7,10 +7,16 @@ deployment:
     # 1. Install dependencies di folder repo
     - cd $REPO_DIR && /opt/cpanel/composer/bin/composer install --no-dev --optimize-autoloader
     
-    # 2. Copy semua file dari repo ke public_html
-    - /bin/cp -R $REPO_DIR/* $DEPLOY_DIR/
-    - /bin/cp -R $REPO_DIR/.* $DEPLOY_DIR/ 2>/dev/null || :
+    # 2. Jalankan artisan commands (migrasi & clear cache) di folder repo
+    - cd $REPO_DIR && php artisan migrate --force
+    - cd $REPO_DIR && php artisan optimize:clear
     
-    # 3. Jalankan artisan commands di public_html
-    - cd $DEPLOY_DIR && php artisan migrate --force
-    - cd $DEPLOY_DIR && php artisan optimize:clear
+    # 3. Copy HANYA isi folder public ke public_html (Best Practice keamanan Laravel)
+    - /bin/cp -R $REPO_DIR/public/* $DEPLOY_DIR/
+    
+    # 4. Modifikasi index.php di public_html agar mengarah ke folder repo yang aman
+    - sed -i "s|__DIR__.'/../|__DIR__.'/../pharm-inventory-app/|g" $DEPLOY_DIR/index.php
+    
+    # 5. Buat ulang storage symlink di public_html (wajib untuk file upload Laravel)
+    - rm -rf $DEPLOY_DIR/storage
+    - ln -s $REPO_DIR/storage/app/public $DEPLOY_DIR/storage
