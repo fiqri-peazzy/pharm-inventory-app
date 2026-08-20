@@ -13,6 +13,7 @@ class DistributionIndex extends Component
     public $search = '';
     public $status = '';
     public $warehouseId;
+    public ?int $viewingDistributionId = null;
 
     public function mount()
     {
@@ -23,6 +24,16 @@ class DistributionIndex extends Component
     public function updatedSearch()
     {
         $this->resetPage();
+    }
+
+    public function showDetail($id)
+    {
+        $this->viewingDistributionId = $id;
+    }
+
+    public function closeDetail()
+    {
+        $this->viewingDistributionId = null;
     }
 
     public function render()
@@ -47,8 +58,17 @@ class DistributionIndex extends Component
             $query->where('status', $this->status);
         }
 
+        $viewingDistribution = null;
+        if ($this->viewingDistributionId) {
+            $viewingDistribution = Distribution::with([
+                'origin', 'destination', 'creator', 'approver', 'sender', 'receiver',
+                'details.item.unit', 'details.batch',
+            ])->find($this->viewingDistributionId);
+        }
+
         return view('livewire.inventory.distribution-index', [
-            'distributions' => $query->paginate(15)
+            'distributions' => $query->paginate(15),
+            'viewingDistribution' => $viewingDistribution,
         ]);
     }
 }

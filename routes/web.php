@@ -174,10 +174,10 @@ Route::middleware(['auth', 'check.user.active'])->group(function () {
             ->middleware('permission:distributions.create')
             ->name('distributions.request');
         Route::get('/distributions/{id}/process', [App\Http\Controllers\Inventory\InventoryController::class, 'processDistribution'])
-            ->middleware('permission:distributions.update')
+            ->middleware('permission:distributions.process|distributions.update')
             ->name('distributions.process');
         Route::get('/distributions/{id}/receive', [App\Http\Controllers\Inventory\InventoryController::class, 'receiveDistribution'])
-            ->middleware('permission:distributions.update')
+            ->middleware('permission:distributions.receive|distributions.update')
             ->name('distributions.receive');
 
         // Stock Cards & Batches

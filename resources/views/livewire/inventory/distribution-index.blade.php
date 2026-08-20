@@ -109,9 +109,9 @@
                                         </a>
                                     @endif
 
-                                    <a href="{{ route('inventory.distributions.index') }}?id={{ $dist->id }}" class="p-2 text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-white/[0.03] rounded-lg transition-all" title="Lihat Detail">
+                                    <button wire:click="showDetail({{ $dist->id }})" class="p-2 text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-white/[0.03] rounded-lg transition-all" title="Lihat Detail">
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
-                                    </a>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -127,4 +127,99 @@
             {{ $distributions->links() }}
         </div>
     </div>
+
+    <!-- Detail Modal -->
+    @if ($viewingDistribution)
+        <div x-data class="fixed inset-0 z-99999 flex items-center justify-center p-4 overflow-y-auto"
+            :class="{ 'xl:pl-[290px]': $store.sidebar.isExpanded || $store.sidebar.isHovered, 'xl:pl-[90px]': !$store.sidebar.isExpanded && !$store.sidebar.isHovered }">
+            <div wire:click="closeDetail" class="fixed inset-0 bg-gray-900/40 backdrop-blur-[2px]"></div>
+
+            <div @click.stop class="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-2xl overflow-hidden">
+                <!-- Header -->
+                <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex items-start justify-between">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500">Detail Distribusi</p>
+                        <h3 class="text-lg font-black text-gray-900 dark:text-white mt-0.5">{{ $viewingDistribution->distribution_number }}</h3>
+                        <div class="flex items-center gap-2 mt-1.5 text-xs font-bold">
+                            <span class="text-gray-600 dark:text-gray-300">{{ $viewingDistribution->origin->name }}</span>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-gray-300 dark:text-gray-600"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                            <span class="text-brand-600 dark:text-brand-400">{{ $viewingDistribution->destination->name }}</span>
+                        </div>
+                    </div>
+                    <button wire:click="closeDetail" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+
+                <div class="p-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                    <!-- Timeline -->
+                    <div class="grid grid-cols-4 gap-2 mb-6">
+                        @php
+                            $steps = [
+                                ['label' => 'Diminta', 'at' => $viewingDistribution->requested_at, 'by' => $viewingDistribution->creator?->name, 'done' => (bool) $viewingDistribution->requested_at],
+                                ['label' => 'Disetujui', 'at' => $viewingDistribution->approved_at, 'by' => $viewingDistribution->approver?->name, 'done' => (bool) $viewingDistribution->approved_at],
+                                ['label' => 'Dikirim', 'at' => $viewingDistribution->sent_at, 'by' => $viewingDistribution->sender?->name, 'done' => (bool) $viewingDistribution->sent_at],
+                                ['label' => 'Diterima', 'at' => $viewingDistribution->received_at, 'by' => $viewingDistribution->receiver?->name, 'done' => (bool) $viewingDistribution->received_at],
+                            ];
+                        @endphp
+                        @foreach ($steps as $step)
+                            <div class="text-center">
+                                <div class="w-2 h-2 rounded-full mx-auto mb-1.5 {{ $step['done'] ? 'bg-emerald-500' : 'bg-gray-200 dark:bg-gray-700' }}"></div>
+                                <p class="text-[9px] font-black uppercase tracking-wide {{ $step['done'] ? 'text-gray-700 dark:text-gray-300' : 'text-gray-300 dark:text-gray-600' }}">{{ $step['label'] }}</p>
+                                @if ($step['done'])
+                                    <p class="text-[9px] text-gray-400 dark:text-gray-500 mt-0.5">{{ $step['at']->format('d/m/y H:i') }}</p>
+                                    @if ($step['by'])
+                                        <p class="text-[9px] text-gray-400 dark:text-gray-500 truncate">{{ $step['by'] }}</p>
+                                    @endif
+                                @else
+                                    <p class="text-[9px] text-gray-300 dark:text-gray-600 mt-0.5">-</p>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @if ($viewingDistribution->notes)
+                        <div class="mb-5 bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-gray-800 rounded-xl p-3">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1">Catatan</p>
+                            <p class="text-xs text-gray-600 dark:text-gray-300">{{ $viewingDistribution->notes }}</p>
+                        </div>
+                    @endif
+
+                    <!-- Items -->
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-2">Daftar Item ({{ $viewingDistribution->details->count() }})</p>
+                    <div class="rounded-xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-gray-50 dark:bg-white/[0.03]">
+                                    <th class="px-4 py-2.5 font-black text-gray-400 dark:text-gray-500 uppercase text-[9px]">Item</th>
+                                    <th class="px-4 py-2.5 font-black text-gray-400 dark:text-gray-500 uppercase text-[9px]">Batch</th>
+                                    <th class="px-4 py-2.5 font-black text-gray-400 dark:text-gray-500 uppercase text-[9px] text-right">Diminta</th>
+                                    <th class="px-4 py-2.5 font-black text-gray-400 dark:text-gray-500 uppercase text-[9px] text-right">Dikirim</th>
+                                    <th class="px-4 py-2.5 font-black text-gray-400 dark:text-gray-500 uppercase text-[9px] text-right">Diterima</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50 dark:divide-gray-800">
+                                @forelse ($viewingDistribution->details as $detail)
+                                    <tr>
+                                        <td class="px-4 py-2.5">
+                                            <span class="font-bold text-gray-800 dark:text-white block">{{ $detail->item->name ?? '-' }}</span>
+                                            <span class="text-[9px] text-gray-400 dark:text-gray-500">{{ $detail->item->unit->name ?? '' }}</span>
+                                        </td>
+                                        <td class="px-4 py-2.5 font-mono text-gray-500 dark:text-gray-400">{{ $detail->batch->batch_number ?? '-' }}</td>
+                                        <td class="px-4 py-2.5 text-right font-bold text-gray-700 dark:text-gray-300">{{ number_format($detail->qty_requested) }}</td>
+                                        <td class="px-4 py-2.5 text-right font-bold text-gray-700 dark:text-gray-300">{{ $detail->qty_sent !== null ? number_format($detail->qty_sent) : '-' }}</td>
+                                        <td class="px-4 py-2.5 text-right font-bold text-emerald-600 dark:text-emerald-400">{{ $detail->qty_received !== null ? number_format($detail->qty_received) : '-' }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="px-4 py-8 text-center text-gray-300 dark:text-gray-600 italic">Belum ada item.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>

@@ -121,8 +121,8 @@
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
                 <div
-                    class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-gray-100 dark:bg-white/[0.03] dark:border-gray-800">
-                    <div class="bg-white p-6 dark:bg-white/[0.03]">
+                    class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full border border-gray-100 dark:bg-gray-900 dark:border-gray-800">
+                    <div class="bg-white p-6 dark:bg-gray-900">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-black text-gray-900 uppercase tracking-tight dark:text-white">
                                 {{ $isEdit ? 'Edit User' : 'Tambah User Baru' }}</h3>

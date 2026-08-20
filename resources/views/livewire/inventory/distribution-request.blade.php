@@ -151,7 +151,7 @@
                  x-transition:leave="ease-in duration-200"
                  x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                  x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                 class="relative inline-block w-full max-w-2xl text-left bg-white dark:bg-white/[0.03] rounded-2xl shadow-2xl border border-slate-200 dark:border-gray-800 overflow-hidden transform transition-all align-middle">
+                 class="relative inline-block w-full max-w-2xl text-left bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-gray-800 overflow-hidden transform transition-all align-middle">
                 
                 <!-- Header -->
                 <div class="px-6 py-4 bg-slate-50 dark:bg-white/[0.03] border-b border-slate-100 dark:border-gray-800 flex justify-between items-center text-xs uppercase font-black tracking-widest text-slate-500 dark:text-gray-400">
