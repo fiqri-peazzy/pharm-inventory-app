@@ -1,21 +1,19 @@
 ---
 deployment:
   tasks:
-    - export REPO_DIR=/home/muarati1/pharm-inventory-app
-    - export DEPLOY_DIR=/home/muarati1/public_html
-    - cd $REPO_DIR && if [ ! -f .env ]; then cp .env.example .env; echo "[deploy] .env dibuat dari .env.example - isi kredensial production lalu jalankan php artisan key:generate manual."; fi
-    - cd $REPO_DIR && if [ -f "$HOME/composer.phar" ]; then COMPOSER_CMD="php $HOME/composer.phar"; elif [ -f /opt/cpanel/composer/bin/composer ]; then COMPOSER_CMD="/opt/cpanel/composer/bin/composer"; elif command -v composer >/dev/null 2>&1; then COMPOSER_CMD="composer"; else COMPOSER_CMD=""; fi; if [ -n "$COMPOSER_CMD" ]; then $COMPOSER_CMD install --no-dev --optimize-autoloader --no-interaction || echo "[deploy] composer install gagal, pakai vendor lama jika ada."; elif [ -f "$REPO_DIR/vendor.zip" ]; then echo "[deploy] composer tidak ada, extract vendor.zip"; unzip -oq "$REPO_DIR/vendor.zip" -d "$REPO_DIR"; else echo "[deploy] PERINGATAN: composer tidak ada dan vendor.zip tidak ada."; fi
-    - cd $REPO_DIR && if command -v npm >/dev/null 2>&1; then npm ci --no-audit --no-fund && npm run build || echo "[deploy] npm build gagal, pakai public/build lama jika ada."; elif [ -f "$REPO_DIR/build.zip" ]; then echo "[deploy] npm tidak ada, extract build.zip"; unzip -oq "$REPO_DIR/build.zip" -d "$REPO_DIR"; else echo "[deploy] PERINGATAN: npm tidak ada dan build.zip tidak ada."; fi
-    - cd $REPO_DIR && php artisan migrate --force
-    - cd $REPO_DIR && php artisan optimize:clear
-    - cd $REPO_DIR && php artisan config:cache
-    - cd $REPO_DIR && php artisan route:cache
-    - cd $REPO_DIR && php artisan view:cache
-    - cd $REPO_DIR && php artisan event:cache
-    - cd $REPO_DIR && php artisan storage:link || true
-    - /bin/cp -R $REPO_DIR/public/. $DEPLOY_DIR/
-    - sed -i "s|__DIR__.'/../|__DIR__.'/../pharm-inventory-app/|g" $DEPLOY_DIR/index.php
-    - rm -rf $DEPLOY_DIR/storage
-    - ln -s $REPO_DIR/storage/app/public $DEPLOY_DIR/storage
-    - chmod -R 775 $REPO_DIR/storage $REPO_DIR/bootstrap/cache
-    - cd $REPO_DIR && php artisan queue:restart || true
+    - if [ ! -f /home/muarati1/pharm-inventory-app/.env ]; then cp /home/muarati1/pharm-inventory-app/.env.example /home/muarati1/pharm-inventory-app/.env; echo "[deploy] .env dibuat dari .env.example - isi kredensial production lalu jalankan php artisan key:generate manual."; fi
+    - cd /home/muarati1/pharm-inventory-app && if [ -f "$HOME/composer.phar" ]; then COMPOSER_CMD="php $HOME/composer.phar"; elif [ -f /opt/cpanel/composer/bin/composer ]; then COMPOSER_CMD="/opt/cpanel/composer/bin/composer"; elif command -v composer >/dev/null 2>&1; then COMPOSER_CMD="composer"; else COMPOSER_CMD=""; fi; if [ -n "$COMPOSER_CMD" ]; then $COMPOSER_CMD install --no-dev --optimize-autoloader --no-interaction || echo "[deploy] composer install gagal, pakai vendor lama jika ada."; elif [ -f vendor.zip ]; then echo "[deploy] composer tidak ada, extract vendor.zip"; unzip -oq vendor.zip; else echo "[deploy] PERINGATAN: composer tidak ada dan vendor.zip tidak ada."; fi
+    - cd /home/muarati1/pharm-inventory-app && if command -v npm >/dev/null 2>&1; then npm ci --no-audit --no-fund && npm run build || echo "[deploy] npm build gagal, pakai public/build lama jika ada."; elif [ -f build.zip ]; then echo "[deploy] npm tidak ada, extract build.zip"; unzip -oq build.zip; else echo "[deploy] PERINGATAN: npm tidak ada dan build.zip tidak ada."; fi
+    - cd /home/muarati1/pharm-inventory-app && php artisan migrate --force
+    - cd /home/muarati1/pharm-inventory-app && php artisan optimize:clear
+    - cd /home/muarati1/pharm-inventory-app && php artisan config:cache
+    - cd /home/muarati1/pharm-inventory-app && php artisan route:cache
+    - cd /home/muarati1/pharm-inventory-app && php artisan view:cache
+    - cd /home/muarati1/pharm-inventory-app && php artisan event:cache
+    - cd /home/muarati1/pharm-inventory-app && php artisan storage:link || true
+    - /bin/cp -R /home/muarati1/pharm-inventory-app/public/. /home/muarati1/public_html/
+    - sed -i "s|__DIR__.'/../|__DIR__.'/../pharm-inventory-app/|g" /home/muarati1/public_html/index.php
+    - rm -rf /home/muarati1/public_html/storage
+    - ln -s /home/muarati1/pharm-inventory-app/storage/app/public /home/muarati1/public_html/storage
+    - chmod -R 775 /home/muarati1/pharm-inventory-app/storage /home/muarati1/pharm-inventory-app/bootstrap/cache
+    - cd /home/muarati1/pharm-inventory-app && php artisan queue:restart || true
