@@ -1,0 +1,16 @@
+---
+deployment:
+  tasks:
+    - export REPO_DIR=/home/muarati1/pharm-inventory-app
+    - export DEPLOY_DIR=/home/muarati1/public_html
+    
+    # 1. Install dependencies di folder repo
+    - cd $REPO_DIR && /opt/cpanel/composer/bin/composer install --no-dev --optimize-autoloader
+    
+    # 2. Copy semua file dari repo ke public_html
+    - /bin/cp -R $REPO_DIR/* $DEPLOY_DIR/
+    - /bin/cp -R $REPO_DIR/.* $DEPLOY_DIR/ 2>/dev/null || :
+    
+    # 3. Jalankan artisan commands di public_html
+    - cd $DEPLOY_DIR && php artisan migrate --force
+    - cd $DEPLOY_DIR && php artisan optimize:clear
