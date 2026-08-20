@@ -3,20 +3,77 @@ deployment:
   tasks:
     - export REPO_DIR=/home/muarati1/pharm-inventory-app
     - export DEPLOY_DIR=/home/muarati1/public_html
-    
-    # 1. Install dependencies di folder repo
-    - cd $REPO_DIR && /opt/cpanel/composer/bin/composer install --no-dev --optimize-autoloader
-    
-    # 2. Jalankan artisan commands (migrasi & clear cache) di folder repo
+
+    # 1. .env: jangan pernah menimpa yang sudah ada di server. Buat dari
+    #    .env.example HANYA kalau belum ada sama sekali (first deploy).
+    - >
+      cd $REPO_DIR && if [ ! -f .env ]; then
+      cp .env.example .env;
+      echo "[deploy] .env baru dibuat dari .env.example - isi kredensial production lalu jalankan 'php artisan key:generate' manual sebelum pakai.";
+      fi
+
+    # 2. Composer install. Urutan pencarian: composer.phar di $HOME (yang
+    #    sudah diinstall manual di terminal) -> composer bawaan cPanel ->
+    #    composer di PATH -> kalau semua tidak ada, extract vendor.zip
+    #    (upload manual) sebagai fallback terakhir, tanpa menggagalkan deploy.
+    - >
+      cd $REPO_DIR &&
+      if [ -f "$HOME/composer.phar" ]; then COMPOSER_CMD="php $HOME/composer.phar";
+      elif [ -f /opt/cpanel/composer/bin/composer ]; then COMPOSER_CMD="/opt/cpanel/composer/bin/composer";
+      elif command -v composer >/dev/null 2>&1; then COMPOSER_CMD="composer";
+      else COMPOSER_CMD=""; fi;
+      if [ -n "$COMPOSER_CMD" ]; then
+      $COMPOSER_CMD install --no-dev --optimize-autoloader --no-interaction || echo "[deploy] composer install gagal, pakai vendor/ lama jika ada.";
+      elif [ -f "$REPO_DIR/vendor.zip" ]; then
+      echo "[deploy] composer tidak ditemukan, extract vendor.zip...";
+      unzip -oq "$REPO_DIR/vendor.zip" -d "$REPO_DIR";
+      else
+      echo "[deploy] PERINGATAN: composer tidak ditemukan dan vendor.zip tidak ada. Upload vendor.zip manual lalu deploy ulang.";
+      fi
+
+    # 3. Frontend assets. Build otomatis kalau npm tersedia di server;
+    #    kalau tidak, extract build.zip (hasil "npm run build" lokal, upload
+    #    manual) sebagai fallback tanpa menggagalkan deploy.
+    - >
+      cd $REPO_DIR &&
+      if command -v npm >/dev/null 2>&1; then
+      npm ci --no-audit --no-fund && npm run build || echo "[deploy] npm build gagal, pakai public/build lama jika ada.";
+      elif [ -f "$REPO_DIR/build.zip" ]; then
+      echo "[deploy] npm tidak ditemukan, extract build.zip...";
+      unzip -oq "$REPO_DIR/build.zip" -d "$REPO_DIR";
+      else
+      echo "[deploy] PERINGATAN: npm tidak ditemukan dan build.zip tidak ada. Upload build.zip manual lalu deploy ulang.";
+      fi
+
+    # 4. Migrasi DB + rebuild seluruh cache Laravel (urutan penting: clear
+    #    dulu baru cache ulang, supaya tidak ada config/route lama nyangkut).
     - cd $REPO_DIR && php artisan migrate --force
     - cd $REPO_DIR && php artisan optimize:clear
-    
-    # 3. Copy HANYA isi folder public ke public_html (Best Practice keamanan Laravel)
-    - /bin/cp -R $REPO_DIR/public/* $DEPLOY_DIR/
-    
-    # 4. Modifikasi index.php di public_html agar mengarah ke folder repo yang aman
+    - cd $REPO_DIR && php artisan config:cache
+    - cd $REPO_DIR && php artisan route:cache
+    - cd $REPO_DIR && php artisan view:cache
+    - cd $REPO_DIR && php artisan event:cache
+
+    # 5. Storage symlink di dalam repo (dipakai kalau artisan dijalankan
+    #    langsung dari REPO_DIR, aman dijalankan berulang kali).
+    - cd $REPO_DIR && php artisan storage:link || true
+
+    # 6. Copy isi folder public (TERMASUK file tersembunyi seperti
+    #    .htaccess - pakai "public/." bukan "public/*") ke public_html.
+    - /bin/cp -R $REPO_DIR/public/. $DEPLOY_DIR/
+
+    # 7. Modifikasi index.php di public_html agar mengarah ke folder repo
+    #    yang aman (di luar document root).
     - sed -i "s|__DIR__.'/../|__DIR__.'/../pharm-inventory-app/|g" $DEPLOY_DIR/index.php
-    
-    # 5. Buat ulang storage symlink di public_html (wajib untuk file upload Laravel)
+
+    # 8. Buat ulang storage symlink di public_html (wajib untuk file upload
+    #    Laravel bisa diakses publik).
     - rm -rf $DEPLOY_DIR/storage
     - ln -s $REPO_DIR/storage/app/public $DEPLOY_DIR/storage
+
+    # 9. Permission folder yang wajib bisa ditulis Laravel runtime.
+    - chmod -R 775 $REPO_DIR/storage $REPO_DIR/bootstrap/cache
+
+    # 10. Restart queue worker (no-op kalau tidak pakai queue:work/Supervisor)
+    #     supaya worker baca kode baru, bukan kode lama yang sudah di-cache di memory.
+    - cd $REPO_DIR && php artisan queue:restart || true
